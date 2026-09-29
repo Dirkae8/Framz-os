@@ -140,8 +140,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p output
+          LOG="$PWD/iso-build.log"
           # Установщик собирает ISO с Anaconda и вшивает в него наш образ.
           # IMAGE_SIGNED=false — образ пока не подписан (preview).
+          # Вывод целиком пишем в лог: его видно даже там, где артефакты GitHub недоступны.
           sudo docker run --privileged --rm \
             --volume "$PWD/output:/build-container-installer/build" \
             -e IMAGE_REPO="ghcr.io/${{ needs.image.outputs.namespace }}" \
@@ -152,7 +154,7 @@ jobs:
             -e VARIANT="kinoite" \
             -e ISO_NAME="build/${ISO_NAME}" \
             -e WEB_UI="false" \
-            "${INSTALLER_IMAGE}"
+            "${INSTALLER_IMAGE}" 2>&1 | tee "${LOG}"
           ls -lh output/
           sha256sum "output/${ISO_NAME}" | tee "output/${ISO_NAME}-SHA256"
 
@@ -205,13 +207,16 @@ jobs:
       - name: Сохранить логи при сбое
         if: failure()
         shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p ci-logs
-          FILE="ci-logs/iso-failure-${{ github.run_id }}.txt"
-          gh run view "${{ github.run_id }}" --log-failed > "${FILE}" 2>&1 || true
-          gh run view "${{ github.run_id }}" --log >> "${FILE}" 2>&1 || true
+          {
+            echo "=== запуск ${{ github.run_id }} (${{ github.ref_name }}) ==="
+            echo "=== свободное место ==="
+            df -h / /var/lib/docker 2>/dev/null || true
+            echo
+            echo "=== вывод сборки ISO ==="
+            cat iso-build.log 2>/dev/null || echo "(файла нет — сборка не дошла до docker run)"
+          } > "ci-logs/iso-failure-${{ github.run_id }}.txt"
           git config user.name "framz-ci"
           git config user.email "ci@framz.local"
           git add ci-logs
