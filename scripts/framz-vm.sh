@@ -49,6 +49,7 @@ FRAMZ OS — запуск в виртуальной машине
 Команды:
   deps        что установить (и готовые команды для Arch/Garuda и Fedora)
   download    скачать ISO (частями), собрать его и проверить контрольные суммы
+  verify      проверить уже скачанный ISO по контрольной сумме
   run         запустить виртуальную машину (диск создастся сам)
   all         download + run
   clean       удалить скачанные файлы и виртуальный диск
@@ -111,6 +112,20 @@ verify_parts() {
     if [ "$actual" != "$hash" ]; then warn "часть повреждена: ${base}"; ok=0; fi
   done < "$cfile"
   [ "$ok" = 1 ]
+}
+
+# ----------------------------- verify ---------------------------------------
+cmd_verify() {
+  local path="${ISO_PATH:-$WORKDIR/$ISO_NAME}"
+  [ -f "$path" ] || die "нет файла ISO: $path
+Скачай: $(basename "$0") download --dir '$WORKDIR'"
+  local rc=0
+  verify_against "${path}-SHA256" "$path" "$(basename "$path")" || rc=$?
+  case "$rc" in
+    0) info "ISO в порядке: $path ($(du -h "$path" | cut -f1))" ;;
+    2) warn "файла контрольной суммы нет — проверить нечем. Размер: $(du -h "$path" | cut -f1)" ;;
+    *) die "ISO не прошёл проверку — удали и скачай заново" ;;
+  esac
 }
 
 # ----------------------------- deps -----------------------------------------
@@ -221,38 +236,65 @@ cmd_download() {
     parts_mode=1
   fi
 
-  if [ "$parts_mode" = 1 ]; then
-    local -a parts=()
-    while read -r _hash name; do
-      if [ -n "${name:-}" ]; then parts+=("$(basename "$name")"); fi
-    done < "${ISO_NAME}.parts-SHA256"
-    [ "${#parts[@]}" -gt 0 ] || die "не удалось прочитать список частей"
+  local attempt
+  for attempt in 1 2; do
+    if [ "$parts_mode" = 1 ]; then
+      local -a parts=()
+      while read -r _hash name; do
+        if [ -n "${name:-}" ]; then parts+=("$(basename "$name")"); fi
+      done < "${ISO_NAME}.parts-SHA256"
+      [ "${#parts[@]}" -gt 0 ] || die "не удалось прочитать список частей"
 
-    info "частей: ${#parts[@]}, качаю с докачкой (это ~4 ГБ, можно прервать и продолжить)"
-    local p
-    for p in "${parts[@]}"; do
-      if [ -f "$p" ] && sha256sum "$p" 2>/dev/null | awk '{print $1}' | grep -q .; then
-        info "уже скачано: $p"
+      info "частей: ${#parts[@]}, качаю с докачкой (это ~4 ГБ, можно прервать и продолжить)"
+      local p
+      for p in "${parts[@]}"; do
+        if [ "$attempt" = 1 ] && [ -f "$p" ] && [ -s "$p" ]; then
+          info "уже скачано: $p"
+          continue
+        fi
+        info "качаю $p"
+        fetch "$BASE_URL/$p" "$p" || die "не удалось скачать $p (проверь интернет и запусти снова — докачает)"
+      done
+
+      info "проверяю части по контрольным суммам…"
+      if verify_parts; then
+        info "собираю ISO из ${#parts[@]} частей…"
+        : > "$ISO_NAME"
+        for p in "${parts[@]}"; do cat "$p" >> "$ISO_NAME"; done
+        break
+      fi
+
+      if [ "$attempt" = 1 ]; then
+        warn "части не совпали с контрольными суммами."
+        warn "Обычно это значит, что релиз пересобирается (файлы заменились по ходу скачивания)."
+        warn "Удаляю части и качаю заново — целиком из одной версии релиза."
+        rm -f "$WORKDIR/${ISO_NAME}".part-*
         continue
       fi
-      info "качаю $p"
-      fetch "$BASE_URL/$p" "$p" || die "не удалось скачать $p (проверь интернет и запусти снова — докачает)"
-    done
+      die "части повреждены после повторного скачивания. Проверь связь и запусти снова."
+    else
+      info "качаю ${ISO_NAME} (~4 ГБ, можно прервать и продолжить)"
+      fetch "$BASE_URL/${ISO_NAME}" "$ISO_NAME" || die "не удалось скачать ISO"
+      if [ -f "${ISO_NAME}-SHA256" ]; then
+        if verify_against "${ISO_NAME}-SHA256" "$ISO_NAME" "$ISO_NAME"; then
+          break
+        fi
+      else
+        break   # суммы нет — доверяем скачанному
+      fi
+      if [ "$attempt" = 1 ]; then
+        warn "сумма не совпала (возможно, релиз пересобирается) — качаю заново"
+        rm -f "$ISO_NAME"
+        continue
+      fi
+      die "ISO не проходит проверку после повторного скачивания"
+    fi
+  done
 
-    info "проверяю части по контрольным суммам…"
-    verify_parts || die "части повреждены. Удали битые и запусти снова: rm -f ${WORKDIR}/${ISO_NAME}.part-*"
-
-    info "собираю ISO из ${#parts[@]} частей…"
-    : > "$ISO_NAME"
-    for p in "${parts[@]}"; do cat "$p" >> "$ISO_NAME"; done
-  else
-    info "качаю ${ISO_NAME} (~4 ГБ, можно прервать и продолжить)"
-    fetch "$BASE_URL/${ISO_NAME}" "$ISO_NAME" || die "не удалось скачать ISO"
-  fi
-
-  # 4. Итоговая проверка
-  if ! fetch "$BASE_URL/${ISO_NAME}-SHA256" "${ISO_NAME}-SHA256" 2>/dev/null; then
-    warn "в релизе нет файла суммы для целого ISO — пропускаю проверку"
+  # Итоговая проверка целого файла (если в релизе есть сумма)
+  if [ ! -f "${ISO_NAME}-SHA256" ]; then
+    fetch "$BASE_URL/${ISO_NAME}-SHA256" "${ISO_NAME}-SHA256" 2>/dev/null \
+      || warn "в релизе нет файла суммы для целого ISO — пропускаю проверку"
   fi
   if [ -f "${ISO_NAME}-SHA256" ]; then
     verify_against "${ISO_NAME}-SHA256" "$ISO_NAME" "$ISO_NAME" \
@@ -329,11 +371,11 @@ EOF
       warn "нет прав на /dev/kvm — добавь себя в группу kvm: sudo usermod -aG kvm \"$USER\" (и войди заново)"
       die "запуск отменён"
     fi
-    have qemu-img || die "не найден qemu-img (пакет qemu-desktop / qemu-utils)"
   else
     ACCEL="tcg"; CPU_MODEL="max"
     warn "режим без ускорения: установка системы займёт часы. Только для проверки."
   fi
+  have qemu-img || die "не найден qemu-img (в Arch это пакет qemu-desktop, в Debian/Ubuntu — qemu-utils)"
 
   # 3. Виртуальный диск
   if [ ! -f "$DISK_PATH" ]; then
@@ -435,6 +477,7 @@ done
 case "$CMD" in
   deps)     cmd_deps ;;
   download) cmd_download ;;
+  verify)   cmd_verify ;;
   run)      cmd_run ;;
   all)      cmd_download; cmd_run ;;
   clean)    cmd_clean ;;
