@@ -149,6 +149,7 @@ jobs:
           # Вывод целиком пишем в лог: его видно даже там, где артефакты GitHub недоступны.
           sudo docker run --privileged --rm \
             --volume "$PWD/output:/build-container-installer/build" \
+            --volume framz-dnf-cache:/cache/dnf \
             "${INSTALLER_IMAGE}" \
             IMAGE_REPO="ghcr.io/${{ needs.image.outputs.namespace }}" \
             IMAGE_NAME="${IMAGE_NAME}" \
@@ -157,7 +158,9 @@ jobs:
             VERSION="${FEDORA_VERSION}" \
             VARIANT="kinoite" \
             ISO_NAME="build/${ISO_NAME}" \
-            WEB_UI="false" 2>&1 | tee "${LOG}"
+            WEB_UI="false" \
+            DNF_CACHE="/cache/dnf" \
+            _VOLID="FRAMZ_OS_1" 2>&1 | tee "${LOG}"
           ls -lh output/
           sha256sum "output/${ISO_NAME}" | tee "output/${ISO_NAME}-SHA256"
 
