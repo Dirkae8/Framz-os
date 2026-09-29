@@ -9,7 +9,7 @@ ColorScheme=FramzDark
 Name=FRAMZ OS
 
 [Icons]
-Theme=breeze-dark
+Theme=Kora
 
 [kcminputrc][Mouse]
 cursorTheme=breeze_cursors

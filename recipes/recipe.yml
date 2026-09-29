@@ -19,7 +19,12 @@ modules:
       - source: system
         destination: /
 
-  # 2. Пакеты под творческие задачи ------------------------------------------
+  # 2. Сборка оформления внутри образа: иконки Kora, права на окно первого запуска
+  - type: script
+    scripts:
+      - install-branding.sh
+
+  # 3. Пакеты под творческие задачи ------------------------------------------
   - type: dnf
     repos:
       cleanup: true
@@ -55,7 +60,7 @@ modules:
         - firefox
         - firefox-langpacks
 
-  # 3. Творческий набор: ставится Flatpak'ами в образ, доступен сразу --------
+  # 4. Творческий набор: ставится Flatpak'ами в образ, доступен сразу --------
   - type: default-flatpaks
     configurations:
       - notify: false
@@ -83,7 +88,7 @@ modules:
           - org.libreoffice.LibreOffice
       - scope: user
 
-  # 4. Название системы (идёт последним — см. примечание в шапке) -------------
+  # 5. Название системы (идёт последним — см. примечание в шапке) -------------
   - type: os-release
     properties:
       ID: framz
@@ -104,5 +109,5 @@ modules:
       VENDOR_NAME: FRAMZ OS
       VENDOR_URL: https://github.com/Dirkae8/Framz-os
 
-  # 5. Подпись образов — включим к публичной бете ----------------------------
+  # 6. Подпись образов — включим к публичной бете ----------------------------
   # - type: signing

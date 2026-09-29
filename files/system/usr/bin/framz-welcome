@@ -1,0 +1,227 @@
+#!/usr/bin/env bash
+# FRAMZ OS — «Окно первого запуска» (упрощённое).
+#
+# Что делает: при первом входе показывает окно, где можно выбрать тему,
+# проверить железо (видео, звук, планшет) и открыть нужные приложения.
+# Это НЕ полноценный мастер установки — только дружелюбная первая встреча.
+#
+# Зависимости: kdialog (kde-cli-tools) — есть в KDE по умолчанию.
+# Флаг одной проверки за раз: FRAMZ_WELCOME_STEP=тема|железо|ссылки
+set -uo pipefail
+
+MARKER_DIR="${HOME}/.config/framz"
+MARKER="${MARKER_DIR}/welcome-done"
+LOG="${MARKER_DIR}/welcome.log"
+WALLPAPER_DIR="/usr/share/framz/branding/wallpapers"
+
+mkdir -p "${MARKER_DIR}"
+exec 2>>"${LOG}"
+
+# Показываем один раз на пользователя. Принудительно: FRAMZ_WELCOME_FORCE=1
+if [ -f "${MARKER}" ] && [ "${FRAMZ_WELCOME_FORCE:-0}" != "1" ]; then
+  exit 0
+fi
+
+# ── Язык: русский, если локаль русская, иначе английский ─────────────────────
+case "${LANG:-${LC_ALL:-en}}" in
+  ru*|*_RU*|*ru_RU*) L=ru ;;
+  *)                  L=en ;;
+esac
+
+if [ "${L}" = "ru" ]; then
+  T_TITLE="FRAMZ OS 1.0"
+  T_HELLO="Добро пожаловать в FRAMZ OS 1.0!\n\nЭто система для творчества: рисование, 3D, видео, музыка, фото, документы.\nВсё нужное уже установлено — можно просто начинать.\n\nСейчас настроим внешний вид и проверим железо (займёт полминуты)."
+  B_NEXT="Продолжить"      B_LATER="Не сейчас"
+  T_THEME="Выбери тему оформления:"
+  TH_D="Frame Dark — тёмная, фиолетово-маджентовая"
+  TH_L="Studio Light — светлая, тёплая (для работы с фото и цветом)"
+  B_SAVE="Применить"       B_BACK="Пропустить"
+  T_THEME_OK="Тема применена: %s"
+  T_HW="Проверка железа:"
+  HW_GPU="Видео: %s"
+  HW_SND_OK="Звук: PipeWire работает — наушники, микрофон, MIDI-интерфейсы готовы"
+  HW_SND_NO="Звук: служба звука ещё запускается — после перезагрузки всё будет готово"
+  HW_TAB_YES="Планшет/перо: найден графический планшет (%s) — нажим пера работает в Krita"
+  HW_TAB_NO="Планшет/перо: не найден. Если подключишь — Krita и GIMP подхватят нажим сразу"
+  HW_NO_NV="У тебя видеокарта NVIDIA: для CUDA-рендера и NVENC поставь редакцию framz-os-1.0-nvidia.iso (ссылка в документации)"
+  B_MORE="Дальше"
+  T_APPS="Что-нибудь открыть прямо сейчас?"
+  A_DISCOVER="Магазин приложений (Discover)"
+  A_KRITA="Krita — рисование и живопись"
+  A_BLENDER="Blender — 3D"
+  A_KDENLIVE="Kdenlive — видеомонтаж"
+  A_OBS="OBS Studio — запись и стрим"
+  A_ARD="Ardour — музыка и звук"
+  A_DARK="darktable — обработка фото"
+  A_DONE="Готово, закрыть"
+  T_BYE="Готово! Приятной работы.\n\nВсё это можно менять в «Параметрах системы».\nДокументация — в папке docs репозитория FRAMZ OS."
+else
+  T_TITLE="FRAMZ OS 1.0"
+  T_HELLO="Welcome to FRAMZ OS 1.0!\n\nThis system is built for creators: drawing, 3D, video, music, photo, documents.\nEverything you need is already installed.\n\nLet's set the look and check your hardware (takes half a minute)."
+  B_NEXT="Continue"        B_LATER="Not now"
+  T_THEME="Pick a theme:"
+  TH_D="Frame Dark — dark, violet/magenta"
+  TH_L="Studio Light — light, warm (for photo and colour work)"
+  B_SAVE="Apply"           B_BACK="Skip"
+  T_THEME_OK="Theme applied: %s"
+  T_HW="Hardware check:"
+  HW_GPU="Graphics: %s"
+  HW_SND_OK="Sound: PipeWire is running — headphones, mic and MIDI interfaces are ready"
+  HW_SND_NO="Sound: audio service is still starting — it will be ready after a reboot"
+  HW_TAB_YES="Tablet/pen: graphics tablet found (%s) — pen pressure works in Krita"
+  HW_TAB_NO="Tablet/pen: none found. Plug one in and Krita/GIMP pick up pressure automatically"
+  HW_NO_NV="You have an NVIDIA GPU: for CUDA rendering and NVENC use the framz-os-1.0-nvidia.iso edition"
+  B_MORE="Next"
+  T_APPS="Open something right now?"
+  A_DISCOVER="App store (Discover)"
+  A_KRITA="Krita — drawing and painting"
+  A_BLENDER="Blender — 3D"
+  A_KDENLIVE="Kdenlive — video editing"
+  A_OBS="OBS Studio — recording and streaming"
+  A_ARD="Ardour — music and audio"
+  A_DARK="darktable — photo processing"
+  A_DONE="Done, close"
+  T_BYE="All set! Have a great time.\n\nEverything can be changed in System Settings.\nDocs live in the docs/ folder of the FRAMZ OS repository."
+fi
+
+# ── kdialog обязателен; без него тихо выходим, систему это не ломает ─────────
+if ! command -v kdialog >/dev/null 2>&1; then
+  echo "kdialog недоступен, окно первого запуска пропущено"
+  exit 0
+fi
+
+say()   { kdialog --title "${T_TITLE}" --msgbox "$1"; }
+ask()   { kdialog --title "${T_TITLE}" --yesno "$1"; }
+
+# ── Определение видеокарты без лишних пакетов (через /sys) ───────────────────
+gpu_names() {
+  local out="" vendor id count=0
+  for card in /sys/class/drm/card[0-9]*/device/vendor; do
+    [ -r "${card}" ] || continue
+    id="$(cat "${card}" 2>/dev/null)"
+    case "${id}" in
+      0x10de) vendor="NVIDIA" ;;
+      0x1002) vendor="AMD" ;;
+      0x8086) vendor="Intel" ;;
+      0x1af4) vendor="virtio (виртуальная машина)" ;;
+      *)      vendor="неизвестно (${id})" ;;
+    esac
+    case "${out}" in *"${vendor}"*) ;; *) out="${out:+${out}, }${vendor}" ;; esac
+    count=$((count + 1))
+  done
+  [ -n "${out}" ] && echo "${out}" || echo "не определена"
+}
+
+nvidia_present() {
+  for card in /sys/class/drm/card[0-9]*/device/vendor; do
+    [ -r "${card}" ] || continue
+    [ "$(cat "${card}" 2>/dev/null)" = "0x10de" ] && return 0
+  done
+  return 1
+}
+
+# ── 1. Приветствие ───────────────────────────────────────────────────────────
+if kdialog --title "${T_TITLE}" --yesno "${T_HELLO}" \
+     --yes-label "${B_NEXT}" --no-label "${B_LATER}"; then
+  :
+else
+  mkdir -p "${MARKER_DIR}" && date -u +"%Y-%m-%d %H:%M UTC" > "${MARKER}"
+  exit 0
+fi
+
+# ── 2. Тема ──────────────────────────────────────────────────────────────────
+if [ "${FRAMZ_WELCOME_STEP:-}" = "" ] || [ "${FRAMZ_WELCOME_STEP}" = "тема" ]; then
+  CHOICE="$(kdialog --title "${T_TITLE}" --radiolist "${T_THEME}" \
+      FramzDark "${TH_D}" on \
+      FramzLight "${TH_L}" off \
+      --ok-label "${B_SAVE}" --cancel-label "${B_BACK}" 2>/dev/null)" || CHOICE=""
+
+  case "${CHOICE}" in
+    FramzDark)
+      command -v plasma-apply-colorscheme >/dev/null 2>&1 && \
+        plasma-apply-colorscheme FramzDark >/dev/null 2>&1 || \
+        command -v kwriteconfig6 >/dev/null 2>&1 && \
+        kwriteconfig6 --file kdeglobals --group General --key ColorScheme FramzDark
+      command -v plasma-apply-wallpaperimage >/dev/null 2>&1 && \
+        plasma-apply-wallpaperimage "${WALLPAPER_DIR}/framz-frame-dark.jpg" >/dev/null 2>&1
+      say "$(printf "${T_THEME_OK}" "Frame Dark")"
+      ;;
+    FramzLight)
+      command -v plasma-apply-colorscheme >/dev/null 2>&1 && \
+        plasma-apply-colorscheme FramzLight >/dev/null 2>&1 || \
+        command -v kwriteconfig6 >/dev/null 2>&1 && \
+        kwriteconfig6 --file kdeglobals --group General --key ColorScheme FramzLight
+      command -v plasma-apply-wallpaperimage >/dev/null 2>&1 && \
+        plasma-apply-wallpaperimage "${WALLPAPER_DIR}/framz-studio-light.jpg" >/dev/null 2>&1
+      say "$(printf "${T_THEME_OK}" "Studio Light")"
+      ;;
+  esac
+fi
+
+# ── 3. Проверка железа ───────────────────────────────────────────────────────
+if [ "${FRAMZ_WELCOME_STEP:-}" = "" ] || [ "${FRAMZ_WELCOME_STEP}" = "железо" ]; then
+  GPU="$(gpu_names)"
+  REPORT="$(printf "${HW_GPU}" "${GPU}")
+"
+  if pgrep -x pipewire >/dev/null 2>&1; then
+    REPORT="${REPORT}
+${HW_SND_OK}"
+  else
+    REPORT="${REPORT}
+${HW_SND_NO}"
+  fi
+
+  TAB=""
+  if command -v libwacom-list-local-devices >/dev/null 2>&1; then
+    TAB="$(libwacom-list-local-devices 2>/dev/null | grep -m1 '^name=' | cut -d= -f2- || true)"
+  fi
+  if [ -z "${TAB}" ]; then
+    TAB="$(ls /sys/class/input 2>/dev/null | grep -i -m1 -E 'wacom|tablet|pen' || true)"
+  fi
+
+  if [ -n "${TAB}" ]; then
+    REPORT="${REPORT}
+$(printf "${HW_TAB_YES}" "${TAB}")"
+  else
+    REPORT="${REPORT}
+${HW_TAB_NO}"
+  fi
+
+  if nvidia_present; then
+    REPORT="${REPORT}
+
+${HW_NO_NV}"
+  fi
+
+  kdialog --title "${T_TITLE}" --msgbox "${T_HW}
+${REPORT}" --ok-label "${B_MORE}"
+fi
+
+# ── 4. Быстрые ссылки ────────────────────────────────────────────────────────
+while true; do
+  ACTION="$(kdialog --title "${T_TITLE}" --menu "${T_APPS}" \
+      discover "${A_DISCOVER}" \
+      krita "${A_KRITA}" \
+      blender "${A_BLENDER}" \
+      kdenlive "${A_KDENLIVE}" \
+      obs "${A_OBS}" \
+      ardour "${A_ARD}" \
+      darktable "${A_DARK}" \
+      done "${A_DONE}" 2>/dev/null)" || break
+
+  case "${ACTION}" in
+    discover)  (plasma-discover &) >/dev/null 2>&1 || true ;;
+    krita)     (flatpak run org.kde.krita &) >/dev/null 2>&1 || true ;;
+    blender)   (flatpak run org.blender.Blender &) >/dev/null 2>&1 || true ;;
+    kdenlive)  (flatpak run org.kde.kdenlive &) >/dev/null 2>&1 || true ;;
+    obs)       (flatpak run com.obsproject.Studio &) >/dev/null 2>&1 || true ;;
+    ardour)    (flatpak run org.ardour.Ardour &) >/dev/null 2>&1 || true ;;
+    darktable) (flatpak run org.darktable.Darktable &) >/dev/null 2>&1 || true ;;
+    done|"")   break ;;
+  esac
+done
+
+# ── 5. Прощание и отметка «показано» ─────────────────────────────────────────
+say "${T_BYE}"
+date -u +"%Y-%m-%d %H:%M UTC" > "${MARKER}"
+exit 0

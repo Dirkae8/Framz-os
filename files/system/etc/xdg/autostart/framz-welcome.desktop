@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=FRAMZ OS — первый запуск
+Name[en]=FRAMZ OS — first run
+Comment=Настройка внешнего вида и проверка железа
+Comment[en]=Set the look and check your hardware
+Exec=/usr/bin/framz-welcome
+TryExec=/usr/bin/framz-welcome
+Icon=framz-logo
+Terminal=false
+StartupNotify=false
+OnlyShowIn=KDE;
+X-KDE-autostart-after=panel
+X-KDE-StartupNotify=false

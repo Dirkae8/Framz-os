@@ -8,7 +8,7 @@ XftHintStyle=hintslight
 XftSubPixel=rgb
 
 [kdeglobals][Icons]
-Theme=breeze-dark
+Theme=Kora
 
 [plasmarc][Theme]
 name=default

@@ -39,6 +39,10 @@ sha256sum -c framz-os-1.0.iso-SHA256         # собранный ISO: OK
 
 ## Что внутри ISO
 
+**При первом входе** появится окно **FRAMZ OS**: выбрать тему (Frame Dark / Studio Light),
+посмотреть проверку железа (видео, звук, планшет) и сразу открыть Discover, Krita, Blender,
+Kdenlive, OBS или Ardour. Окно показывается один раз; вернуть его можно командой `framz-welcome`.
+
 **Важно:** творческий набор приложений (Krita, Blender, Kdenlive, OBS, Ardour, darktable, GIMP,
 Inkscape, Scribus, LibreOffice) система докачает **при первом запуске** — нужен интернет, 5–15 минут.
 Так устроена атомарная Fedora: ISO остаётся 4,3 ГБ вместо ~11 ГБ, а приложения ставятся свежими.
