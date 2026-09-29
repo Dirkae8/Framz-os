@@ -39,6 +39,11 @@ sha256sum -c framz-os-1.0.iso-SHA256         # собранный ISO: OK
 
 ## Что внутри ISO
 
+**Важно:** творческий набор приложений (Krita, Blender, Kdenlive, OBS, Ardour, darktable, GIMP,
+Inkscape, Scribus, LibreOffice) система докачает **при первом запуске** — нужен интернет, 5–15 минут.
+Так устроена атомарная Fedora: ISO остаётся 4,3 ГБ вместо ~11 ГБ, а приложения ставятся свежими.
+Устанавливать их руками не нужно: они появятся сами (можно смотреть прогресс: `flatpak list --app`).
+
 - База: **Fedora Atomic KDE (Kinoite), Fedora 44** — атомарная система с откатом обновлений.
 - Образ системы: `ghcr.io/dirkae8/framz:br-arena_01a0ee0e-framz-os-44`
 - Установщик: Anaconda в варианте Kinoite (`IMAGE_SIGNED=false` — образ пока не подписан).
