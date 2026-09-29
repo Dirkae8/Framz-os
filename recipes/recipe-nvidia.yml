@@ -18,26 +18,6 @@ modules:
       - source: system
         destination: /
 
-  - type: os-release
-    properties:
-      ID: framz
-      ID_LIKE: fedora
-      NAME: FRAMZ OS
-      PRETTY_NAME: FRAMZ OS 1.0 (NVIDIA)
-      VARIANT: FRAMZ OS NVIDIA
-      VARIANT_ID: framz-nvidia
-      VERSION: "1.0"
-      VERSION_ID: "1.0"
-      VERSION_CODENAME: FRAMZ
-      LOGO: framz-logo
-      DEFAULT_HOSTNAME: framz
-      HOME_URL: https://github.com/Dirkae8/Framz-os
-      DOCUMENTATION_URL: https://github.com/Dirkae8/Framz-os/tree/main/docs
-      SUPPORT_URL: https://github.com/Dirkae8/Framz-os/issues
-      BUG_REPORT_URL: https://github.com/Dirkae8/Framz-os/issues
-      VENDOR_NAME: FRAMZ OS
-      VENDOR_URL: https://github.com/Dirkae8/Framz-os
-
   - type: dnf
     repos:
       cleanup: true
@@ -76,3 +56,26 @@ modules:
           - com.github.tchx84.Flatseal
           - io.github.flattool.Warehouse
       - scope: user
+
+  # Название системы — ПОСЛЕ установки пакетов: модуль меняет VERSION_ID,
+  # а dnf/flatpak используют его для выбора репозиториев Fedora.
+  - type: os-release
+    properties:
+      ID: framz
+      ID_LIKE: fedora
+      NAME: FRAMZ OS
+      PRETTY_NAME: FRAMZ OS 1.0 (NVIDIA)
+      VARIANT: FRAMZ OS NVIDIA
+      VARIANT_ID: framz-nvidia
+      VERSION: "1.0"
+      VERSION_ID: "1.0"
+      VERSION_CODENAME: FRAMZ
+      LOGO: framz-logo
+      DEFAULT_HOSTNAME: framz
+      HOME_URL: https://github.com/Dirkae8/Framz-os
+      DOCUMENTATION_URL: https://github.com/Dirkae8/Framz-os/tree/main/docs
+      SUPPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+      BUG_REPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+      VENDOR_NAME: FRAMZ OS
+      VENDOR_URL: https://github.com/Dirkae8/Framz-os
+

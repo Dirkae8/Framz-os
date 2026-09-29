@@ -17,26 +17,6 @@ modules:
         destination: /
 
   # 2. Название системы: в терминале и «О системе» видно FRAMZ OS ------------
-  - type: os-release
-    properties:
-      ID: framz
-      ID_LIKE: fedora
-      NAME: FRAMZ OS
-      PRETTY_NAME: FRAMZ OS 1.0
-      VARIANT: FRAMZ OS
-      VARIANT_ID: framz
-      VERSION: "1.0"
-      VERSION_ID: "1.0"
-      VERSION_CODENAME: FRAMZ
-      LOGO: framz-logo
-      DEFAULT_HOSTNAME: framz
-      HOME_URL: https://github.com/Dirkae8/Framz-os
-      DOCUMENTATION_URL: https://github.com/Dirkae8/Framz-os/tree/main/docs
-      SUPPORT_URL: https://github.com/Dirkae8/Framz-os/issues
-      BUG_REPORT_URL: https://github.com/Dirkae8/Framz-os/issues
-      VENDOR_NAME: FRAMZ OS
-      VENDOR_URL: https://github.com/Dirkae8/Framz-os
-
   # 3. Пакеты под творческие задачи ------------------------------------------
   - type: dnf
     repos:
@@ -83,6 +63,29 @@ modules:
           - com.github.tchx84.Flatseal
           - io.github.flattool.Warehouse
       - scope: user
+
+  # Название системы — ПОСЛЕ установки пакетов: модуль меняет VERSION_ID,
+  # а dnf/flatpak используют его для выбора репозиториев Fedora.
+  - type: os-release
+    properties:
+      ID: framz
+      ID_LIKE: fedora
+      NAME: FRAMZ OS
+      PRETTY_NAME: FRAMZ OS 1.0
+      VARIANT: FRAMZ OS
+      VARIANT_ID: framz
+      VERSION: "1.0"
+      VERSION_ID: "1.0"
+      VERSION_CODENAME: FRAMZ
+      LOGO: framz-logo
+      DEFAULT_HOSTNAME: framz
+      HOME_URL: https://github.com/Dirkae8/Framz-os
+      DOCUMENTATION_URL: https://github.com/Dirkae8/Framz-os/tree/main/docs
+      SUPPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+      BUG_REPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+      VENDOR_NAME: FRAMZ OS
+      VENDOR_URL: https://github.com/Dirkae8/Framz-os
+
 
   # 5. Подпись образов — включим к публичной бете ----------------------------
   # - type: signing
