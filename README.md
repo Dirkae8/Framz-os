@@ -28,6 +28,7 @@
 |---|---|
 | [`docs/START-HERE.md`](docs/START-HERE.md) | **Как получить ISO и запустить FRAMZ OS** (в виртуальной машине или без установки) |
 | [`docs/RUN-ON-GARUDA.md`](docs/RUN-ON-GARUDA.md) | **Запуск на Arch/Garuda по шагам** + готовый скрипт `scripts/framz-vm.sh` |
+| [`docs/INSTALL-ON-PC.md`](docs/INSTALL-ON-PC.md) | **Установка на компьютер с флешки** (в том числе на пустой): Windows/macOS/Linux, BIOS, Secure Boot |
 | [`docs/VISION.md`](docs/VISION.md) | Продуктовое видение, все зафиксированные решения, дорожная карта |
 | [`docs/SPEC.md`](docs/SPEC.md) | Техническая спецификация: архитектура, состав образа, обновления, приватность |
 | [`docs/APPS.md`](docs/APPS.md) | Каталог приложений по дисциплинам + наполнение профилей первого запуска |
@@ -40,6 +41,7 @@
 recipes/recipe.yml            ← рецепт образа (что вшито в систему)
 files/system/...              ← файлы, которые копируются в образ (брендинг, sysctl, скелет настроек)
 scripts/framz-vm.sh           ← скачать ISO, собрать из частей, проверить суммы и запустить виртуалку
+scripts/framz-usb.sh          ← записать ISO на флешку (с защитой от записи на системный диск)
 .github/workflows/build.yml   ← автоматическая сборка образа и ISO в GitHub Actions
 docs/                         ← вся документация, включая концепты брендинга
 ```
