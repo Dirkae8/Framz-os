@@ -38,10 +38,10 @@ jobs:
   # 1. Три образа
   # ===========================================================================
   image:
-    name: Образ ${{ matrix.image }}
+    name: Образ (${{ matrix.title }})
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write   # нужно, чтобы при сбое сохранять логи в ci-logs/
       packages: write
     strategy:
       fail-fast: false
@@ -70,12 +70,17 @@ jobs:
           sudo docker rm bluebuild-installer
           bluebuild --version
 
+      - name: Имя владельца в нижнем регистре
+        id: ns
+        shell: bash
+        run: echo "namespace=${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_OUTPUT}"
+
       - name: Собрать и опубликовать образ (${{ matrix.title }})
         shell: bash
         env:
           BB_REGISTRY: ghcr.io
-          # имя образа в реестре должно быть в нижнем регистре
-          BB_REGISTRY_NAMESPACE: ${{ github.repository_owner }}
+          # в реестре имена только в нижнем регистре
+          BB_REGISTRY_NAMESPACE: ${{ steps.ns.outputs.namespace }}
           BB_USERNAME: ${{ github.actor }}
           BB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           BB_BUILD_PUSH: "true"
@@ -113,7 +118,7 @@ jobs:
   # 2. Установочный ISO на каждую редакцию
   # ===========================================================================
   iso:
-    name: ISO ${{ matrix.image }}
+    name: ISO
     needs: image
     runs-on: ubuntu-latest
     permissions:
