@@ -8,6 +8,13 @@ name: build-nvidia
 
 on:
   workflow_dispatch:
+  # Кнопка «Run workflow» появляется только у файлов с главной ветки.
+  # Поэтому, пока сборка не влита в main, её можно запустить, тронув файл-метку:
+  #   touch build-nvidia/trigger.txt && git commit && git push
+  push:
+    paths:
+      - ".github/workflows/build-nvidia.yml"
+      - "build-nvidia/**"
 
 permissions:
   contents: read
