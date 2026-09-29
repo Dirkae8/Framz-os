@@ -1,52 +1,39 @@
-name: build-framz
+name: build-nvidia
 
-# БЫСТРАЯ сборка: ОДИН образ и ОДИН установочный ISO для всех устройств.
-#   образ: ghcr.io/<owner>/framz        ·   ISO: framz-os-1.0.iso
-# Внутри уже всё: оформление FRAMZ + творческий набор (Krita, Blender, Kdenlive, OBS, Ardour…).
-# NVIDIA-редакция собирается отдельным workflow (build-nvidia.yml) — по кнопке, чтобы не тратить время.
+# Отдельная сборка NVIDIA-редакции — запускается ВРУЧНУЮ, чтобы не тратить время
+# на каждую обычную сборку. Результат: ISO framz-os-1.0-nvidia.iso с драйвером
+# NVIDIA и CUDA внутри (Blender-рендер, NVENC, DaVinci Resolve, CUDA-плагины).
+#
+# Запуск: Actions → build-nvidia → Run workflow.
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - arena/01a0ee0e-framz-os
-    paths:
-      - "recipes/**"
-      - "files/**"
-      - ".github/workflows/build.yml"
-  schedule:
-    - cron: "30 5 * * *"
 
 permissions:
   contents: read
 
 concurrency:
-  group: build-framz-${{ github.ref }}
-  cancel-in-progress: true
+  group: build-nvidia-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   FEDORA_VERSION: "44"
-  IMAGE_NAME: framz
-  ISO_NAME: framz-os-1.0.iso
+  IMAGE_NAME: framz-nvidia
+  ISO_NAME: framz-os-1.0-nvidia.iso
   INSTALLER_IMAGE: ghcr.io/jasonn3/build-container-installer:v1.5.0
   BLUEBUILD_INSTALLER: ghcr.io/blue-build/cli:v0.9-installer
 
 jobs:
-  # ===========================================================================
-  # 1. Образ системы
-  # ===========================================================================
   image:
-    name: Образ FRAMZ OS
+    name: Образ FRAMZ OS (NVIDIA)
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # нужно, чтобы при сбое сохранять логи в ci-logs/
+      contents: write
       packages: write
     outputs:
       namespace: ${{ steps.ns.outputs.namespace }}
     steps:
-      - name: Забрать репозиторий
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Имя владельца в нижнем регистре
         id: ns
@@ -77,49 +64,39 @@ jobs:
           CLICOLOR_FORCE: "1"
         run: |
           set -o pipefail
-          bluebuild build -v recipes/recipe.yml 2>&1 | tee build-image.log
+          bluebuild build -v recipes/recipe-nvidia.yml 2>&1 | tee build-image.log
 
       - name: Сохранить логи при сбое
         if: failure()
         shell: bash
         run: |
           mkdir -p ci-logs
-          {
-            echo "=== образ: ${{ env.IMAGE_NAME }} · запуск ${{ github.run_id }} · ветка ${{ github.ref_name }} ==="
-            echo
-            echo "=== вывод bluebuild (последние 300 строк) ==="
-            tail -300 build-image.log 2>/dev/null || echo "(лог не найден)"
-          } > "ci-logs/image-failure-${{ github.run_id }}.txt"
-          git config user.name "framz-ci"
-          git config user.email "ci@framz.local"
-          git add ci-logs
-          git commit -m "ci: логи падения сборки образа (${{ github.run_id }})" || true
-          for attempt in 1 2 3; do
+          { echo "=== NVIDIA · запуск ${{ github.run_id }} ==="; echo
+            tail -300 build-image.log 2>/dev/null || echo "(лог не найден)"; } \
+            > "ci-logs/image-failure-${{ github.run_id }}-nvidia.txt"
+          git config user.name "framz-ci"; git config user.email "ci@framz.local"
+          git add ci-logs && git commit -m "ci: логи падения сборки NVIDIA-образа" || true
+          for a in 1 2 3; do
             git pull --rebase --autostash origin "${GITHUB_REF_NAME}" >/dev/null 2>&1 || true
-            if git push origin "HEAD:${GITHUB_REF_NAME}" >/dev/null 2>&1; then break; fi
-            sleep 5
+            git push origin "HEAD:${GITHUB_REF_NAME}" >/dev/null 2>&1 && break || sleep 5
           done
 
-  # ===========================================================================
-  # 2. Установочный ISO (один для всех устройств)
-  # ===========================================================================
   iso:
-    name: ISO FRAMZ OS
+    name: ISO FRAMZ OS (NVIDIA)
     needs: image
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: read
     steps:
-      - name: Забрать репозиторий
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Освободить место на диске
         uses: jlumbroso/free-disk-space@v1.3.1
         with:
           tool-cache: true
 
-      - name: Определить тег образа в реестре
+      - name: Определить тег образа
         id: tag
         shell: bash
         env:
@@ -136,16 +113,14 @@ jobs:
           elif [ -n "${TAGS}" ]; then TAG=$(echo "${TAGS}" | tail -1)
           else TAG="${CANDIDATE}"; fi
           echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
-          echo "Тег образа: ${TAG} (доступные: ${TAGS})"
 
-      # Кэш пакетов lorax: сильно ускоряет повторные сборки ISO
       - name: Кэш пакетов установщика
         uses: actions/cache@v4
         with:
           path: dnf-cache
-          key: framz-iso-dnf-${{ env.FEDORA_VERSION }}-${{ github.run_id }}
+          key: framz-nvidia-iso-dnf-${{ env.FEDORA_VERSION }}-${{ github.run_id }}
           restore-keys: |
-            framz-iso-dnf-${{ env.FEDORA_VERSION }}-
+            framz-nvidia-iso-dnf-${{ env.FEDORA_VERSION }}-
 
       - name: Собрать ISO
         shell: bash
@@ -153,8 +128,6 @@ jobs:
           set -euo pipefail
           mkdir -p output dnf-cache
           LOG="$PWD/iso-build.log"
-          # Параметры передаются АРГУМЕНТАМИ make, а не через -e:
-          # значения из Makefile.inputs внутри образа установщика перекрывают окружение.
           sudo docker run --privileged --rm \
             --volume "$PWD/output:/build-container-installer/build" \
             --volume "$PWD/dnf-cache:/cache/dnf" \
@@ -168,10 +141,9 @@ jobs:
             ISO_NAME="build/${ISO_NAME}" \
             WEB_UI="false" \
             DNF_CACHE="/cache/dnf" \
-            _VOLID="FRAMZ_OS_1" 2>&1 | tee "${LOG}"
-          ls -lh output/
+            _VOLID="FRAMZ_NV_1" 2>&1 | tee "${LOG}"
           (cd output && sha256sum "${ISO_NAME}" > "${ISO_NAME}-SHA256")
-          cat "output/${ISO_NAME}-SHA256"
+          ls -lh output/
 
       - name: Загрузить ISO как артефакт
         uses: actions/upload-artifact@v4
@@ -187,22 +159,15 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NS: ${{ needs.image.outputs.namespace }}
-          TAG: ${{ steps.tag.outputs.tag }}
         run: |
           set -euo pipefail
           SIZE=$(stat -c%s "output/${ISO_NAME}")
-          LIMIT=$((1900 * 1024 * 1024))
-          if [ "${SIZE}" -le "${LIMIT}" ]; then
-            # ISO помещается целиком — отдаём одним файлом (удобнее, чем части)
+          if [ "${SIZE}" -le $((1900 * 1024 * 1024)) ]; then
             FILES="output/${ISO_NAME} output/${ISO_NAME}-SHA256"
           else
             split -b 1800M "output/${ISO_NAME}" "output/${ISO_NAME}.part-"
             (cd output && sha256sum ${ISO_NAME}.part-* > ${ISO_NAME}.parts-SHA256)
             FILES="output/${ISO_NAME}.part-* output/${ISO_NAME}.parts-SHA256 output/${ISO_NAME}-SHA256"
-          fi
-          if ! gh release view "v1.0" >/dev/null 2>&1; then
-            gh release create "v1.0" --title "FRAMZ OS 1.0" --notes-file .github/release-notes.md || true
           fi
           gh release upload "v1.0" ${FILES} --clobber
 
@@ -211,19 +176,12 @@ jobs:
         shell: bash
         run: |
           mkdir -p ci-logs
-          {
-            echo "=== ISO · запуск ${{ github.run_id }} · ветка ${{ github.ref_name }} ==="
-            df -h / 2>/dev/null || true
-            echo
-            echo "=== вывод сборки ISO ==="
-            cat iso-build.log 2>/dev/null || echo "(лог не найден)"
-          } > "ci-logs/iso-failure-${{ github.run_id }}.txt"
-          git config user.name "framz-ci"
-          git config user.email "ci@framz.local"
-          git add ci-logs
-          git commit -m "ci: логи падения сборки ISO (${{ github.run_id }})" || true
-          for attempt in 1 2 3; do
+          { echo "=== NVIDIA ISO · запуск ${{ github.run_id }} ==="; echo
+            cat iso-build.log 2>/dev/null || echo "(лог не найден)"; } \
+            > "ci-logs/iso-failure-${{ github.run_id }}-nvidia.txt"
+          git config user.name "framz-ci"; git config user.email "ci@framz.local"
+          git add ci-logs && git commit -m "ci: логи падения NVIDIA ISO" || true
+          for a in 1 2 3; do
             git pull --rebase --autostash origin "${GITHUB_REF_NAME}" >/dev/null 2>&1 || true
-            if git push origin "HEAD:${GITHUB_REF_NAME}" >/dev/null 2>&1; then break; fi
-            sleep 5
+            git push origin "HEAD:${GITHUB_REF_NAME}" >/dev/null 2>&1 && break || sleep 5
           done

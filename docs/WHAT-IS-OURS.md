@@ -28,15 +28,17 @@
 | **3 Flatpak-приложения** (Firefox, Flatseal, Warehouse) + Flathub | `recipes/recipe.yml` |
 | **Настройки ядра** под низкую задержку и большие проекты | `/etc/sysctl.d/90-framz.conf` |
 
-### Три редакции (три ISO)
+### Один образ для всех устройств
 
-| Редакция | База | Что дополнительно |
+| Редакция | База | Что внутри |
 |---|---|---|
-| **FRAMZ OS** | kinoite | творческий софт ставится из магазина |
-| **FRAMZ OS NVIDIA** | kinoite-nvidia (Universal Blue) | драйвер NVIDIA + CUDA поддерживаются вместе с системой, а не «накладываются» руками |
-| **FRAMZ OS Studio** | kinoite | внутри уже стоят Krita, Inkscape, GIMP, Scribus, Blender, darktable, Kdenlive, OBS, Ardour, LibreOffice (Flatpak) |
+| **FRAMZ OS** (основная, `framz-os-1.0.iso`) | kinoite | система + оформление FRAMZ + творческий набор: Krita, Inkscape, GIMP, Scribus, Blender, darktable, Kdenlive, OBS, Ardour, LibreOffice (Flatpak) |
+| **FRAMZ OS NVIDIA** (по кнопке, `framz-os-1.0-nvidia.iso`) | kinoite-nvidia (Universal Blue) | то же + драйвер NVIDIA и CUDA внутри |
 
-**Чего ещё нет:** мастера первого запуска (FRAMZ Setup), магазина FRAMZ Store, своих иконок,
+Магазин — штатный **Discover** с Flathub (свой стор не пишем).
+
+
+**Чего ещё нет:** мастера первого запуска (FRAMZ Setup), своих иконок (наборы подобраны — `brand/ICONS.md`),
 курсоров и звуков, своих панели/дока/лаунчера (оставлены штатные Plasma — сознательно: непроверенная
 панель может оставить пользователя без рабочего стола), подписи образов (поэтому Secure Boot выключен).
 

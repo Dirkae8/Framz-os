@@ -40,8 +40,7 @@ bash ~/framz-quickstart.sh
 bash ~/framz-quickstart.sh --dry-run                        # всё подготовить, но не запускать
 bash ~/framz-quickstart.sh --download-only                  # только скачать ISO и проверить
 bash ~/framz-quickstart.sh --memory 8192 --cpus 6 --gl      # если у тебя мощная машина и хочешь 3D
-bash ~/framz-quickstart.sh --edition nvidia                 # редакция с драйвером NVIDIA
-bash ~/framz-quickstart.sh --edition studio                 # полная: весь творческий набор внутри
+bash ~/framz-quickstart.sh --edition nvidia                 # сборка с драйвером NVIDIA (по кнопке в CI)
 bash ~/framz-quickstart.sh --sound                          # звук внутри виртуалки
 bash ~/framz-vm.sh run                                      # запустить виртуалку позже (диск сохраняется)
 bash ~/framz-vm.sh clean                                    # удалить ISO, части и виртуальный диск
