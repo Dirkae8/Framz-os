@@ -4,10 +4,21 @@
 > при первом запуске. Свой интерфейс, свой магазин, обновление и откат в один клик.
 > Бесплатно, навсегда.
 
-**Статус:** ✅ **FRAMZ OS 1.0 (preview) собран и опубликован** — образ системы и установочный ISO:
-[релиз v1.0-preview](https://github.com/Dirkae8/Framz-os/releases/tag/v1.0-preview).
-Как скачать и запустить — [`docs/START-HERE.md`](docs/START-HERE.md).
-Дальше по плану — этап 2: своя оболочка (тема, панель, док, лаунчер).
+**Статус:** ✅ **FRAMZ OS 1.0 — три редакции и три ISO**:
+[релиз v1.0](https://github.com/Dirkae8/Framz-os/releases/tag/v1.0).
+
+| Редакция | Файл ISO | Кому |
+|---|---|---|
+| **FRAMZ OS (базовая)** | `framz-os-1.0.iso` | лёгкая система, творческий софт — из магазина |
+| **FRAMZ OS NVIDIA** | `framz-os-1.0-nvidia.iso` | драйвер NVIDIA и CUDA внутри (рендер, NVENC) |
+| **FRAMZ OS Studio** | `framz-os-1.0-studio.iso` | Krita, GIMP, Blender, Kdenlive, OBS, Ardour и др. уже внутри |
+
+**Готово в 1.0:** своё оформление (тема Frame Dark + Studio Light, обои, экран загрузки, шрифты),
+брендинг системы (`os-release` = FRAMZ OS), творческая настройка (звук, планшеты, цвет),
+три редакции и автоматическая сборка образов + ISO в CI.
+
+**Впереди:** мастер первого запуска, магазин FRAMZ Store, свои иконки/курсоры, подпись образов
+(для Secure Boot). Подробности — [`docs/VISION.md`](docs/VISION.md) и [`docs/WHAT-IS-OURS.md`](docs/WHAT-IS-OURS.md).
 **База:** Fedora Atomic KDE (Kinoite, image-based) → собирается через [BlueBuild](https://bluebuild.org).
 
 ---
@@ -28,7 +39,7 @@
 |---|---|
 | [`docs/WHAT-IS-OURS.md`](docs/WHAT-IS-OURS.md) | **Что именно «наше» в системе сейчас** (пакеты, файлы, что пока не сделано) |
 | [`docs/START-HERE.md`](docs/START-HERE.md) | **Как получить ISO и запустить FRAMZ OS** (в виртуальной машине или без установки) |
-| [`docs/RUN-ON-GARUDA.md`](docs/RUN-ON-GARUDA.md) | **Запуск на Arch/Garuda по шагам** + готовый скрипт `scripts/framz-vm.sh` |
+| [`docs/RUN-ON-GARUDA.md`](docs/RUN-ON-GARUDA.md) | **Запуск на Arch/Garuda по шагам** + скрипты `scripts/framz-quickstart.sh`, `scripts/framz-vm.sh` |
 | [`docs/INSTALL-ON-PC.md`](docs/INSTALL-ON-PC.md) | **Установка на компьютер с флешки** (в том числе на пустой): Windows/macOS/Linux, BIOS, Secure Boot |
 | [`docs/VISION.md`](docs/VISION.md) | Продуктовое видение, все зафиксированные решения, дорожная карта |
 | [`docs/SPEC.md`](docs/SPEC.md) | Техническая спецификация: архитектура, состав образа, обновления, приватность |

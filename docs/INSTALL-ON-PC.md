@@ -33,8 +33,10 @@
 
 Скачай файлы релиза со страницы: <https://github.com/Dirkae8/Framz-os/releases/tag/v1.0-preview>
 
-ISO выложен **тремя частями** (GitHub не принимает файлы больше 2 ГиБ):
-`framz-os-1.0.iso.part-aa`, `.part-ab`, `.part-ac`.
+**Какие ISO бывают:** `framz-os-1.0.iso` (базовая), `framz-os-1.0-nvidia.iso` (драйвер NVIDIA
+внутри — бери, если у тебя NVIDIA), `framz-os-1.0-studio.iso` (полная: Krita, Blender, Kdenlive,
+OBS, Ardour и др. уже внутри). Файлы выложены **частями** (GitHub не принимает файлы больше 2 ГиБ),
+число частей зависит от размера ISO.
 
 ### На Linux / macOS
 

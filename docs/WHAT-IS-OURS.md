@@ -8,18 +8,37 @@
 
 ## Коротко
 
-**База неизменна:** официальная атомарная Fedora с KDE — `quay.io/fedora-ostree-desktops/kinoite:44`.
-Мы её не патчим и не пересобираем: берём как есть и добавляем сверху свой слой.
+**База — официальная атомарная Fedora с KDE** (`quay.io/fedora-ostree-desktops/kinoite:44`,
+а в редакции NVIDIA — `ghcr.io/ublue-os/kinoite-nvidia:44` с драйвером). Патчей базы мы не делаем:
+добавляем свой слой сверху.
 
-**Наш слой сейчас — это:**
-- **18 пакетов** (звук, планшеты, цвет, шрифты, утилиты, контейнеры);
-- **удалён Firefox из RPM** — браузер ставится Flatpak'ом;
-- **3 Flatpak-приложения** предустановлены + подключён Flathub;
-- **один файл настроек ядра** (`/etc/sysctl.d/90-framz.conf`);
-- **папка под брендинг** `/usr/share/framz/branding/` — пока только README-заглушка.
+**Наш слой в версии 1.0 — это:**
 
-Итого: ~20 минут работы. Это **честный этап 1**, а не «свой интерфейс». Тема, панель, док, лаунчер,
-мастер первого запуска и магазин — этапы 2–3.
+| Что | Где смотреть |
+|---|---|
+| **Своё оформление (тема FRAMZ)** | `/usr/share/plasma/look-and-feel/org.framz.desktop/` |
+| **Две цветовые схемы**: Frame Dark (по умолчанию) и Studio Light | `.../contents/color-schemes/FramzDark.colors`, `FramzLight.colors` |
+| **Свой экран загрузки** (метки кадрирования + знак FRAMZ) | `.../contents/splash/Splash.qml` |
+| **Свои обои** (3840×2160, светлая и тёмная) | `/usr/share/framz/branding/wallpapers/` |
+| **Свой логотип** (чёрно-белый знак, SVG) | `/usr/share/framz/branding/logo/framz-mark.svg` |
+| **Тема применяется для всех пользователей** | `/etc/xdg/kdeglobals` (`LookAndFeelPackage=org.framz.desktop`) |
+| **Система называется FRAMZ OS** | `os-release` через модуль `os-release` в рецепте |
+| **Шрифты по умолчанию**: Noto Sans в интерфейсе, JetBrains Mono в терминале | `.../contents/defaults` |
+| **18 пакетов** под творчество (звук, планшеты, цвет, утилиты, контейнеры) | `recipes/recipe.yml` |
+| **3 Flatpak-приложения** (Firefox, Flatseal, Warehouse) + Flathub | `recipes/recipe.yml` |
+| **Настройки ядра** под низкую задержку и большие проекты | `/etc/sysctl.d/90-framz.conf` |
+
+### Три редакции (три ISO)
+
+| Редакция | База | Что дополнительно |
+|---|---|---|
+| **FRAMZ OS** | kinoite | творческий софт ставится из магазина |
+| **FRAMZ OS NVIDIA** | kinoite-nvidia (Universal Blue) | драйвер NVIDIA + CUDA поддерживаются вместе с системой, а не «накладываются» руками |
+| **FRAMZ OS Studio** | kinoite | внутри уже стоят Krita, Inkscape, GIMP, Scribus, Blender, darktable, Kdenlive, OBS, Ardour, LibreOffice (Flatpak) |
+
+**Чего ещё нет:** мастера первого запуска (FRAMZ Setup), магазина FRAMZ Store, своих иконок,
+курсоров и звуков, своих панели/дока/лаунчера (оставлены штатные Plasma — сознательно: непроверенная
+панель может оставить пользователя без рабочего стола), подписи образов (поэтому Secure Boot выключен).
 
 ---
 

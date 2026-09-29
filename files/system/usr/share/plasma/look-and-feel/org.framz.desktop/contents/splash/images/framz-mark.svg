@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FRAMZ OS — знак для тёмного фона: метки кадрирования + F -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="FRAMZ OS">
+  <title>FRAMZ OS</title>
+  <g fill="#FFFFFF">
+    <!-- метки кадрирования -->
+    <rect x="64" y="64" width="84" height="24"/>
+    <rect x="64" y="64" width="24" height="84"/>
+    <rect x="364" y="64" width="84" height="24"/>
+    <rect x="424" y="64" width="24" height="84"/>
+    <rect x="64" y="424" width="84" height="24"/>
+    <rect x="64" y="364" width="24" height="84"/>
+    <rect x="364" y="424" width="84" height="24"/>
+    <rect x="424" y="364" width="24" height="84"/>
+    <!-- буква F -->
+    <rect x="200" y="140" width="40" height="232"/>
+    <rect x="200" y="140" width="176" height="40"/>
+    <rect x="200" y="236" width="136" height="40"/>
+  </g>
+  <circle cx="376" cy="376" r="22" fill="#8B5CF6"/>
+</svg>

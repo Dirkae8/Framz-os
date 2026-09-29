@@ -1,13 +1,15 @@
 name: build-framz
 
-# Собирает образ FRAMZ OS и установочный ISO.
-# Образ публикуется в ghcr.io/<владелец-в-нижнем-регистре>/framz
-# ISO складывается в артефакты запуска и в Releases (см. docs/START-HERE.md).
+# Собирает ТРИ редакции FRAMZ OS и по установочному ISO на каждую:
+#   • framz          — базовая (лёгкая, творческий софт из магазина)   → framz-os-1.0.iso
+#   • framz-nvidia   — с драйвером NVIDIA и CUDA из коробки            → framz-os-1.0-nvidia.iso
+#   • framz-studio   — полная: Krita, GIMP, Blender, Kdenlive, ...     → framz-os-1.0-studio.iso
+#
+# ISO нужен любой: обычная, NVIDIA-редакция или полная — ставится на голый компьютер
+# с флешки (docs/INSTALL-ON-PC.md) или запускается в виртуалке (docs/RUN-ON-GARUDA.md).
 
 on:
-  # Ручной запуск из веб-интерфейса GitHub (Actions → build-framz → Run workflow).
   workflow_dispatch:
-  # Автосборка при изменениях, влияющих на образ.
   push:
     branches:
       - main
@@ -16,7 +18,6 @@ on:
       - "recipes/**"
       - "files/**"
       - ".github/workflows/build.yml"
-  # Ежедневная пересборка: свежая база Fedora + свежие обновления.
   schedule:
     - cron: "30 5 * * *"
 
@@ -28,39 +29,36 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  IMAGE_NAME: framz
-  # Версия Fedora: должна совпадать с image-version в recipes/recipe.yml
   FEDORA_VERSION: "44"
-  ISO_NAME: framz-os-1.0.iso
   INSTALLER_IMAGE: ghcr.io/jasonn3/build-container-installer:v1.5.0
   BLUEBUILD_INSTALLER: ghcr.io/blue-build/cli:v0.9-installer
 
 jobs:
   # ===========================================================================
-  # 1. Образ системы
+  # 1. Три образа
   # ===========================================================================
   image:
-    name: Образ FRAMZ OS
+    name: Образ ${{ matrix.image }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    outputs:
-      image: ${{ steps.vars.outputs.image }}
-      namespace: ${{ steps.vars.outputs.namespace }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - recipe: recipe.yml
+            image: framz
+            title: Базовая
+          - recipe: recipe-nvidia.yml
+            image: framz-nvidia
+            title: NVIDIA
+          - recipe: recipe-studio.yml
+            image: framz-studio
+            title: Полная (Studio)
     steps:
       - name: Забрать репозиторий
         uses: actions/checkout@v4
-
-      - name: Определить имена
-        id: vars
-        shell: bash
-        run: |
-          set -euo pipefail
-          # имя образа в реестре должно быть в нижнем регистре
-          NS="${GITHUB_REPOSITORY_OWNER,,}"
-          echo "namespace=${NS}" >> "${GITHUB_OUTPUT}"
-          echo "image=ghcr.io/${NS}/${IMAGE_NAME}" >> "${GITHUB_OUTPUT}"
 
       - name: Установить BlueBuild
         shell: bash
@@ -72,31 +70,45 @@ jobs:
           sudo docker rm bluebuild-installer
           bluebuild --version
 
-      - name: Собрать и опубликовать образ
+      - name: Собрать и опубликовать образ (${{ matrix.title }})
         shell: bash
         env:
           BB_REGISTRY: ghcr.io
-          BB_REGISTRY_NAMESPACE: ${{ steps.vars.outputs.namespace }}
+          # имя образа в реестре должно быть в нижнем регистре
+          BB_REGISTRY_NAMESPACE: ${{ github.repository_owner }}
           BB_USERNAME: ${{ github.actor }}
           BB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           BB_BUILD_PUSH: "true"
-          # Подпись включим, когда появятся секреты репозитория (этап беты).
+          # Подпись включим, когда у проекта появятся секреты репозитория
           BB_BUILD_NO_SIGN: "true"
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUST_LOG_STYLE: always
           CLICOLOR_FORCE: "1"
-        run: bluebuild build -v recipes/recipe.yml
+        run: bluebuild build -v "recipes/${{ matrix.recipe }}"
 
   # ===========================================================================
-  # 2. Установочный ISO из собранного образа
+  # 2. Установочный ISO на каждую редакцию
   # ===========================================================================
   iso:
-    name: ISO FRAMZ OS
+    name: ISO ${{ matrix.image }}
     needs: image
     runs-on: ubuntu-latest
     permissions:
-      contents: write # для создания Release и для логов в ci-logs/
+      contents: write
       packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: framz
+            title: Базовая
+            iso: framz-os-1.0.iso
+          - image: framz-nvidia
+            title: NVIDIA
+            iso: framz-os-1.0-nvidia.iso
+          - image: framz-studio
+            title: Полная (Studio)
+            iso: framz-os-1.0-studio.iso
     steps:
       - name: Забрать репозиторий
         uses: actions/checkout@v4
@@ -106,22 +118,24 @@ jobs:
         with:
           tool-cache: true
 
-      - name: Определить тег опубликованного образа
+      - name: Определить тег образа в реестре
         id: tag
         shell: bash
+        env:
+          NS: ${{ github.repository_owner }}
+          IMG: ${{ matrix.image }}
         run: |
           set -euo pipefail
-          NS="${{ needs.image.outputs.namespace }}"
-          # BlueBuild создаёт тег latest только для ветки main, а для рабочей ветки —
-          # br-<ветка>-<версия Fedora> (слэши в имени ветки заменяются на подчёркивания).
+          NS="${NS,,}"   # в нижний регистр
+          # BlueBuild даёт тег latest только для ветки main; для рабочих веток —
+          # br-<ветка>-<версия Fedora>, слэши в имени ветки заменяются на подчёркивания.
           REF="${GITHUB_REF_NAME//\//_}"
           CANDIDATE="br-${REF}-${FEDORA_VERSION}"
 
-          # образ публичный, поэтому теги можно посмотреть без токена
-          TOKEN=$(curl -fsS "https://ghcr.io/token?scope=repository:${NS}/${IMAGE_NAME}:pull&service=ghcr.io" | jq -r '.token')
+          TOKEN=$(curl -fsS "https://ghcr.io/token?scope=repository:${NS}/${IMG}:pull&service=ghcr.io" | jq -r '.token')
           TAGS=$(curl -fsS -H "Authorization: Bearer ${TOKEN}" \
-            "https://ghcr.io/v2/${NS}/${IMAGE_NAME}/tags/list" | jq -r '.tags[]?' || true)
-          echo "Доступные теги: ${TAGS}"
+            "https://ghcr.io/v2/${NS}/${IMG}/tags/list" | jq -r '.tags[]?' || true)
+          echo "Теги образа ${IMG}: ${TAGS}"
 
           if echo "${TAGS}" | grep -qx "latest"; then
             TAG="latest"
@@ -130,59 +144,58 @@ jobs:
           elif [ -n "${TAGS}" ]; then
             TAG=$(echo "${TAGS}" | tail -1)
           else
-            TAG="${CANDIDATE}" # реестр недоступен — используем вычисленный тег
+            TAG="${CANDIDATE}"
           fi
-          echo "Тег для ISO: ${TAG}"
           echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+          echo "namespace=${NS}" >> "${GITHUB_OUTPUT}"
 
-      - name: Собрать ISO
+      - name: Собрать ISO (${{ matrix.title }})
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p output
           LOG="$PWD/iso-build.log"
-          # Установщик собирает ISO с Anaconda и зашивает в него ссылку на наш образ.
-          # ВАЖНО: параметры передаются АРГУМЕНТАМИ (переменные make), а не через -e:
-          # значения из Makefile.inputs внутри образа перекрывают переменные окружения,
-          # из-за этого сборка уходила за дефолтной базой Fedora вместо нашего образа.
-          # IMAGE_SIGNED=false — образ пока не подписан (preview).
-          # Вывод целиком пишем в лог: его видно даже там, где артефакты GitHub недоступны.
+          # Установщик принимает параметры АРГУМЕНТАМИ (переменные make), а не через -e:
+          # значения из Makefile.inputs внутри образа перекрывают переменные окружения.
           sudo docker run --privileged --rm \
             --volume "$PWD/output:/build-container-installer/build" \
             --volume framz-dnf-cache:/cache/dnf \
             "${INSTALLER_IMAGE}" \
-            IMAGE_REPO="ghcr.io/${{ needs.image.outputs.namespace }}" \
-            IMAGE_NAME="${IMAGE_NAME}" \
+            IMAGE_REPO="ghcr.io/${{ steps.tag.outputs.namespace }}" \
+            IMAGE_NAME="${{ matrix.image }}" \
             IMAGE_TAG="${{ steps.tag.outputs.tag }}" \
             IMAGE_SIGNED="false" \
             VERSION="${FEDORA_VERSION}" \
             VARIANT="kinoite" \
-            ISO_NAME="build/${ISO_NAME}" \
+            ISO_NAME="build/${{ matrix.iso }}" \
             WEB_UI="false" \
             DNF_CACHE="/cache/dnf" \
             _VOLID="FRAMZ_OS_1" 2>&1 | tee "${LOG}"
           ls -lh output/
-          # Контрольные суммы без префикса пути: файл должен проверяться
-          # командой `sha256sum -c` прямо из каталога со скачанным ISO.
-          (cd output && sha256sum "${ISO_NAME}" > "${ISO_NAME}-SHA256")
-          cat "output/${ISO_NAME}-SHA256"
+          # суммы без префикса пути — чтобы работал `sha256sum -c` рядом со скачанным файлом
+          (cd output && sha256sum "${{ matrix.iso }}" > "${{ matrix.iso }}-SHA256")
+          cat "output/${{ matrix.iso }}-SHA256"
 
       - name: Загрузить ISO как артефакт
         uses: actions/upload-artifact@v4
         with:
-          name: framz-os-iso
+          name: ${{ matrix.iso }}
           path: |
-            output/${{ env.ISO_NAME }}
-            output/${{ env.ISO_NAME }}-SHA256
-          compression-level: 0 # ISO уже сжатый
+            output/${{ matrix.iso }}
+            output/${{ matrix.iso }}-SHA256
+          compression-level: 0
           retention-days: 30
 
       - name: Приложить ISO к релизу
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NS: ${{ steps.tag.outputs.namespace }}
+          IMG: ${{ matrix.image }}
+          TAG: ${{ steps.tag.outputs.tag }}
         run: |
           set -euo pipefail
+          ISO_NAME="${{ matrix.iso }}"
           SIZE=$(stat -c%s "output/${ISO_NAME}")
           LIMIT=$((1900 * 1024 * 1024))
           if [ "${SIZE}" -le "${LIMIT}" ]; then
@@ -193,44 +206,30 @@ jobs:
             (cd output && sha256sum ${ISO_NAME}.part-* > ${ISO_NAME}.parts-SHA256)
             FILES="output/${ISO_NAME}.part-* output/${ISO_NAME}.parts-SHA256 output/${ISO_NAME}-SHA256"
           fi
-          NOTES="Первый публичный образ и установочный ISO FRAMZ OS.
 
-          **Как установить — см. https://github.com/${{ github.repository }}/blob/arena/01a0ee0e-framz-os/docs/START-HERE.md**
-
-          - образ системы: \`${{ needs.image.outputs.image }}:${{ steps.tag.outputs.tag }}\`
-          - вариант ISO: установщик Kinoite (Fedora Atomic KDE), версия Fedora ${{ env.FEDORA_VERSION }}
-          - ISO не подписан (preview), в виртуальной машине лучше выключить Secure Boot
-
-          Проверка целостности после скачивания:
-          \`sha256sum -c framz-os-1.0.iso.parts-SHA256\` — для частей,
-          \`sha256sum -c framz-os-1.0.iso-SHA256\` — для собранного ISO.
-          Если ISO загружен частями (.part-*), соберите файл командой:
-          \`cat ${ISO_NAME}.part-* > ${ISO_NAME}\`"
-          if gh release view "v1.0-preview" >/dev/null 2>&1; then
-            gh release upload "v1.0-preview" ${FILES} --clobber
-          else
-            gh release create "v1.0-preview" ${FILES} \
-              --title "FRAMZ OS 1.0 (preview)" \
-              --notes "${NOTES}"
+          # проверяем, что релиз уже существует (могут писать параллельные задания)
+          if ! gh release view "v1.0" >/dev/null 2>&1; then
+            gh release create "v1.0" \
+              --title "FRAMZ OS 1.0" \
+              --notes-file .github/release-notes.md || true
           fi
+          gh release upload "v1.0" ${FILES} --clobber
 
-      # Логи падений сохраняем в репозиторий: их видно через обычный git,
-      # а артефакты GitHub из некоторых окружений недоступны.
       - name: Сохранить логи при сбое
         if: failure()
         shell: bash
         run: |
           mkdir -p ci-logs
           {
-            echo "=== запуск ${{ github.run_id }} (${{ github.ref_name }}) ==="
+            echo "=== запуск ${{ github.run_id }} · ${{ matrix.image }} (${{ github.ref_name }}) ==="
             echo "=== свободное место ==="
-            df -h / /var/lib/docker 2>/dev/null || true
+            df -h / 2>/dev/null || true
             echo
             echo "=== вывод сборки ISO ==="
             cat iso-build.log 2>/dev/null || echo "(файла нет — сборка не дошла до docker run)"
-          } > "ci-logs/iso-failure-${{ github.run_id }}.txt"
+          } > "ci-logs/iso-failure-${{ github.run_id }}-${{ matrix.image }}.txt"
           git config user.name "framz-ci"
           git config user.email "ci@framz.local"
           git add ci-logs
-          git commit -m "ci: логи падения сборки ISO (${{ github.run_id }})" || true
+          git commit -m "ci: логи падения сборки ISO (${{ matrix.image }}, ${{ github.run_id }})" || true
           git push || true

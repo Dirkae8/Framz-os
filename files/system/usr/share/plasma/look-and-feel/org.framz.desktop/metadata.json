@@ -1,0 +1,13 @@
+{
+    "KPlugin": {
+        "Description": "Тема FRAMZ OS — своя панель, цвета, обои, экран загрузки и звуки",
+        "Description[en]": "FRAMZ OS look and feel — custom colors, wallpaper, splash and sounds",
+        "Id": "org.framz.desktop",
+        "License": "MIT",
+        "Name": "FRAMZ OS",
+        "Name[en]": "FRAMZ OS",
+        "Version": "1.0",
+        "Website": "https://github.com/Dirkae8/Framz-os"
+    },
+    "KPackageStructure": "Plasma/LookAndFeel"
+}

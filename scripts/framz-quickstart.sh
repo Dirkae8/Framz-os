@@ -20,6 +20,7 @@ set -euo pipefail
 # ------------------------------ параметры -----------------------------------
 WORKDIR="${FRAMZ_DIR:-$HOME/framz}"
 RAW_URL="${FRAMZ_RAW_URL:-https://raw.githubusercontent.com/Dirkae8/Framz-os/arena/01a0ee0e-framz-os}"
+EDITION="base"
 ASSUME_YES=0
 SKIP_DEPS=0
 DRY_RUN=0
@@ -56,6 +57,7 @@ FRAMZ OS — быстрый запуск на Garuda (одной командо�
   --disk ГБ        размер диска ВМ      (по умолчанию 40)
   --gl             включить 3D-ускорение
   --sound          включить звук в ВМ (нужен qemu-audio-pipewire)
+  --edition X      редакция: base (по умолчанию) | nvidia | studio
   --iso FILE       использовать готовый ISO по пути
   -h, --help       эта справка
 EOF
@@ -65,6 +67,7 @@ EOF
 [ "$#" -gt 0 ] && while [ "$#" -gt 0 ]; do
   case "$1" in
     --dir)           WORKDIR="$2"; shift 2 ;;
+    --edition)       EDITION="$2"; shift 2 ;;
     --yes|-y)        ASSUME_YES=1; shift ;;
     --skip-deps)     SKIP_DEPS=1; shift ;;
     --dry-run)       DRY_RUN=1; shift ;;
@@ -212,8 +215,16 @@ else
   chmod +x "$VM_SH" 2>/dev/null || true
 fi
 
+case "$EDITION" in
+  base|"")     ISO_FILE="framz-os-1.0.iso" ;;
+  nvidia)      ISO_FILE="framz-os-1.0-nvidia.iso" ;;
+  studio|full) ISO_FILE="framz-os-1.0-studio.iso" ;;
+  *)           die "неизвестная редакция: $EDITION (доступно: base, nvidia, studio)" ;;
+esac
+info "редакция: $EDITION → файл $ISO_FILE"
+
 ISO_PATH="${FRAMZ_ISO_PATH:-}"
-[ -n "$ISO_PATH" ] || ISO_PATH="$WORKDIR/framz-os-1.0.iso"
+[ -n "$ISO_PATH" ] || ISO_PATH="$WORKDIR/$ISO_FILE"
 
 if [ -f "$ISO_PATH" ]; then
   info "ISO уже скачан: $ISO_PATH ($(du -h "$ISO_PATH" | cut -f1))"
@@ -227,7 +238,7 @@ EOF
   if [ "$DRY_RUN" = 1 ] && [ -n "${FRAMZ_BASE_URL:-}" ]; then
     info "(тестовый режим: пропускаю скачивание)"
   else
-    bash "$VM_SH" download --dir "$WORKDIR" || die "не удалось скачать ISO (см. сообщение выше)"
+    bash "$VM_SH" download --dir "$WORKDIR" --edition "$EDITION" || die "не удалось скачать ISO (см. сообщение выше)"
   fi
 fi
 
@@ -245,7 +256,7 @@ fi
 if [ "$DOWNLOAD_ONLY" = 1 ]; then
   step "ГОТОВО (только скачивание)"
   info "ISO: $ISO_PATH"
-  info "Запустить виртуалку позже: bash $WORKDIR/framz-vm.sh run --dir $WORKDIR"
+  info "Запустить виртуалку позже: bash $WORKDIR/framz-vm.sh run --dir $WORKDIR --edition $EDITION"
   exit 0
 fi
 

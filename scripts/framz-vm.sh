@@ -8,6 +8,8 @@
 # Примеры:
 #   scripts/framz-vm.sh deps                 # что установить и как
 #   scripts/framz-vm.sh all                  # скачать ISO + собрать из частей + запустить ВМ
+#   scripts/framz-vm.sh all --edition studio # полная редакция со всеми приложениями
+#   scripts/framz-vm.sh all --edition nvidia # редакция с драйвером NVIDIA
 #   scripts/framz-vm.sh run                  # только запустить (ISO уже скачан)
 #   scripts/framz-vm.sh run --memory 8192 --cpus 6 --gl
 #   scripts/framz-vm.sh download             # только скачать и проверить
@@ -17,7 +19,8 @@ set -euo pipefail
 # ----------------------------- настройки ------------------------------------
 REPO="${FRAMZ_REPO:-Dirkae8/Framz-os}"
 TAG="${FRAMZ_RELEASE_TAG:-v1.0-preview}"
-ISO_NAME="${FRAMZ_ISO_NAME:-framz-os-1.0.iso}"
+ISO_NAME="${FRAMZ_ISO_NAME:-}"     # заполняется после разбора --edition
+EDITION="base"
 BASE_URL="${FRAMZ_BASE_URL:-https://github.com/${REPO}/releases/download/${TAG}}"
 
 WORKDIR="${FRAMZ_DIR:-$HOME/framz}"
@@ -57,6 +60,10 @@ FRAMZ OS — запуск в виртуальной машине
 
 Опции:
   --dir DIR       рабочий каталог                 (по умолчанию ~/framz)
+  --edition X     какая редакция: base | nvidia | studio
+                  base   — лёгкая система, софт из магазина   (framz-os-1.0.iso)
+                  nvidia — драйвер NVIDIA и CUDA внутри       (framz-os-1.0-nvidia.iso)
+                  studio — Krita, Blender, Kdenlive и др.     (framz-os-1.0-studio.iso)
   --iso FILE      запустить готовый ISO по пути   (пропускает скачивание)
   --src DIR       где лежат уже скачанные части   (работает без сети)
   --memory МБ     памяти для ВМ                   (по умолчанию 6144)
@@ -459,6 +466,7 @@ CMD="$1"; shift
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --dir)        WORKDIR="$2"; shift 2 ;;
+    --edition)    EDITION="$2"; shift 2 ;;
     --iso)        ISO_PATH="$2"; shift 2 ;;
     --src)        SRC_DIR="$2"; shift 2 ;;
     --memory)     MEMORY="$2"; shift 2 ;;
@@ -473,6 +481,13 @@ while [ "$#" -gt 0 ]; do
     *)            die "неизвестная опция: $1 (см. --help)" ;;
   esac
 done
+
+case "$EDITION" in
+  base|"")       [ -n "$ISO_NAME" ] || ISO_NAME="framz-os-1.0.iso" ;;
+  nvidia)        [ -n "$ISO_NAME" ] || ISO_NAME="framz-os-1.0-nvidia.iso" ;;
+  studio|full)   [ -n "$ISO_NAME" ] || ISO_NAME="framz-os-1.0-studio.iso" ;;
+  *)             die "неизвестная редакция: $EDITION (доступно: base, nvidia, studio)" ;;
+esac
 
 case "$CMD" in
   deps)     cmd_deps ;;

@@ -1,0 +1,15 @@
+# Системные настройки FRAMZ OS для всех пользователей.
+# Ключевая строка: система применяет нашу тему оформления при первом входе.
+
+[KDE]
+LookAndFeelPackage=org.framz.desktop
+
+[General]
+ColorScheme=FramzDark
+Name=FRAMZ OS
+
+[Icons]
+Theme=breeze-dark
+
+[kcminputrc][Mouse]
+cursorTheme=breeze_cursors

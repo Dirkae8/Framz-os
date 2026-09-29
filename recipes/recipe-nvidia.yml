@@ -1,30 +1,31 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# FRAMZ OS — БАЗОВАЯ редакция: лёгкая система + магазин.
-# Образ: ghcr.io/<owner>/framz
-name: framz
-description: FRAMZ OS — творческая система на базе Fedora Atomic KDE (базовая редакция)
+# FRAMZ OS — редакция NVIDIA: проприетарный драйвер уже внутри.
+# Для 3D-рендера (Blender/CUDA), монтажа (NVENC) и профессиональных GPU.
+# Образ: ghcr.io/<owner>/framz-nvidia
+#
+# База — образ Universal Blue для KDE с NVIDIA: драйвер и модули ядра
+# поддерживаются и обновляются вместе с системой, а не «накладываются» руками.
+name: framz-nvidia
+description: FRAMZ OS (NVIDIA) — драйвер NVIDIA и CUDA из коробки
 
-# Официальная атомарная Fedora с KDE (Kinoite). Тег = номер релиза Fedora.
-base-image: quay.io/fedora-ostree-desktops/kinoite
+base-image: ghcr.io/ublue-os/kinoite-nvidia
 image-version: 44
 
 modules:
-  # 1. Брендинг, тема FRAMZ, настройки системы ---------------------------------
   - type: files
     files:
       - source: system
         destination: /
 
-  # 2. Название системы: в терминале и «О системе» видно FRAMZ OS ------------
   - type: os-release
     properties:
       ID: framz
       ID_LIKE: fedora
       NAME: FRAMZ OS
-      PRETTY_NAME: FRAMZ OS 1.0
-      VARIANT: FRAMZ OS
-      VARIANT_ID: framz
+      PRETTY_NAME: FRAMZ OS 1.0 (NVIDIA)
+      VARIANT: FRAMZ OS NVIDIA
+      VARIANT_ID: framz-nvidia
       VERSION: "1.0"
       VERSION_ID: "1.0"
       VERSION_CODENAME: FRAMZ
@@ -37,7 +38,6 @@ modules:
       VENDOR_NAME: FRAMZ OS
       VENDOR_URL: https://github.com/Dirkae8/Framz-os
 
-  # 3. Пакеты под творческие задачи ------------------------------------------
   - type: dnf
     repos:
       cleanup: true
@@ -45,27 +45,21 @@ modules:
     install:
       skip-unavailable: true
       packages:
-        # звук без задержек
         - pipewire-jack-audio-connection-kit
         - qjackctl
-        # графические планшеты
         - libwacom
         - libwacom-data
-        # цвет: профили и калибровка
         - colord
         - colord-extra-profiles
         - argyllcms
-        # шрифты
         - jetbrains-mono-fonts-all
         - google-noto-sans-fonts
         - google-noto-color-emoji-fonts
-        # утилиты
         - btop
         - kde-connect
         - partitionmanager
         - ark
         - filelight
-        # контейнеры для «Мастерской»
         - distrobox
         - podman
       remove:
@@ -73,7 +67,6 @@ modules:
           - firefox
           - firefox-langpacks
 
-  # 4. Приложения, которые должны быть у всех --------------------------------
   - type: default-flatpaks
     configurations:
       - notify: false
@@ -83,6 +76,3 @@ modules:
           - com.github.tchx84.Flatseal
           - io.github.flattool.Warehouse
       - scope: user
-
-  # 5. Подпись образов — включим к публичной бете ----------------------------
-  # - type: signing
