@@ -18,7 +18,7 @@ set -euo pipefail
 
 # ----------------------------- настройки ------------------------------------
 REPO="${FRAMZ_REPO:-Dirkae8/Framz-os}"
-TAG="${FRAMZ_RELEASE_TAG:-v1.0-preview}"
+TAG="${FRAMZ_RELEASE_TAG:-v1.0}"
 ISO_NAME="${FRAMZ_ISO_NAME:-}"     # заполняется после разбора --edition
 EDITION="base"
 BASE_URL="${FRAMZ_BASE_URL:-https://github.com/${REPO}/releases/download/${TAG}}"
