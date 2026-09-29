@@ -84,7 +84,30 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUST_LOG_STYLE: always
           CLICOLOR_FORCE: "1"
-        run: bluebuild build -v "recipes/${{ matrix.recipe }}"
+        run: |
+          set -o pipefail
+          bluebuild build -v "recipes/${{ matrix.recipe }}" 2>&1 | tee build-image.log
+
+      - name: Сохранить логи при сбое
+        if: failure()
+        shell: bash
+        run: |
+          mkdir -p ci-logs
+          {
+            echo "=== образ ${{ matrix.image }} · запуск ${{ github.run_id }} · ветка ${{ github.ref_name }} ==="
+            echo
+            echo "=== вывод bluebuild (последние 300 строк) ==="
+            tail -300 build-image.log 2>/dev/null || echo "(лог не найден — сборка не дошла до вызова bluebuild)"
+          } > "ci-logs/image-failure-${{ github.run_id }}-${{ matrix.image }}.txt"
+          git config user.name "framz-ci"
+          git config user.email "ci@framz.local"
+          git add ci-logs
+          git commit -m "ci: логи падения сборки образа (${{ matrix.image }}, ${{ github.run_id }})" || true
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" >/dev/null 2>&1 || true
+            if git push origin "HEAD:${GITHUB_REF_NAME}" >/dev/null 2>&1; then break; fi
+            sleep 5
+          done
 
   # ===========================================================================
   # 2. Установочный ISO на каждую редакцию
