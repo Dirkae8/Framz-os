@@ -4,8 +4,9 @@
 > при первом запуске. Свой интерфейс, свой магазин, обновление и откат в один клик.
 > Бесплатно, навсегда.
 
-**Статус:** ✅ **FRAMZ OS 1.0** — один образ и один установочный ISO для всех устройств:
-[релиз v1.0](https://github.com/Dirkae8/Framz-os/releases/tag/v1.0) (`framz-os-1.0.iso`).
+**Статус:** ✅ **FRAMZ OS 1.0 собрана и выложена** — [релиз v1.0](https://github.com/Dirkae8/Framz-os/releases/tag/v1.0):
+`framz-os-1.0.iso` (один для всех устройств, ≈4,3 ГБ) и `framz-os-1.0-nvidia.iso`
+(для видеокарт NVIDIA, ≈6,3 ГБ). Файлы выложены частями — как склеить, написано в релизе.
 Творческий набор (Krita, Inkscape, GIMP, Blender, darktable, Kdenlive, OBS, Ardour, LibreOffice)
 и оформление FRAMZ — уже внутри. Магазин — штатный **Discover** с Flathub.
 Отдельная сборка с драйвером NVIDIA — по кнопке: `Actions → build-nvidia`.
