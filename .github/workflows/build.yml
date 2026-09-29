@@ -192,12 +192,15 @@ jobs:
           fi
           NOTES="Первый публичный образ и установочный ISO FRAMZ OS.
 
-          **Как установить — см. docs/START-HERE.md в репозитории.**
+          **Как установить — см. https://github.com/${{ github.repository }}/blob/arena/01a0ee0e-framz-os/docs/START-HERE.md**
 
           - образ системы: \`${{ needs.image.outputs.image }}:${{ steps.tag.outputs.tag }}\`
           - вариант ISO: установщик Kinoite (Fedora Atomic KDE), версия Fedora ${{ env.FEDORA_VERSION }}
           - ISO не подписан (preview), в виртуальной машине лучше выключить Secure Boot
 
+          Проверка целостности после скачивания:
+          \`sha256sum -c framz-os-1.0.iso.parts-SHA256\` — для частей,
+          \`sha256sum -c framz-os-1.0.iso-SHA256\` — для собранного ISO.
           Если ISO загружен частями (.part-*), соберите файл командой:
           \`cat ${ISO_NAME}.part-* > ${ISO_NAME}\`"
           if gh release view "v1.0-preview" >/dev/null 2>&1; then

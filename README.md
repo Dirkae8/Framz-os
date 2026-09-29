@@ -4,7 +4,10 @@
 > при первом запуске. Свой интерфейс, свой магазин, обновление и откат в один клик.
 > Бесплатно, навсегда.
 
-**Статус:** этап 1 — первая сборка образа и установочного ISO в CI (см. `docs/START-HERE.md`).
+**Статус:** ✅ **FRAMZ OS 1.0 (preview) собран и опубликован** — образ системы и установочный ISO:
+[релиз v1.0-preview](https://github.com/Dirkae8/Framz-os/releases/tag/v1.0-preview).
+Как скачать и запустить — [`docs/START-HERE.md`](docs/START-HERE.md).
+Дальше по плану — этап 2: своя оболочка (тема, панель, док, лаунчер).
 **База:** Fedora Atomic KDE (Kinoite, image-based) → собирается через [BlueBuild](https://bluebuild.org).
 
 ---
