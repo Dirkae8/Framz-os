@@ -68,10 +68,10 @@ modules:
         # контейнеры для «Мастерской»
         - distrobox
         - podman
-      remove:
-        packages:
-          - firefox
-          - firefox-langpacks
+    remove:
+      packages:
+        - firefox
+        - firefox-langpacks
 
   # 4. Приложения, которые должны быть у всех --------------------------------
   - type: default-flatpaks

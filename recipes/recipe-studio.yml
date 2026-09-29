@@ -59,10 +59,10 @@ modules:
         - filelight
         - distrobox
         - podman
-      remove:
-        packages:
-          - firefox
-          - firefox-langpacks
+    remove:
+      packages:
+        - firefox
+        - firefox-langpacks
 
   # Творческий набор — ставится в образ, доступен сразу после установки --------
   - type: default-flatpaks
