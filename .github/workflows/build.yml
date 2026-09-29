@@ -1,0 +1,48 @@
+name: build-framz-image
+
+on:
+  # Ежедневная пересборка: тянем свежую базу и обновления — так работает rolling-модель.
+  schedule:
+    - cron: "30 05 * * *"
+  # Ручной запуск из веб-интерфейса GitHub.
+  workflow_dispatch:
+  # Автосборка только для main и только когда меняется то, что влияет на образ.
+  push:
+    branches: [main]
+    paths:
+      - "recipes/**"
+      - "files/**"
+      - ".github/workflows/build.yml"
+  pull_request:
+    paths:
+      - "recipes/**"
+      - "files/**"
+      - ".github/workflows/build.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  bluebuild:
+    name: Build FRAMZ OS image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        recipe:
+          - recipe.yml
+    steps:
+      - name: Build Custom Image
+        uses: blue-build/github-action@v1.13
+        with:
+          recipe: ${{ matrix.recipe }}
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
+          maximize_build_space: true
+          # Подпись включим на этапе публичной беты:
+          # cosign_private_key: ${{ secrets.SIGNING_SECRET }}

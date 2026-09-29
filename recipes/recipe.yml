@@ -1,0 +1,102 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# FRAMZ OS — рецепт образа.
+# Образ публикуется как ghcr.io/<owner>/framz:<tag>
+name: framz
+description: FRAMZ OS — творческая система на базе Fedora Atomic KDE
+
+# Готовая база Universal Blue: драйверы, кодеки, аппаратные патчи уже внутри.
+# Альтернатива «с нуля»: quay.io/fedora-ostree-desktops/kinoite
+base-image: ghcr.io/ublue-os/kinoite-main
+# 44 — текущий стабильный. После 20.10.2026 переключаемся на 45 (проверить рецепт!).
+image-version: 44
+
+modules:
+  # ---------------------------------------------------------------------------
+  # 1. Файлы: брендинг, настройки по умолчанию, скелет домашнего каталога.
+  #    Всё из files/system/ копируется в корень образа.
+  # ---------------------------------------------------------------------------
+  - type: files
+    files:
+      - source: system
+        destination: /
+
+  # ---------------------------------------------------------------------------
+  # 2. Пакеты, которые обязаны работать до входа в магазин.
+  #    Правило: в образе — минимум. Всё творческое — Flatpak из FRAMZ Store.
+  # ---------------------------------------------------------------------------
+  - type: dnf
+    install:
+      packages:
+        # — медиа-стек и кодеки (монтаж, воспроизведение, кодирование)
+        - ffmpeg
+        - ffmpeg-libs
+        - gstreamer1-plugins-ugly-free
+        - gstreamer1-plugin-openh264
+        # — звук: низкая задержка, маршрутизация
+        - pipewire-jack-audio-connection-kit
+        - pipewire-utils
+        - qjackctl
+        # — планшеты (Wacom/XPPen/Huion) и их калибровка
+        - libwacom
+        - libwacom-data
+        # — цвет: профили и калибровка мониторов/принтеров
+        - colord
+        - colord-extra-profiles
+        - argyllcms
+        # — шрифты: интерфейс, код, эмодзи, кириллица
+        - rsms-inter-fonts
+        - jetbrains-mono-fonts-all
+        - google-noto-sans-fonts
+        - google-noto-sans-cjk-fonts
+        - google-noto-color-emoji-fonts
+        # — бытовые утилиты и связь с телефоном
+        - btop
+        - fastfetch
+        - kde-connect
+        - partitionmanager
+        - ark
+        - filelight
+        # — контейнеры для «Мастерской» (проприетарный творческий софт)
+        - distrobox
+      remove:
+        packages:
+          # принцип «лёгкой базы»: браузер ставим Flatpak'ом, а не в образ
+          - firefox
+          - firefox-langpacks
+
+  # ---------------------------------------------------------------------------
+  # 3. Приложения, которые должны быть у всех: ставим Flatpak'ами при сборке.
+  # ---------------------------------------------------------------------------
+  - type: default-flatpaks
+    configurations:
+      - notify: false
+        scope: system
+        install:
+          - org.mozilla.firefox        # браузер
+          - com.github.tchx84.Flatseal # управление правами Flatpak
+          - io.github.flattool.Warehouse # управление приложениями и кэшем
+      - scope: user                    # пользовательский репозиторий Flathub
+
+  # ---------------------------------------------------------------------------
+  # 4. Подпись образов (cosign + Secure Boot).
+  #    Включить на этапе публичной беты: bluebuild generate-keys --output-dir .
+  #    cosign.key → секрет SIGNING_SECRET, cosign.pub → в репозиторий.
+  # ---------------------------------------------------------------------------
+  # - type: signing
+
+  # ---------------------------------------------------------------------------
+  # 5. TODO (этап 2–3): наши собственные компоненты.
+  #    - оболочка FRAMZ (тема, панель, док, лаунчер) — через COPR или RPM в репозитории
+  #    - FRAMZ Setup (мастер первого запуска)
+  #    - FRAMZ Store (форк Discover с брендингом)
+  # Пример:
+  # - type: dnf
+  #   repos:
+  #     copr:
+  #       - framz-os/framz-shell
+  #   install:
+  #     packages:
+  #       - framz-look-and-feel
+  #       - framz-shell
+  #       - framz-setup
