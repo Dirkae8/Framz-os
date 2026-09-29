@@ -1,0 +1,276 @@
+=== образ: диагностика ===
+ветка: arena/01a0ee0e-framz-os
+
+=== ДИАГНОСТИКА · запуск 36622259177 ===
+--- версия bluebuild ---
+BlueBuild 0.9.37
+tag:v0.9.37
+commit_hash:513065f9
+build_time:2026-08-13 04:38:18 +00:00
+build_env:rustc 1.97.1 (8bab26f4f 2026-07-14),
+
+--- проверка рецептов ---
+### recipes/recipe.yml
+[31mERROR[0m [1m=>[0m Failed:
+  [31m×[0m Recipe [1;3mrecipes/recipe.yml[0m failed to validate
+[31m  ╰─▶ [0m  [31m×[0m [31m1[0m error encountered
+[31m      [0m    ╭─[[36;1;4mrecipes/recipe.yml:38:54[0m]
+[31m      [0m [2m35[0m │           SUPPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+[31m      [0m [2m36[0m │           BUG_REPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+[31m      [0m [2m37[0m │           VENDOR_NAME: FRAMZ OS
+[31m      [0m [2m38[0m │ [35;1m╭[0m[35;1m─[0m[35;1m▶[0m       VENDOR_URL: https://github.com/Dirkae8/Framz-os
+[31m      [0m [2m39[0m │ [35;1m│[0m   
+[31m      [0m [2m40[0m │ [35;1m│[0m     # 3. Пакеты под творческие задачи ------------------------------------------
+[31m      [0m [2m41[0m │ [35;1m│[0m     - type: dnf
+[31m      [0m [2m42[0m │ [35;1m│[0m       repos:
+[31m      [0m [2m43[0m │ [35;1m│[0m         cleanup: true
+[31m      [0m [2m44[0m │ [35;1m│[0m         nonfree: rpmfusion
+[31m      [0m [2m45[0m │ [35;1m│[0m       install:
+[31m      [0m [2m46[0m │ [35;1m│[0m         skip-unavailable: true
+[31m      [0m [2m47[0m │ [35;1m│[0m         packages:
+[31m      [0m [2m48[0m │ [35;1m│[0m           # звук без задержек
+[31m      [0m [2m49[0m │ [35;1m│[0m           - pipewire-jack-audio-connection-kit
+[31m      [0m [2m50[0m │ [35;1m│[0m           - qjackctl
+[31m      [0m [2m51[0m │ [35;1m│[0m           # графические планшеты
+[31m      [0m [2m52[0m │ [35;1m│[0m           - libwacom
+[31m      [0m [2m53[0m │ [35;1m│[0m           - libwacom-data
+[31m      [0m [2m54[0m │ [35;1m│[0m           # цвет: профили и калибровка
+[31m      [0m [2m55[0m │ [35;1m│[0m           - colord
+[31m      [0m [2m56[0m │ [35;1m│[0m           - colord-extra-profiles
+[31m      [0m [2m57[0m │ [35;1m│[0m           - argyllcms
+[31m      [0m [2m58[0m │ [35;1m│[0m           # шрифты
+[31m      [0m [2m59[0m │ [35;1m│[0m           - jetbrains-mono-fonts-all
+[31m      [0m [2m60[0m │ [35;1m│[0m           - google-noto-sans-fonts
+[31m      [0m [2m61[0m │ [35;1m├[0m[35;1m─[0m[35;1m▶[0m         - google-noto-color-emoji-fonts
+[31m      [0m    · [35;1m╰[0m[35;1m───[0m[35;1m─[0m [35;1m[1;31mAdditional properties are not allowed ('remove' was unexpected)[0m[0m
+[31m      [0m [2m62[0m │             # утилиты
+[31m      [0m [2m63[0m │             - btop
+[31m      [0m [2m64[0m │             - kde-connect
+[31m      [0m    ╰────
+[31m      [0m[36m  help: [0mTry adding these lines to the top of your file for editor validation highlights:
+[31m      [0m        [92m---[0m
+[31m      [0m        [92m# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json[0m
+[31m      [0m
+[31m      [0m  Try running with `[93m-vv[0m` for trace logging.
+[31m      [0m  You can also open an issue at https://github.com/blue-build/cli/issues
+
+[36m  help: [0mUse `[1mbluebuild validate --all-errors recipes/recipe.yml[0m` to view more information.
+        If you're using a local module, be sure to add `[1msource: local[0m` to the module entry
+
+  Try running with `[93m-vv[0m` for trace logging.
+  You can also open an issue at https://github.com/blue-build/cli/issues
+
+(validate вернул ошибку)
+
+### recipes/recipe-nvidia.yml
+[31mERROR[0m [1m=>[0m Failed:
+  [31m×[0m Recipe [1;3mrecipes/recipe-nvidia.yml[0m failed to validate
+[31m  ╰─▶ [0m  [31m×[0m [31m1[0m error encountered
+[31m      [0m    ╭─[[36;1;4mrecipes/recipe-nvidia.yml:37:59[0m]
+[31m      [0m [2m34[0m │           HOME_URL: https://github.com/Dirkae8/Framz-os
+[31m      [0m [2m35[0m │           DOCUMENTATION_URL: https://github.com/Dirkae8/Framz-os/tree/main/docs
+[31m      [0m [2m36[0m │           SUPPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+[31m      [0m [2m37[0m │ [35;1m╭[0m[35;1m─[0m[35;1m▶[0m       BUG_REPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+[31m      [0m [2m38[0m │ [35;1m│[0m         VENDOR_NAME: FRAMZ OS
+[31m      [0m [2m39[0m │ [35;1m│[0m         VENDOR_URL: https://github.com/Dirkae8/Framz-os
+[31m      [0m [2m40[0m │ [35;1m│[0m   
+[31m      [0m [2m41[0m │ [35;1m│[0m     - type: dnf
+[31m      [0m [2m42[0m │ [35;1m│[0m       repos:
+[31m      [0m [2m43[0m │ [35;1m│[0m         cleanup: true
+[31m      [0m [2m44[0m │ [35;1m│[0m         nonfree: rpmfusion
+[31m      [0m [2m45[0m │ [35;1m│[0m       install:
+[31m      [0m [2m46[0m │ [35;1m│[0m         skip-unavailable: true
+[31m      [0m [2m47[0m │ [35;1m│[0m         packages:
+[31m      [0m [2m48[0m │ [35;1m│[0m           - pipewire-jack-audio-connection-kit
+[31m      [0m [2m49[0m │ [35;1m│[0m           - qjackctl
+[31m      [0m [2m50[0m │ [35;1m│[0m           - libwacom
+[31m      [0m [2m51[0m │ [35;1m│[0m           - libwacom-data
+[31m      [0m [2m52[0m │ [35;1m│[0m           - colord
+[31m      [0m [2m53[0m │ [35;1m│[0m           - colord-extra-profiles
+[31m      [0m [2m54[0m │ [35;1m│[0m           - argyllcms
+[31m      [0m [2m55[0m │ [35;1m│[0m           - jetbrains-mono-fonts-all
+[31m      [0m [2m56[0m │ [35;1m│[0m           - google-noto-sans-fonts
+[31m      [0m [2m57[0m │ [35;1m│[0m           - google-noto-color-emoji-fonts
+[31m      [0m [2m58[0m │ [35;1m│[0m           - btop
+[31m      [0m [2m59[0m │ [35;1m├[0m[35;1m─[0m[35;1m▶[0m         - kde-connect
+[31m      [0m    · [35;1m╰[0m[35;1m───[0m[35;1m─[0m [35;1m[1;31mAdditional properties are not allowed ('remove' was unexpected)[0m[0m
+[31m      [0m [2m60[0m │             - partitionmanager
+[31m      [0m [2m61[0m │             - ark
+[31m      [0m [2m62[0m │             - filelight
+[31m      [0m    ╰────
+[31m      [0m[36m  help: [0mTry adding these lines to the top of your file for editor validation highlights:
+[31m      [0m        [92m---[0m
+[31m      [0m        [92m# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json[0m
+[31m      [0m
+[31m      [0m  Try running with `[93m-vv[0m` for trace logging.
+[31m      [0m  You can also open an issue at https://github.com/blue-build/cli/issues
+
+[36m  help: [0mUse `[1mbluebuild validate --all-errors recipes/recipe-nvidia.yml[0m` to view more information.
+        If you're using a local module, be sure to add `[1msource: local[0m` to the module entry
+
+  Try running with `[93m-vv[0m` for trace logging.
+  You can also open an issue at https://github.com/blue-build/cli/issues
+
+(validate вернул ошибку)
+
+### recipes/recipe-studio.yml
+[31mERROR[0m [1m=>[0m Failed:
+  [31m×[0m Recipe [1;3mrecipes/recipe-studio.yml[0m failed to validate
+[31m  ╰─▶ [0m  [31m×[0m [31m1[0m error encountered
+[31m      [0m    ╭─[[36;1;4mrecipes/recipe-studio.yml:36:5[0m]
+[31m      [0m [2m33[0m │           SUPPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+[31m      [0m [2m34[0m │           BUG_REPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+[31m      [0m [2m35[0m │           VENDOR_NAME: FRAMZ OS
+[31m      [0m [2m36[0m │ [35;1m╭[0m[35;1m─[0m[35;1m▶[0m       VENDOR_URL: https://github.com/Dirkae8/Framz-os
+[31m      [0m [2m37[0m │ [35;1m│[0m   
+[31m      [0m [2m38[0m │ [35;1m│[0m     - type: dnf
+[31m      [0m [2m39[0m │ [35;1m│[0m       repos:
+[31m      [0m [2m40[0m │ [35;1m│[0m         cleanup: true
+[31m      [0m [2m41[0m │ [35;1m│[0m         nonfree: rpmfusion
+[31m      [0m [2m42[0m │ [35;1m│[0m       install:
+[31m      [0m [2m43[0m │ [35;1m│[0m         skip-unavailable: true
+[31m      [0m [2m44[0m │ [35;1m│[0m         packages:
+[31m      [0m [2m45[0m │ [35;1m│[0m           - pipewire-jack-audio-connection-kit
+[31m      [0m [2m46[0m │ [35;1m│[0m           - qjackctl
+[31m      [0m [2m47[0m │ [35;1m│[0m           - libwacom
+[31m      [0m [2m48[0m │ [35;1m│[0m           - libwacom-data
+[31m      [0m [2m49[0m │ [35;1m│[0m           - colord
+[31m      [0m [2m50[0m │ [35;1m│[0m           - colord-extra-profiles
+[31m      [0m [2m51[0m │ [35;1m│[0m           - argyllcms
+[31m      [0m [2m52[0m │ [35;1m│[0m           - jetbrains-mono-fonts-all
+[31m      [0m [2m53[0m │ [35;1m│[0m           - google-noto-sans-fonts
+[31m      [0m [2m54[0m │ [35;1m│[0m           - google-noto-color-emoji-fonts
+[31m      [0m [2m55[0m │ [35;1m│[0m           - btop
+[31m      [0m [2m56[0m │ [35;1m│[0m           - kde-connect
+[31m      [0m [2m57[0m │ [35;1m├[0m[35;1m─[0m[35;1m▶[0m         - partitionmanager
+[31m      [0m    · [35;1m╰[0m[35;1m───[0m[35;1m─[0m [35;1m[1;31mAdditional properties are not allowed ('remove' was unexpected)[0m[0m
+[31m      [0m [2m58[0m │             - ark
+[31m      [0m [2m59[0m │             - filelight
+[31m      [0m [2m60[0m │             - distrobox
+[31m      [0m    ╰────
+[31m      [0m[36m  help: [0mTry adding these lines to the top of your file for editor validation highlights:
+[31m      [0m        [92m---[0m
+[31m      [0m        [92m# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json[0m
+[31m      [0m
+[31m      [0m  Try running with `[93m-vv[0m` for trace logging.
+[31m      [0m  You can also open an issue at https://github.com/blue-build/cli/issues
+
+[36m  help: [0mUse `[1mbluebuild validate --all-errors recipes/recipe-studio.yml[0m` to view more information.
+        If you're using a local module, be sure to add `[1msource: local[0m` to the module entry
+
+  Try running with `[93m-vv[0m` for trace logging.
+  You can also open an issue at https://github.com/blue-build/cli/issues
+
+(validate вернул ошибку)
+
+--- пробная сборка базового рецепта (без публикации) ---
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/module-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/os-release-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/stage-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/import-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/gschema-overrides-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/default-flatpaks-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/justfiles-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/rpm-ostree-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/brew-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/apk-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/pacman-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/initramfs-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/soar-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/signing-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/apt-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/script-v2.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/soar-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/script-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/fonts-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/kargs-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/systemd-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/os-release-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/script-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/kargs-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/yafti-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/dnf-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/copy-v1.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/files-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/apk-latest.json[0m
+[19:52:19 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/signing-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/bling-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/chezmoi-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/files-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/bling-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/yafti-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/systemd-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/apt-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/akmods-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/brew-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/zypper-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/containerfile-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/default-flatpaks-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/gschema-overrides-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/containerfile-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/gnome-extensions-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/initramfs-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/default-flatpaks-v2.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/rpm-ostree-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/zypper-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/dnf-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/chezmoi-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/akmods-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/fonts-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/module-custom-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/gnome-extensions-v1.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/pacman-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/justfiles-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Retrieving schema from [1;3mhttps://schema.blue-build.org/modules/copy-latest.json[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Validating recipe [1;3mrecipes/recipe.yml[0m
+[19:52:20 [34mDEBUG[0m] [1m=>[0m Searching /modules/2/install
+[19:52:20 [31mERROR[0m] [1m=>[0m Failed:
+  [31m×[0m Recipe [1;3mrecipes/recipe.yml[0m failed to validate
+[31m  ╰─▶ [0m  [31m×[0m [31m1[0m error encountered
+[31m      [0m    ╭─[[36;1;4mrecipes/recipe.yml:38:54[0m]
+[31m      [0m [2m35[0m │           SUPPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+[31m      [0m [2m36[0m │           BUG_REPORT_URL: https://github.com/Dirkae8/Framz-os/issues
+[31m      [0m [2m37[0m │           VENDOR_NAME: FRAMZ OS
+[31m      [0m [2m38[0m │ [35;1m╭[0m[35;1m─[0m[35;1m▶[0m       VENDOR_URL: https://github.com/Dirkae8/Framz-os
+[31m      [0m [2m39[0m │ [35;1m│[0m   
+[31m      [0m [2m40[0m │ [35;1m│[0m     # 3. Пакеты под творческие задачи ------------------------------------------
+[31m      [0m [2m41[0m │ [35;1m│[0m     - type: dnf
+[31m      [0m [2m42[0m │ [35;1m│[0m       repos:
+[31m      [0m [2m43[0m │ [35;1m│[0m         cleanup: true
+[31m      [0m [2m44[0m │ [35;1m│[0m         nonfree: rpmfusion
+[31m      [0m [2m45[0m │ [35;1m│[0m       install:
+[31m      [0m [2m46[0m │ [35;1m│[0m         skip-unavailable: true
+[31m      [0m [2m47[0m │ [35;1m│[0m         packages:
+[31m      [0m [2m48[0m │ [35;1m│[0m           # звук без задержек
+[31m      [0m [2m49[0m │ [35;1m│[0m           - pipewire-jack-audio-connection-kit
+[31m      [0m [2m50[0m │ [35;1m│[0m           - qjackctl
+[31m      [0m [2m51[0m │ [35;1m│[0m           # графические планшеты
+[31m      [0m [2m52[0m │ [35;1m│[0m           - libwacom
+[31m      [0m [2m53[0m │ [35;1m│[0m           - libwacom-data
+[31m      [0m [2m54[0m │ [35;1m│[0m           # цвет: профили и калибровка
+[31m      [0m [2m55[0m │ [35;1m│[0m           - colord
+[31m      [0m [2m56[0m │ [35;1m│[0m           - colord-extra-profiles
+[31m      [0m [2m57[0m │ [35;1m│[0m           - argyllcms
+[31m      [0m [2m58[0m │ [35;1m│[0m           # шрифты
+[31m      [0m [2m59[0m │ [35;1m│[0m           - jetbrains-mono-fonts-all
+[31m      [0m [2m60[0m │ [35;1m│[0m           - google-noto-sans-fonts
+[31m      [0m [2m61[0m │ [35;1m├[0m[35;1m─[0m[35;1m▶[0m         - google-noto-color-emoji-fonts
+[31m      [0m    · [35;1m╰[0m[35;1m───[0m[35;1m─[0m [35;1m[1;31mAdditional properties are not allowed ('remove' was unexpected)[0m[0m
+[31m      [0m [2m62[0m │             # утилиты
+[31m      [0m [2m63[0m │             - btop
+[31m      [0m [2m64[0m │             - kde-connect
+[31m      [0m    ╰────
+[31m      [0m[36m  help: [0mTry adding these lines to the top of your file for editor validation highlights:
+[31m      [0m        [92m---[0m
+[31m      [0m        [92m# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json[0m
+[31m      [0m
+[31m      [0m  Try running with `[93m-vv[0m` for trace logging.
+[31m      [0m  You can also open an issue at https://github.com/blue-build/cli/issues
+
+[36m  help: [0mUse `[1mbluebuild validate --all-errors recipes/recipe.yml[0m` to view more information.
+        If you're using a local module, be sure to add `[1msource: local[0m` to the module entry
+
+  Try running with `[93m-vv[0m` for trace logging.
+  You can also open an issue at https://github.com/blue-build/cli/issues
+
+(сборка вернула ошибку)
