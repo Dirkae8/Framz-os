@@ -1,0 +1,91 @@
+=== запуск 36611068625 (arena/01a0ee0e-framz-os) ===
+=== свободное место ===
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root       145G   28G  117G  20% /
+/dev/root       145G   28G  117G  20% /
+
+=== вывод сборки ISO ===
+Unable to find image 'ghcr.io/jasonn3/build-container-installer:v1.5.0' locally
+v1.5.0: Pulling from jasonn3/build-container-installer
+8532d3aa7560: Pulling fs layer
+4e670e049a45: Pulling fs layer
+8532d3aa7560: Verifying Checksum
+8532d3aa7560: Download complete
+8532d3aa7560: Pull complete
+4e670e049a45: Verifying Checksum
+4e670e049a45: Download complete
+4e670e049a45: Pull complete
+Digest: sha256:354e6d7fd4cb1850fb5adcfc3535f2c271dcecbc127730a058c0cbedbd9d3f51
+Status: Downloaded newer image for ghcr.io/jasonn3/build-container-installer:v1.5.0
++ mknod -m 0660 /dev/loop0 b 7 0
++ true
++ [[ -d /cache/skopeo ]]
++ [[ ! -d /cache/dnf ]]
++ mkdir /cache/dnf
++ make IMAGE_REPO=ghcr.io/dirkae8 IMAGE_NAME=framz IMAGE_TAG=br-arena_01a0ee0e-framz-os-44 IMAGE_SIGNED=false VERSION=44 VARIANT=kinoite ISO_NAME=build/framz-os-1.0.iso WEB_UI=false
+make -w -C external lorax/branch-44
+make[1]: Entering directory '/build-container-installer/external'
+git config advice.detachedHead false
+cd lorax && git reset --hard HEAD && git checkout tags/lorax-44.6-1
+HEAD is now at ffba3078 Add prefixdevname support to the boot.iso
+Previous HEAD position was ffba3078 Add prefixdevname support to the boot.iso
+HEAD is now at 9a140ee6 Automatic commit of package [lorax] release [44.6-1].
+touch lorax/branch-44
+make[1]: Leaving directory '/build-container-installer/external'
+make -w -C lorax_templates post_install_configure_upgrades.tmpl
+make[1]: Entering directory '/build-container-installer/lorax_templates'
+header=0; skip=0; while read -r line; do if [[ $line =~ ^\<\% ]]; then if [[ 'true' == 'true' ]]; then echo $line >> post_install_configure_upgrades.tmpl; fi; echo >> post_install_configure_upgrades.tmpl; else if [[ $header == 0 ]]; then if [[ $line =~ ^\#\#\ (.*)$ ]]; then echo "append usr/share/anaconda/post-scripts/install_configure_upgrades.ks \"%post --erroronfail ${BASH_REMATCH[1]}\"" >> post_install_configure_upgrades.tmpl; skip=1; else echo "append usr/share/anaconda/post-scripts/install_configure_upgrades.ks \"%post --erroronfail\"" >> post_install_configure_upgrades.tmpl; fi; header=1; fi; if [[ $skip == 0 ]]; then echo "append usr/share/anaconda/post-scripts/install_configure_upgrades.ks \"${line//\"/\\\"}\"" >> post_install_configure_upgrades.tmpl; fi; skip=0; fi; done < scripts/post/install_configure_upgrades; echo "append usr/share/anaconda/post-scripts/install_configure_upgrades.ks \"%end\"" >> post_install_configure_upgrades.tmpl
+make[1]: Leaving directory '/build-container-installer/lorax_templates'
+make -w -C lorax_templates install_include_post.tmpl
+make[1]: Entering directory '/build-container-installer/lorax_templates'
+echo '<%page />' > install_include_post.tmpl
+for file in  install_configure_upgrades; do echo "append usr/share/anaconda/interactive-defaults.ks \"%include /usr/share/anaconda/post-scripts/${file}.ks\"" >> install_include_post.tmpl; done
+make[1]: Leaving directory '/build-container-installer/lorax_templates'
+make -w -C repos fedora-cisco-openh264.repo
+make[1]: Entering directory '/build-container-installer/repos'
+cp /etc/yum.repos.d/fedora-cisco-openh264.repo           fedora-cisco-openh264.repo
+sed -i "s/\$releasever/44/g" fedora-cisco-openh264.repo
+sed -i "s/\$basearch/x86_64/g"      fedora-cisco-openh264.repo
+make[1]: Leaving directory '/build-container-installer/repos'
+make -w -C repos fedora-updates-testing.repo
+make[1]: Entering directory '/build-container-installer/repos'
+cp /etc/yum.repos.d/fedora-updates-testing.repo           fedora-updates-testing.repo
+sed -i "s/\$releasever/44/g" fedora-updates-testing.repo
+sed -i "s/\$basearch/x86_64/g"      fedora-updates-testing.repo
+make[1]: Leaving directory '/build-container-installer/repos'
+make -w -C repos fedora-updates.repo
+make[1]: Entering directory '/build-container-installer/repos'
+cp /etc/yum.repos.d/fedora-updates.repo           fedora-updates.repo
+sed -i "s/\$releasever/44/g" fedora-updates.repo
+sed -i "s/\$basearch/x86_64/g"      fedora-updates.repo
+make[1]: Leaving directory '/build-container-installer/repos'
+make -w -C repos fedora.repo
+make[1]: Entering directory '/build-container-installer/repos'
+cp /etc/yum.repos.d/fedora.repo           fedora.repo
+sed -i "s/\$releasever/44/g" fedora.repo
+sed -i "s/\$basearch/x86_64/g"      fedora.repo
+make[1]: Leaving directory '/build-container-installer/repos'
+mv /etc/rpm/macros.image-language-conf /tmp/tmp.rpL4jDbGRH/macros.image-language-conf
+lorax -p framz -v 44 -r 44 -t kinoite \
+	--isfinal --buildarch=x86_64 --volid=framz-x86_64-br-arena_01a0ee0e-framz-os-44 --sharedir /build-container-installer/external/lorax/share/templates.d/99-generic \
+	--nomacboot --squashfs-only \
+	--repo /build-container-installer/repos/fedora-cisco-openh264.repo --repo /build-container-installer/repos/fedora-updates-testing.repo --repo /build-container-installer/repos/fedora-updates.repo --repo /build-container-installer/repos/fedora.repo \
+	--add-template /build-container-installer/lorax_templates/install_set_installer.tmpl --add-template /build-container-installer/lorax_templates/post_install_configure_upgrades.tmpl --add-template /build-container-installer/lorax_templates/install_include_post.tmpl \
+	 \
+	 \
+	 \
+	--rootfs-size 4 \
+	--add-template-var "arch=x86_64" --add-template-var "image_name=framz" --add-template-var "image_repo=ghcr.io/dirkae8" --add-template-var "_image_repo_double_escaped=ghcr.io\\\/dirkae8" --add-template-var "_image_repo_escaped=ghcr.io\/dirkae8" --add-template-var "image_signed=false" --add-template-var "image_tag=br-arena_01a0ee0e-framz-os-44" --add-template-var "repos=/etc/yum.repos.d/fedora-cisco-openh264.repo /etc/yum.repos.d/fedora-updates-testing.repo /etc/yum.repos.d/fedora-updates.repo /etc/yum.repos.d/fedora.repo" --add-template-var "_rhel=" --add-template-var "variant=kinoite" --add-template-var "version=44" --add-template-var "web_ui=false" \
+	results/
+2026-09-29 18:25:42,488: selinux is Disabled
+2026-09-29 18:25:42,509: Using platform:f44 for module_platform_id
+2026-09-29 18:25:42,511: Using repos: fedora, fedora-cisco-openh264, updates
+2026-09-29 18:25:42,511: Fetching metadata...
+2026-09-29 18:26:02,046: selinux is Disabled
+2026-09-29 18:26:02,046: checking for root privileges
+2026-09-29 18:26:02,046: checking dnf base object
+2026-09-29 18:26:02,046: setting up build architecture
+2026-09-29 18:26:02,047: setting up build parameters
+2026-09-29 18:26:02,047: the volume id cannot be longer than 32 characters
+2026-09-29 18:26:02,052: Cleaning up tempdir - /var/tmp/lorax/lorax.x0kpwvur
+make: *** [Makefile:112: results/images/boot.iso] Error 1
