@@ -1,0 +1,303 @@
+=== образ framz-nvidia · запуск 36622333989 · ветка arena/01a0ee0e-framz-os ===
+
+=== вывод bluebuild (последние 300 строк) ===
+[19:55:08 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:8afa4046d2bc1db1949c801077a3f5c5a8eb426d8f02e2ff1e1c9c22a7bd2f1e
+[19:55:08 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:8afa4046d2bc1db1949c801077a3f5c5a8eb426d8f02e2ff1e1c9c22a7bd2f1e 0.4s done
+[19:55:08 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 130.6s
+[19:55:08 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:08 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:08 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:8bec5a229d96792c83fdaa48af20faf7b8eb7fbb5b7bad9155089606266e61d8
+[19:55:08 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:8bec5a229d96792c83fdaa48af20faf7b8eb7fbb5b7bad9155089606266e61d8 0.2s done
+[19:55:08 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 130.8s
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:b24942bfb574ceaf10aa233bbefb5fbdebfc15296f29f778ea080edacf66a469
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:b24942bfb574ceaf10aa233bbefb5fbdebfc15296f29f778ea080edacf66a469 0.2s done
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 131.0s
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:a795cd36dfd3dcaa260c2026633f2d7fcac4b34e7c10caf6e0a08980688e4d67
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:a795cd36dfd3dcaa260c2026633f2d7fcac4b34e7c10caf6e0a08980688e4d67 0.2s done
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 131.2s
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:0afef3dd78833a6d4a44795be50be7a7c8686e7f6974980e74b51aa867f27571
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:0afef3dd78833a6d4a44795be50be7a7c8686e7f6974980e74b51aa867f27571 0.3s done
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 131.6s
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:7bb9c9deb3c1d7c2a72ad659b4b1529a7aa5f97f87924398b37c136419a83b98
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:7bb9c9deb3c1d7c2a72ad659b4b1529a7aa5f97f87924398b37c136419a83b98 0.2s done
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 131.8s
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:157fcd5f3696068a6ef4314eae0e54b37a893bf110d9f8b22711d2a7e1dd0aed
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:157fcd5f3696068a6ef4314eae0e54b37a893bf110d9f8b22711d2a7e1dd0aed 0.2s done
+[19:55:09 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 131.9s
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:7e8f380b40f9635ff5dd7c9d623d46ee7891ab35efad12b411afbc7c59d8702b 0.1s done
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 132.1s
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:f446228a94e31533becaf1949e6a21315f3c729644fa1bc8e8c2df905eb3795b
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:f446228a94e31533becaf1949e6a21315f3c729644fa1bc8e8c2df905eb3795b 0.2s done
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 132.3s
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:10 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:de96cb38e9889faa6d78ca54963cef77c0a0074b757e6c9c5591b7a8025b85ee
+[19:55:11 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:de96cb38e9889faa6d78ca54963cef77c0a0074b757e6c9c5591b7a8025b85ee 1.4s done
+[19:55:11 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 133.7s
+[19:55:11 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:11 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:11 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:921951ab2693f5a018cde003d19deb961f5bb0a493a5139c441f49830c66c406
+[19:55:11 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:921951ab2693f5a018cde003d19deb961f5bb0a493a5139c441f49830c66c406 0.2s done
+[19:55:11 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 133.9s
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:81aee097da6e84d44d8c09c5ffe204da0674a5d4d017544341b8ff8714ed843c 0.1s done
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 134.0s
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:86cd0d9004a935e76a4b7041dd87b40795dc047ded70cce9b11d01e3cb95bd9e
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:86cd0d9004a935e76a4b7041dd87b40795dc047ded70cce9b11d01e3cb95bd9e 0.7s done
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 134.7s
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:12 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:f991b7c5234eb15decb350e2f1df44b30d059ce3afac33febfba0b83703547e1
+[19:55:13 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:f991b7c5234eb15decb350e2f1df44b30d059ce3afac33febfba0b83703547e1 1.1s done
+[19:55:13 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 135.9s
+[19:55:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:f1707ed79bbd728994e06fb29298921c8e8f89f6dba915a2c243c07cfc376032
+[19:55:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:f1707ed79bbd728994e06fb29298921c8e8f89f6dba915a2c243c07cfc376032 0.5s done
+[19:55:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 136.4s
+[19:55:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:440c3b0df1e002fc8c6c8f3de515073ada3f03b656327d19a4e3107a6a1f0542
+[19:55:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:440c3b0df1e002fc8c6c8f3de515073ada3f03b656327d19a4e3107a6a1f0542 0.6s done
+[19:55:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 137.0s
+[19:55:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:96c3b80a87f6a1fa51f264a90890eec968f4abcc75c56def4fdeeb40cb021f90
+[19:55:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:96c3b80a87f6a1fa51f264a90890eec968f4abcc75c56def4fdeeb40cb021f90 0.9s done
+[19:55:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 137.9s
+[19:55:16 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:16 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:16 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:d54a6fbdde26e92a0ba7a682ed1d11a2cfefbb53631f28ffedda3955464a3725
+[19:55:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:d54a6fbdde26e92a0ba7a682ed1d11a2cfefbb53631f28ffedda3955464a3725 1.8s done
+[19:55:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 139.7s
+[19:55:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:dee37d929723190a619de8a6278d468270cf4885f2d43b9c02a47fd4863567df
+[19:55:18 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:dee37d929723190a619de8a6278d468270cf4885f2d43b9c02a47fd4863567df 1.0s done
+[19:55:18 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 140.7s
+[19:55:18 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:18 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:18 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:ea5fb7e044c21eacba0f1567d56cd4af4c75d5828d425474f05fa2f6d8de359b
+[19:55:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:ea5fb7e044c21eacba0f1567d56cd4af4c75d5828d425474f05fa2f6d8de359b 1.5s done
+[19:55:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 142.2s
+[19:55:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:82c0dbd21979535fd2630a32682edd0a702430666f827cf237b4b1d7bcf270bb
+[19:55:21 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:82c0dbd21979535fd2630a32682edd0a702430666f827cf237b4b1d7bcf270bb 1.7s done
+[19:55:21 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 143.8s
+[19:55:22 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:22 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:22 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:9728958465cbb2124bd86c1cb4e3f644b222330127187f1be1a9fb044b7c8980
+[19:55:22 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:9728958465cbb2124bd86c1cb4e3f644b222330127187f1be1a9fb044b7c8980 0.9s done
+[19:55:22 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 144.7s
+[19:55:22 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:22 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:22 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:4682ee988fbc3587f4fcfdd01d40ad64fe6229534d4005b36d47419ac0a62852
+[19:55:24 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:4682ee988fbc3587f4fcfdd01d40ad64fe6229534d4005b36d47419ac0a62852 1.4s done
+[19:55:24 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 146.1s
+[19:55:24 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:24 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:24 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:0272bc812022aac4566d621eb86bcd4bc03bd5e9aae1ae86c064f8d0bf8cb629 0.1s done
+[19:55:24 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:40b729c0c85b70aa9dadc9beb3d56ca07ebb2de858584c183fb105afd8ebf669
+[19:55:30 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:40b729c0c85b70aa9dadc9beb3d56ca07ebb2de858584c183fb105afd8ebf669 5.8s done
+[19:55:30 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 152.0s
+[19:55:30 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:30 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:30 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:324cc7db9e6968f2ce9e615e901477cb5ffebcdd3844dc079e3f6050a7321020 0.0s done
+[19:55:30 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:e36b6eb6af557b5606e86e98010aef536f9e204fdd7da793fcce29cd1b965c72
+[19:55:48 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:e36b6eb6af557b5606e86e98010aef536f9e204fdd7da793fcce29cd1b965c72 18.8s done
+[19:55:48 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 170.8s
+[19:55:49 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:49 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 [framz-nvidia 1/1] FROM ghcr.io/ublue-os/kinoite-nvidia@sha256:d7b1d6eaeec7fefecf0fe45de8900d727aefaa434b43b549160014d18354af56
+[19:55:49 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 extracting sha256:bd9ddc54bea929a22b334e73e026d4136e5b73f5cc29942896c72e4ece69b13d done
+[19:55:49 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #28 DONE 170.8s
+[19:55:49 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:49 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #31 [stage-4 1/8] RUN --mount=type=bind,from=stage-bins,src=/bins,dst=/tmp/bins   mkdir -p /usr/bin/   && cp /tmp/bins/* /usr/bin/
+[19:55:52 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #31 DONE 4.1s
+[19:55:53 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:53 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #32 [stage-4 2/8] RUN --mount=type=bind,from=ghcr.io/blue-build/nushell-image:default,src=/nu,dst=/tmp/nu   mkdir -p /usr/libexec/bluebuild/nu   && cp -r /tmp/nu/* /usr/libexec/bluebuild/nu/
+[19:55:53 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #32 DONE 1.0s
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #33 [stage-4 3/8] RUN --mount=type=bind,src=.bluebuild-scripts_513065f9,dst=/scripts/,ro   /scripts/pre_build.sh
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #33 0.057 Preparing system for optfix...
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #33 0.063 Linking /opt => /usr/lib/opt
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #33 DONE 0.1s
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #34 [stage-4 4/8] RUN --mount=type=bind,from=stage-files,src=/files,dst=/tmp/files,rw --mount=type=bind,from=ghcr.io/blue-build/modules/files:latest,src=/modules,dst=/tmp/modules,rw --mount=type=bind,src=.bluebuild-scripts_513065f9,dst=/tmp/scripts/,ro --mount=type=cache,sharing=locked,dst=/var/cache/rpm-ostree,id=rpm-ostree-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/libdnf5,id=dnf-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/zypp,id=zypper-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/apk,id=apk-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/apt,id=apt-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/pacman,id=pacman-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/usr/lib/sysimage/cache/pacman,id=pacman-sysimage-cache-framz-nvidia-44-stage-framz-nvidia /tmp/scripts/run_module.sh 'files' '{"type":"files","files":[{"source":"system","destination":"/"}]}'
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #34 0.097 [33m============================= Start 'files' Module =============================[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #34 0.105 Adding files to image
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #34 0.116 Copying /tmp/files/system/* to /
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #34 0.128 [32m============================== End 'files' Module ==============================[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #34 DONE 0.1s
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 [stage-4 5/8] RUN --mount=type=bind,from=stage-files,src=/files,dst=/tmp/files,rw --mount=type=bind,from=ghcr.io/blue-build/modules/os-release:latest,src=/modules,dst=/tmp/modules,rw --mount=type=bind,src=.bluebuild-scripts_513065f9,dst=/tmp/scripts/,ro --mount=type=cache,sharing=locked,dst=/var/cache/rpm-ostree,id=rpm-ostree-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/libdnf5,id=dnf-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/zypp,id=zypper-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/apk,id=apk-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/apt,id=apt-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/pacman,id=pacman-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/usr/lib/sysimage/cache/pacman,id=pacman-sysimage-cache-framz-nvidia-44-stage-framz-nvidia /tmp/scripts/run_module.sh 'os-release' '{"type":"os-release","properties":{"ID":"framz","ID_LIKE":"fedora","NAME":"FRAMZ OS","PRETTY_NAME":"FRAMZ OS 1.0 (NVIDIA)","VARIANT":"FRAMZ OS NVIDIA","VARIANT_ID":"framz-nvidia","VERSION":"1.0","VERSION_ID":"1.0","VERSION_CODENAME":"FRAMZ","LOGO":"framz-logo","DEFAULT_HOSTNAME":"framz","HOME_URL":"https://github.com/Dirkae8/Framz-os","DOCUMENTATION_URL":"https://github.com/Dirkae8/Framz-os/tree/main/docs","SUPPORT_URL":"https://github.com/Dirkae8/Framz-os/issues","BUG_REPORT_URL":"https://github.com/Dirkae8/Framz-os/issues","VENDOR_NAME":"FRAMZ OS","VENDOR_URL":"https://github.com/Dirkae8/Framz-os"}}'
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.073 [33m========================== Start 'os-release' Module ==========================[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.137 [32mOriginal release:[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m╭─────────────────────────────────┬────────────────────────────────────────────╮[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mNAME[0m                            [37m│[0m [37mFedora Linux[0m                               [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mVERSION[0m                         [37m│[0m [37m44.20260929.0 (Kinoite)[0m                    [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mRELEASE_TYPE[0m                    [37m│[0m [37mstable[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mID[0m                              [37m│[0m [37mfedora[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mVERSION_ID[0m                      [37m│[0m [37m44[0m                                         [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mVERSION_CODENAME[0m                [37m│[0m [37m[0m                                           [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mPRETTY_NAME[0m                     [37m│[0m [37mFedora Linux 44.20260929.0 (Kinoite)[0m       [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mANSI_COLOR[0m                      [37m│[0m [37m0;38;2;60;110;180[0m                          [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mLOGO[0m                            [37m│[0m [37mfedora-logo-icon[0m                           [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mCPE_NAME[0m                        [37m│[0m [37mcpe:/o:fedoraproject:fedora:44[0m             [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mDEFAULT_HOSTNAME[0m                [37m│[0m [37mfedora[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mHOME_URL[0m                        [37m│[0m [37mhttps://kinoite.fedoraproject.org[0m          [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mDOCUMENTATION_URL[0m               [37m│[0m [37mhttps://docs.fedoraproject.org/en-US/fedor[39m [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m                                 [37m│[0m [37ma-kinoite/[39m                                 [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mSUPPORT_URL[0m                     [37m│[0m [37mhttps://ask.fedoraproject.org/[0m             [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mBUG_REPORT_URL[0m                  [37m│[0m [37mhttps://pagure.io/fedora-kde/SIG/issues[0m    [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mREDHAT_BUGZILLA_PRODUCT[0m         [37m│[0m [37mFedora[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mREDHAT_BUGZILLA_PRODUCT_VERSION[0m [37m│[0m [37m44[0m                                         [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mREDHAT_SUPPORT_PRODUCT[0m          [37m│[0m [37mFedora[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mREDHAT_SUPPORT_PRODUCT_VERSION[0m  [37m│[0m [37m44[0m                                         [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mSUPPORT_END[0m                     [37m│[0m [37m2027-05-19[0m                                 [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mVARIANT[0m                         [37m│[0m [37mKinoite[0m                                    [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mVARIANT_ID[0m                      [37m│[0m [37mkinoite[0m                                    [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m│[0m [1;32mOSTREE_VERSION[0m                  [37m│[0m [37m44.20260929.0[0m                              [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.143 [37m╰─────────────────────────────────┴────────────────────────────────────────────╯[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.144 [32mUpdating [36mID[32m with value [33mframz[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.146 [32mAdding [36mID_LIKE[32m with value [33mfedora[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.148 [32mUpdating [36mNAME[32m with value [33mFRAMZ OS[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.149 [32mUpdating [36mPRETTY_NAME[32m with value [33mFRAMZ OS 1.0 (NVIDIA)[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.151 [32mUpdating [36mVARIANT[32m with value [33mFRAMZ OS NVIDIA[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.152 [32mUpdating [36mVARIANT_ID[32m with value [33mframz-nvidia[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.154 [32mUpdating [36mVERSION[32m with value [33m1.0[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.155 [32mUpdating [36mVERSION_ID[32m with value [33m1.0[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.157 [32mUpdating [36mVERSION_CODENAME[32m with value [33mFRAMZ[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.158 [32mUpdating [36mLOGO[32m with value [33mframz-logo[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.160 [32mUpdating [36mDEFAULT_HOSTNAME[32m with value [33mframz[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.161 [32mUpdating [36mHOME_URL[32m with value [33mhttps://github.com/Dirkae8/Framz-os[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.163 [32mUpdating [36mDOCUMENTATION_URL[32m with value [33mhttps://github.com/Dirkae8/Framz-os/tree/main/docs[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.164 [32mUpdating [36mSUPPORT_URL[32m with value [33mhttps://github.com/Dirkae8/Framz-os/issues[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.166 [32mUpdating [36mBUG_REPORT_URL[32m with value [33mhttps://github.com/Dirkae8/Framz-os/issues[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.167 [32mAdding [36mVENDOR_NAME[32m with value [33mFRAMZ OS[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.169 [32mAdding [36mVENDOR_URL[32m with value [33mhttps://github.com/Dirkae8/Framz-os[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.170 [32mNew release:[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m╭─────────────────────────────────┬────────────────────────────────────────────╮[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mNAME[0m                            [37m│[0m [37mFRAMZ OS[0m                                   [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mVERSION[0m                         [37m│[0m [37m1.0[0m                                        [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mRELEASE_TYPE[0m                    [37m│[0m [37mstable[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mID[0m                              [37m│[0m [37mframz[0m                                      [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mVERSION_ID[0m                      [37m│[0m [37m1.0[0m                                        [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mVERSION_CODENAME[0m                [37m│[0m [37mFRAMZ[0m                                      [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mPRETTY_NAME[0m                     [37m│[0m [37mFRAMZ OS 1.0 (NVIDIA)[0m                      [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mANSI_COLOR[0m                      [37m│[0m [37m0;38;2;60;110;180[0m                          [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mLOGO[0m                            [37m│[0m [37mframz-logo[0m                                 [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mCPE_NAME[0m                        [37m│[0m [37mcpe:/o:fedoraproject:fedora:44[0m             [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mDEFAULT_HOSTNAME[0m                [37m│[0m [37mframz[0m                                      [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mHOME_URL[0m                        [37m│[0m [37mhttps://github.com/Dirkae8/Framz-os[0m        [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mDOCUMENTATION_URL[0m               [37m│[0m [37mhttps://github.com/Dirkae8/Framz-os/tree/m[39m [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m                                 [37m│[0m [37main/docs[39m                                   [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mSUPPORT_URL[0m                     [37m│[0m [37mhttps://github.com/Dirkae8/Framz-os/issues[0m [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mBUG_REPORT_URL[0m                  [37m│[0m [37mhttps://github.com/Dirkae8/Framz-os/issues[0m [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mREDHAT_BUGZILLA_PRODUCT[0m         [37m│[0m [37mFedora[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mREDHAT_BUGZILLA_PRODUCT_VERSION[0m [37m│[0m [37m44[0m                                         [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mREDHAT_SUPPORT_PRODUCT[0m          [37m│[0m [37mFedora[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mREDHAT_SUPPORT_PRODUCT_VERSION[0m  [37m│[0m [37m44[0m                                         [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mSUPPORT_END[0m                     [37m│[0m [37m2027-05-19[0m                                 [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mVARIANT[0m                         [37m│[0m [37mFRAMZ OS NVIDIA[0m                            [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mVARIANT_ID[0m                      [37m│[0m [37mframz-nvidia[0m                               [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mOSTREE_VERSION[0m                  [37m│[0m [37m44.20260929.0[0m                              [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mID_LIKE[0m                         [37m│[0m [37mfedora[0m                                     [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mVENDOR_NAME[0m                     [37m│[0m [37mFRAMZ OS[0m                                   [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m│[0m [1;32mVENDOR_URL[0m                      [37m│[0m [37mhttps://github.com/Dirkae8/Framz-os[0m        [37m│[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.172 [37m╰─────────────────────────────────┴────────────────────────────────────────────╯[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 0.178 [32m=========================== End 'os-release' Module ===========================[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #35 DONE 0.2s
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 [stage-4 6/8] RUN --mount=type=bind,from=stage-files,src=/files,dst=/tmp/files,rw --mount=type=bind,from=ghcr.io/blue-build/modules/dnf:latest,src=/modules,dst=/tmp/modules,rw --mount=type=bind,src=.bluebuild-scripts_513065f9,dst=/tmp/scripts/,ro --mount=type=cache,sharing=locked,dst=/var/cache/rpm-ostree,id=rpm-ostree-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/libdnf5,id=dnf-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/zypp,id=zypper-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/apk,id=apk-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/apt,id=apt-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/pacman,id=pacman-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/usr/lib/sysimage/cache/pacman,id=pacman-sysimage-cache-framz-nvidia-44-stage-framz-nvidia /tmp/scripts/run_module.sh 'dnf' '{"type":"dnf","repos":{"cleanup":true,"nonfree":"rpmfusion"},"install":{"skip-unavailable":true,"packages":["pipewire-jack-audio-connection-kit","qjackctl","libwacom","libwacom-data","colord","colord-extra-profiles","argyllcms","jetbrains-mono-fonts-all","google-noto-sans-fonts","google-noto-color-emoji-fonts","btop","kde-connect","partitionmanager","ark","filelight","distrobox","podman"]},"remove":{"packages":["firefox","firefox-langpacks"]}}'
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 0.078 [33m============================== Start 'dnf' Module ==============================[0m
+[19:55:54 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 0.137 [32mDisabling negativo17 repos[0m
+[19:56:14 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.58 [32mRemoving repositories:[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.59 - [36mfedora-multimedia-source[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.59 - [36mfedora-nvidia-lts[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.59 - [36mfedora-multimedia[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.59 - [36mfedora-multimedia-debug[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.59 - [36mfedora-nvidia-lts-debug[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.59 - [36mfedora-nvidia-source[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.59 - [36mfedora-nvidia-debug[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.60 - [36mfedora-nvidia[0m
+[19:56:15 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 20.60 - [36mfedora-nvidia-lts-source[0m
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 22.86 Removing repo file '[36m/etc/yum.repos.d/negativo17-fedora-multimedia.repo[0m'
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 22.87 Removing repo file '[36m/etc/yum.repos.d/negativo17-fedora-nvidia-lts.repo[0m'
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 22.87 Removing repo file '[36m/etc/yum.repos.d/negativo17-fedora-nvidia.repo[0m'
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 22.87 [32mEnabling rpmfusion repos[0m
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 22.89 [32mInstalling packages directly from URL:[0m
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 22.90 - [36mhttps://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm[0m
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 22.90 - [36mhttps://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm[0m
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 22.94 Updating and loading repositories:
+[19:56:17 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 23.48 Repositories loaded.
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.13  https://mirrors.rpmfusion.org/nonfree/ 100% |   2.8 KiB/s |   7.4 KiB |  00m03s
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.13 >>> Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.13 >>> Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.13 >>> Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.13 >>> Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.13 >>> Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198)
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.14  https://mirrors.rpmfusion.org/free/fed   0% |   0.0   B/s |   0.0   B |  00m03s
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.14 >>> Status code: 404 for https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.14 >>> Status code: 404 for https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.14 >>> Status code: 404 for https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.14 >>> Not finished - interrupted by error: Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198)
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.14 Failed to download files
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.14  Librepo error: Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198)
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.15 External command had a non-zero exit code
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 26.15 [31m============================= Failed 'dnf' Module =============================[0m
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m #36 ERROR: process "/bin/sh -c /tmp/scripts/run_module.sh 'dnf' '{\"type\":\"dnf\",\"repos\":{\"cleanup\":true,\"nonfree\":\"rpmfusion\"},\"install\":{\"skip-unavailable\":true,\"packages\":[\"pipewire-jack-audio-connection-kit\",\"qjackctl\",\"libwacom\",\"libwacom-data\",\"colord\",\"colord-extra-profiles\",\"argyllcms\",\"jetbrains-mono-fonts-all\",\"google-noto-sans-fonts\",\"google-noto-color-emoji-fonts\",\"btop\",\"kde-connect\",\"partitionmanager\",\"ark\",\"filelight\",\"distrobox\",\"podman\"]},\"remove\":{\"packages\":[\"firefox\",\"firefox-langpacks\"]}}'" did not complete successfully: exit code: 1
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m ------
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m  > [stage-4 6/8] RUN --mount=type=bind,from=stage-files,src=/files,dst=/tmp/files,rw --mount=type=bind,from=ghcr.io/blue-build/modules/dnf:latest,src=/modules,dst=/tmp/modules,rw --mount=type=bind,src=.bluebuild-scripts_513065f9,dst=/tmp/scripts/,ro --mount=type=cache,sharing=locked,dst=/var/cache/rpm-ostree,id=rpm-ostree-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/libdnf5,id=dnf-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/zypp,id=zypper-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/apk,id=apk-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/apt,id=apt-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/var/cache/pacman,id=pacman-cache-framz-nvidia-44-stage-framz-nvidia --mount=type=cache,sharing=locked,dst=/usr/lib/sysimage/cache/pacman,id=pacman-sysimage-cache-framz-nvidia-44-stage-framz-nvidia /tmp/scripts/run_module.sh 'dnf' '{"type":"dnf","repos":{"cleanup":true,"nonfree":"rpmfusion"},"install":{"skip-unavailable":true,"packages":["pipewire-jack-audio-connection-kit","qjackctl","libwacom","libwacom-data","colord","colord-extra-profiles","argyllcms","jetbrains-mono-fonts-all","google-noto-sans-fonts","google-noto-color-emoji-fonts","btop","kde-connect","partitionmanager","ark","filelight","distrobox","podman"]},"remove":{"packages":["firefox","firefox-langpacks"]}}':
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.13 >>> Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198)
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.14  https://mirrors.rpmfusion.org/free/fed   0% |   0.0   B/s |   0.0   B |  00m03s
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.14 >>> Status code: 404 for https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.14 >>> Status code: 404 for https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.14 >>> Status code: 404 for https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm (IP: 212.129.31.198) - https://rpmfusion.org/free/fedora/rpmfusion-free-release-1.0.noarch.rpm
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.14 >>> Not finished - interrupted by error: Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198)
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.14 Failed to download files
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.14  Librepo error: Status code: 404 for https://rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-1.0.noarch.rpm (IP: 212.129.31.198)
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.15 External command had a non-zero exit code
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m 26.15 [31m============================= Failed 'dnf' Module =============================[0m
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m ------
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m Containerfile.W2qY_FKsvRs:76
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m --------------------
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   75 |     /tmp/scripts/run_module.sh 'os-release' '{"type":"os-release","properties":{"ID":"framz","ID_LIKE":"fedora","NAME":"FRAMZ OS","PRETTY_NAME":"FRAMZ OS 1.0 (NVIDIA)","VARIANT":"FRAMZ OS NVIDIA","VARIANT_ID":"framz-nvidia","VERSION":"1.0","VERSION_ID":"1.0","VERSION_CODENAME":"FRAMZ","LOGO":"framz-logo","DEFAULT_HOSTNAME":"framz","HOME_URL":"https://github.com/Dirkae8/Framz-os","DOCUMENTATION_URL":"https://github.com/Dirkae8/Framz-os/tree/main/docs","SUPPORT_URL":"https://github.com/Dirkae8/Framz-os/issues","BUG_REPORT_URL":"https://github.com/Dirkae8/Framz-os/issues","VENDOR_NAME":"FRAMZ OS","VENDOR_URL":"https://github.com/Dirkae8/Framz-os"}}'
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   76 | >>> RUN \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   77 | >>> --mount=type=bind,from=stage-files,src=/files,dst=/tmp/files,rw \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   78 | >>> --mount=type=bind,from=ghcr.io/blue-build/modules/dnf:latest,src=/modules,dst=/tmp/modules,rw \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   79 | >>> --mount=type=bind,src=.bluebuild-scripts_513065f9,dst=/tmp/scripts/,ro \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   80 | >>> --mount=type=cache,sharing=locked,dst=/var/cache/rpm-ostree,id=rpm-ostree-cache-framz-nvidia-44-stage-framz-nvidia \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   81 | >>> --mount=type=cache,sharing=locked,dst=/var/cache/libdnf5,id=dnf-cache-framz-nvidia-44-stage-framz-nvidia \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   82 | >>> --mount=type=cache,sharing=locked,dst=/var/cache/zypp,id=zypper-cache-framz-nvidia-44-stage-framz-nvidia \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   83 | >>> --mount=type=cache,sharing=locked,dst=/var/cache/apk,id=apk-cache-framz-nvidia-44-stage-framz-nvidia \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   84 | >>> --mount=type=cache,sharing=locked,dst=/var/cache/apt,id=apt-cache-framz-nvidia-44-stage-framz-nvidia \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   85 | >>> --mount=type=cache,sharing=locked,dst=/var/cache/pacman,id=pacman-cache-framz-nvidia-44-stage-framz-nvidia \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   86 | >>> --mount=type=cache,sharing=locked,dst=/usr/lib/sysimage/cache/pacman,id=pacman-sysimage-cache-framz-nvidia-44-stage-framz-nvidia \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   87 | >>> /tmp/scripts/run_module.sh 'dnf' '{"type":"dnf","repos":{"cleanup":true,"nonfree":"rpmfusion"},"install":{"skip-unavailable":true,"packages":["pipewire-jack-audio-connection-kit","qjackctl","libwacom","libwacom-data","colord","colord-extra-profiles","argyllcms","jetbrains-mono-fonts-all","google-noto-sans-fonts","google-noto-color-emoji-fonts","btop","kde-connect","partitionmanager","ark","filelight","distrobox","podman"]},"remove":{"packages":["firefox","firefox-langpacks"]}}'
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m   88 |     RUN \
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m --------------------
+[19:56:20 [38;5;130mg.i/d/framz-nvidia:br-arena_01a0ee0e-framz-os-44[0m] [1m=>[0m ERROR: failed to build: failed to solve: process "/bin/sh -c /tmp/scripts/run_module.sh 'dnf' '{\"type\":\"dnf\",\"repos\":{\"cleanup\":true,\"nonfree\":\"rpmfusion\"},\"install\":{\"skip-unavailable\":true,\"packages\":[\"pipewire-jack-audio-connection-kit\",\"qjackctl\",\"libwacom\",\"libwacom-data\",\"colord\",\"colord-extra-profiles\",\"argyllcms\",\"jetbrains-mono-fonts-all\",\"google-noto-sans-fonts\",\"google-noto-color-emoji-fonts\",\"btop\",\"kde-connect\",\"partitionmanager\",\"ark\",\"filelight\",\"distrobox\",\"podman\"]},\"remove\":{\"packages\":[\"firefox\",\"firefox-langpacks\"]}}'" did not complete successfully: exit code: 1
+[19:56:20 [31mERROR[0m] [1m=>[0m Failed:
+  [31m×[0m Failed to build image ghcr.io/dirkae8/framz-nvidia:br-arena_01a0ee0e-framz-os-44
+
+  Try running with `[93m-vv[0m` for trace logging.
+  You can also open an issue at https://github.com/blue-build/cli/issues
+
