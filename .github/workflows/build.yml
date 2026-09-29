@@ -1,48 +1,177 @@
-name: build-framz-image
+name: build-framz
+
+# Собирает образ FRAMZ OS и установочный ISO.
+# Образ публикуется в ghcr.io/<владелец-в-нижнем-регистре>/framz:latest
+# ISO складывается в артефакты запуска и в Releases (см. docs/START-HERE.md).
 
 on:
-  # Ежедневная пересборка: тянем свежую базу и обновления — так работает rolling-модель.
-  schedule:
-    - cron: "30 05 * * *"
-  # Ручной запуск из веб-интерфейса GitHub.
+  # Ручной запуск из веб-интерфейса GitHub (Actions → build-framz → Run workflow).
   workflow_dispatch:
-  # Автосборка только для main и только когда меняется то, что влияет на образ.
+  # Автосборка при изменениях, влияющих на образ.
   push:
-    branches: [main]
+    branches:
+      - main
+      - arena/01a0ee0e-framz-os
     paths:
       - "recipes/**"
       - "files/**"
       - ".github/workflows/build.yml"
-  pull_request:
-    paths:
-      - "recipes/**"
-      - "files/**"
-      - ".github/workflows/build.yml"
+  # Ежедневная пересборка: свежая база Fedora + свежие обновления.
+  schedule:
+    - cron: "30 5 * * *"
+
+permissions:
+  contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  cancel-in-progress: true
+  group: build-framz-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE_NAME: framz
+  ISO_NAME: framz-os-1.0.iso
+  INSTALLER_IMAGE: ghcr.io/jasonn3/build-container-installer:v1.5.0
+  BLUEBUILD_INSTALLER: ghcr.io/blue-build/cli:v0.9-installer
 
 jobs:
-  bluebuild:
-    name: Build FRAMZ OS image
+  # ===========================================================================
+  # 1. Образ системы
+  # ===========================================================================
+  image:
+    name: Образ FRAMZ OS
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        recipe:
-          - recipe.yml
+    outputs:
+      image: ${{ steps.vars.outputs.image }}
+      namespace: ${{ steps.vars.outputs.namespace }}
     steps:
-      - name: Build Custom Image
-        uses: blue-build/github-action@v1.13
+      - name: Забрать репозиторий
+        uses: actions/checkout@v4
+
+      - name: Определить имена
+        id: vars
+        shell: bash
+        run: |
+          set -euo pipefail
+          # имя образа в реестре должно быть в нижнем регистре
+          NS="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "namespace=${NS}" >> "${GITHUB_OUTPUT}"
+          echo "image=ghcr.io/${NS}/${IMAGE_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Установить BlueBuild
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker pull "${BLUEBUILD_INSTALLER}"
+          sudo docker create --name bluebuild-installer "${BLUEBUILD_INSTALLER}"
+          sudo docker cp bluebuild-installer:/out/bluebuild /usr/bin/bluebuild
+          sudo docker rm bluebuild-installer
+          bluebuild --version
+
+      - name: Собрать и опубликовать образ
+        shell: bash
+        env:
+          BB_REGISTRY: ghcr.io
+          BB_REGISTRY_NAMESPACE: ${{ steps.vars.outputs.namespace }}
+          BB_USERNAME: ${{ github.actor }}
+          BB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          BB_BUILD_PUSH: "true"
+          # Подпись включим, когда появятся секреты репозитория (этап беты).
+          BB_BUILD_NO_SIGN: "true"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUST_LOG_STYLE: always
+          CLICOLOR_FORCE: "1"
+        run: bluebuild build -v recipes/recipe.yml
+
+  # ===========================================================================
+  # 2. Установочный ISO из собранного образа
+  # ===========================================================================
+  iso:
+    name: ISO FRAMZ OS
+    needs: image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # для создания Release с ISO
+      packages: read
+    steps:
+      - name: Забрать репозиторий
+        uses: actions/checkout@v4
+
+      - name: Освободить место на диске
+        uses: jlumbroso/free-disk-space@v1.3.1
         with:
-          recipe: ${{ matrix.recipe }}
-          registry_token: ${{ github.token }}
-          pr_event_number: ${{ github.event.number }}
-          maximize_build_space: true
-          # Подпись включим на этапе публичной беты:
-          # cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+          tool-cache: true
+
+      - name: Скачать собранный образ
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman
+          echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io \
+            --username "${{ github.actor }}" --password-stdin
+          sudo podman pull "${{ needs.image.outputs.image }}:latest"
+
+      - name: Собрать ISO
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output
+          sudo podman run --privileged --rm \
+            --volume "$PWD/output:/build-container-installer/build" \
+            --volume /var/lib/containers/storage:/var/lib/containers/storage \
+            -e IMAGE_REPO="ghcr.io/${{ needs.image.outputs.namespace }}" \
+            -e IMAGE_NAME="${IMAGE_NAME}" \
+            -e IMAGE_TAG="latest" \
+            -e VARIANT="kinoite" \
+            -e ISO_NAME="build/${ISO_NAME}" \
+            -e WEB_UI="false" \
+            -e ENROLLMENT_PASSWORD="framz" \
+            "${INSTALLER_IMAGE}"
+          ls -lh output/
+          sha256sum "output/${ISO_NAME}" | tee "output/${ISO_NAME}-SHA256"
+
+      - name: Загрузить ISO как артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: framz-os-iso
+          path: |
+            output/${{ env.ISO_NAME }}
+            output/${{ env.ISO_NAME }}-SHA256
+          compression-level: 0 # ISO уже сжатый
+          retention-days: 30
+
+      - name: Приложить ISO к релизу
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          SIZE=$(stat -c%s "output/${ISO_NAME}")
+          LIMIT=$((1900 * 1024 * 1024))
+          if [ "${SIZE}" -le "${LIMIT}" ]; then
+            FILES="output/${ISO_NAME} output/${ISO_NAME}-SHA256"
+          else
+            # GitHub не принимает файлы больше 2 ГиБ — режем на части
+            split -b 1800M "output/${ISO_NAME}" "output/${ISO_NAME}.part-"
+            (cd output && sha256sum ${ISO_NAME}.part-* > ${ISO_NAME}.parts-SHA256)
+            FILES="output/${ISO_NAME}.part-* output/${ISO_NAME}.parts-SHA256 output/${ISO_NAME}-SHA256"
+          fi
+          if gh release view "v1.0-preview" >/dev/null 2>&1; then
+            gh release upload "v1.0-preview" ${FILES} --clobber
+          else
+            gh release create "v1.0-preview" ${FILES} \
+              --title "FRAMZ OS 1.0 (preview)" \
+              --notes "Первый публичный образ и установочный ISO FRAMZ OS.
+
+          **Как установить — см. docs/START-HERE.md в репозитории.**
+
+          - образ системы: \`${{ needs.image.outputs.image }}:latest\`
+          - вариант ISO: установщик Kinoite (Fedora Atomic KDE)
+          - ISO не подписан (preview), Secure Boot лучше выключить в виртуальной машине
+
+          Если ISO загружен частями (.part-*), соберите файл командой:
+          \`cat framz-os-1.0.iso.part-* > framz-os-1.0.iso\`"
+          fi

@@ -4,8 +4,8 @@
 > при первом запуске. Свой интерфейс, свой магазин, обновление и откат в один клик.
 > Бесплатно, навсегда.
 
-**Статус:** этап 0 — спецификация и брендинг. Рабочая сборка впереди.
-**База:** Fedora Atomic KDE (image-based, bootc) → собирается через [BlueBuild](https://bluebuild.org).
+**Статус:** этап 1 — первая сборка образа и установочного ISO в CI (см. `docs/START-HERE.md`).
+**База:** Fedora Atomic KDE (Kinoite, image-based) → собирается через [BlueBuild](https://bluebuild.org).
 
 ---
 
@@ -23,6 +23,7 @@
 
 | Файл | О чём |
 |---|---|
+| [`docs/START-HERE.md`](docs/START-HERE.md) | **Как получить ISO и запустить FRAMZ OS** (в виртуальной машине или без установки) |
 | [`docs/VISION.md`](docs/VISION.md) | Продуктовое видение, все зафиксированные решения, дорожная карта |
 | [`docs/SPEC.md`](docs/SPEC.md) | Техническая спецификация: архитектура, состав образа, обновления, приватность |
 | [`docs/APPS.md`](docs/APPS.md) | Каталог приложений по дисциплинам + наполнение профилей первого запуска |
@@ -40,21 +41,24 @@ docs/                         ← вся документация, включа�
 
 ## Быстрый старт для разработки
 
+**Хочешь просто получить ISO и запустить систему? → [`docs/START-HERE.md`](docs/START-HERE.md)**
+(там же — как запустить ISO в виртуальной машине).
+
+Для разработки:
+
 ```bash
 # 1. Проверить рецепт (ничего не собирая)
 bluebuild validate recipes/recipe.yml
 
-# 2. Сгенерировать ключи подписи (понадобится на этапе публичной беты)
-bluebuild generate-keys --output-dir .  # → cosign.key + cosign.pub
-
-# 3. Собрать образ локально (нужен podman, ~30–60 мин на первый раз)
+# 2. Собрать образ локально (нужен podman, 30–60 мин на первый раз)
 bluebuild build recipes/recipe.yml
 
-# 4. Собрать установочный ISO (после успешной сборки образа)
-bluebuild build --build-iso recipes/recipe.yml
+# 3. Собрать из него установочный ISO
+bluebuild generate-iso recipe recipes/recipe.yml --output-dir ./output
 ```
 
-Подробнее — в [`docs/BUILD.md`](docs/BUILD.md).
+Основной путь — **CI**: workflow `.github/workflows/build.yml` собирает образ и ISO
+на серверах GitHub при каждом изменении рецепта. Подробности — в [`docs/BUILD.md`](docs/BUILD.md).
 
 ## Лицензия
 

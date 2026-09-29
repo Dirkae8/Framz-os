@@ -5,10 +5,9 @@
 name: framz
 description: FRAMZ OS — творческая система на базе Fedora Atomic KDE
 
-# Готовая база Universal Blue: драйверы, кодеки, аппаратные патчи уже внутри.
-# Альтернатива «с нуля»: quay.io/fedora-ostree-desktops/kinoite
-base-image: ghcr.io/ublue-os/kinoite-main
-# 44 — текущий стабильный. После 20.10.2026 переключаемся на 45 (проверить рецепт!).
+# Официальная атомарная Fedora с KDE (Kinoite). Тег = номер релиза Fedora.
+# 44 — текущий стабильный релиз. После выхода Fedora 45 (20.10.2026) проверить и обновить.
+base-image: quay.io/fedora-ostree-desktops/kinoite
 image-version: 44
 
 modules:
@@ -22,20 +21,19 @@ modules:
         destination: /
 
   # ---------------------------------------------------------------------------
-  # 2. Пакеты, которые обязаны работать до входа в магазин.
-  #    Правило: в образе — минимум. Всё творческое — Flatpak из FRAMZ Store.
+  # 2. Репозитории и пакеты.
+  #    Включаем RPM Fusion (кодеки, проприетарные драйверы в будущем).
+  #    skip-unavailable: пакет, которого нет в репозиториях, не провалит сборку.
   # ---------------------------------------------------------------------------
   - type: dnf
+    repos:
+      cleanup: true
+      nonfree: rpmfusion
     install:
+      skip-unavailable: true
       packages:
-        # — медиа-стек и кодеки (монтаж, воспроизведение, кодирование)
-        - ffmpeg
-        - ffmpeg-libs
-        - gstreamer1-plugins-ugly-free
-        - gstreamer1-plugin-openh264
-        # — звук: низкая задержка, маршрутизация
+        # — звук: низкая задержка, маршрутизация, JACK-совместимость
         - pipewire-jack-audio-connection-kit
-        - pipewire-utils
         - qjackctl
         # — планшеты (Wacom/XPPen/Huion) и их калибровка
         - libwacom
@@ -45,49 +43,50 @@ modules:
         - colord-extra-profiles
         - argyllcms
         # — шрифты: интерфейс, код, эмодзи, кириллица
-        - rsms-inter-fonts
         - jetbrains-mono-fonts-all
         - google-noto-sans-fonts
-        - google-noto-sans-cjk-fonts
         - google-noto-color-emoji-fonts
-        # — бытовые утилиты и связь с телефоном
+        # — утилиты для быта и связь с телефоном
         - btop
-        - fastfetch
         - kde-connect
         - partitionmanager
         - ark
         - filelight
         # — контейнеры для «Мастерской» (проприетарный творческий софт)
         - distrobox
-      remove:
-        packages:
-          # принцип «лёгкой базы»: браузер ставим Flatpak'ом, а не в образ
-          - firefox
-          - firefox-langpacks
+        - podman
+    # TODO (этап 1.1): полный медиа-стек требует замены пакетов из Fedora на версии
+    # из RPM Fusion (ffmpeg-free → ffmpeg). Делается секцией replace, проверяется
+    # отдельной сборкой, чтобы не рисковать стабильностью образа:
+    # replace:
+    #   - from-repo: rpmfusion
+    #     packages:
+    #       - ffmpeg
 
   # ---------------------------------------------------------------------------
-  # 3. Приложения, которые должны быть у всех: ставим Flatpak'ами при сборке.
+  # 3. Приложения, которые должны быть у всех: ставятся Flatpak'ами при сборке.
   # ---------------------------------------------------------------------------
   - type: default-flatpaks
     configurations:
       - notify: false
         scope: system
         install:
-          - org.mozilla.firefox        # браузер
-          - com.github.tchx84.Flatseal # управление правами Flatpak
+          - org.mozilla.firefox          # браузер
+          - com.github.tchx84.Flatseal   # управление правами Flatpak
           - io.github.flattool.Warehouse # управление приложениями и кэшем
       - scope: user                    # пользовательский репозиторий Flathub
 
   # ---------------------------------------------------------------------------
   # 4. Подпись образов (cosign + Secure Boot).
-  #    Включить на этапе публичной беты: bluebuild generate-keys --output-dir .
-  #    cosign.key → секрет SIGNING_SECRET, cosign.pub → в репозиторий.
+  #    Включить, когда у проекта будет доступ к секретам репозитория:
+  #      bluebuild generate-keys --output-dir .
+  #      cosign.key → секрет SIGNING_SECRET, cosign.pub → в репозиторий
   # ---------------------------------------------------------------------------
   # - type: signing
 
   # ---------------------------------------------------------------------------
   # 5. TODO (этап 2–3): наши собственные компоненты.
-  #    - оболочка FRAMZ (тема, панель, док, лаунчер) — через COPR или RPM в репозитории
+  #    - оболочка FRAMZ (тема, панель, док, лаунчер)
   #    - FRAMZ Setup (мастер первого запуска)
   #    - FRAMZ Store (форк Discover с брендингом)
   # Пример:

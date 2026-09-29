@@ -13,20 +13,29 @@
 
 ## 2. Сборка через GitHub Actions (основной путь)
 
-1. Рецепт лежит в `recipes/recipe.yml`; образ публикуется в `ghcr.io/<owner>/framz`.
-2. Workflow запускается по расписанию (ежедневно), вручную (`workflow_dispatch`) и на push
-   в `main`, если менялись `recipes/**`, `files/**` или сам workflow.
-3. После сборки образ доступен как `ghcr.io/<owner>/framz:latest`.
-4. **Первые шаги для владельца репозитория:**
-   - проверить, что `name:` в рецепте совпадает с именем образа, который вы хотите;
-   - включить Actions в настройках репозитория;
-   - ⚠️ подпись образов (cosign) пока **отключена** — включим на этапе публичной беты:
-     ```
-     bluebuild generate-keys --output-dir .
-     # cosign.key → секрет репозитория SIGNING_SECRET
-     # cosign.pub → в репозиторий (public)
-     ```
-     затем раскомментировать модуль `signing` в рецепте и строку `cosign_private_key` в workflow.
+Workflow **`.github/workflows/build.yml`** (имя `build-framz`) делает всё сам, в два шага:
+
+| Job | Что делает | Результат |
+|---|---|---|
+| **image** | ставит BlueBuild CLI из контейнера и выполняет `bluebuild build -v recipes/recipe.yml` | образ в `ghcr.io/<владелец>/framz:latest` |
+| **iso** | скачивает собранный образ и запускает установщик `ghcr.io/jasonn3/build-container-installer` | `framz-os-1.0.iso` в артефактах и в Release `v1.0-preview` |
+
+Запускается:
+- автоматически при изменениях в `recipes/**`, `files/**`, `.github/workflows/build.yml`
+  (ветки `main` и текущая рабочая ветка);
+- по расписанию — ежедневно в 05:30 UTC (свежая база Fedora + обновления);
+- вручную: **Actions → build-framz → Run workflow**.
+
+**Особенности первой сборки:**
+- Подписи (cosign) **нет**: в репозиторий пока нельзя добавить секрет ключа, поэтому сборка идёт
+  с `BB_BUILD_NO_SIGN=true`. Включается позже, когда у проекта есть доступ к секретам:
+  ```
+  bluebuild generate-keys --output-dir .
+  # cosign.key → секрет репозитория SIGNING_SECRET, cosign.pub → в репозиторий
+  ```
+  и затем раскомментировать модуль `signing` в рецепте + убрать `BB_BUILD_NO_SIGN`.
+- ISO собирается только после успешного образа (job `iso` ждёт job `image` через `needs`).
+- Если ISO больше 1,9 ГБ, workflow режет его на части — GitHub не принимает файлы > 2 ГиБ.
 
 ## 3. Локальная проверка и сборка
 
@@ -51,15 +60,21 @@ systemctl reboot
 
 Это же — путь для миграции пользователей с других атомарных Fedora.
 
-## 5. ISO
+## 5. ISO локально (если нужен свой ISO без CI)
 
 ```bash
-bluebuild build --build-iso recipes/recipe.yml
+# собрать ISO из уже опубликованного образа (образ тянется из реестра)
+bluebuild generate-iso image ghcr.io/<владелец>/framz:latest \
+  --output-dir ./output --iso-name framz-os-1.0.iso -V kinoite
+
+# либо: собрать образ локально и сразу из него сделать ISO (долго, нужен podman)
+bluebuild generate-iso recipe recipes/recipe.yml \
+  --output-dir ./output --iso-name framz-os-1.0.iso -V kinoite
 ```
 
-⚠️ Уточнить на этапе 1: текущий синтаксис сборки ISO и возможность собирать ISO прямо в CI
-(в новых версиях BlueBuild/`bootc-image-builder` это менялось). Пока считаем, что ISO делаем
-локально или отдельным job'ом.
+Внутри используется установщик `ghcr.io/jasonn3/build-container-installer` — тот же, что в CI,
+поэтому ISO из CI и ISO, собранный руками, эквивалентны. Нужен `podman` и права root
+(контейнер запускается с `--privileged`).
 
 ## 6. Что проверять руками на каждом тесте (чек-лист)
 
