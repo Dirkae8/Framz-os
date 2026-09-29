@@ -1,0 +1,225 @@
+# FRAMZ OS на Garuda Linux — запустить прямо сейчас
+
+> Garuda — это Arch, поэтому путь другой, чем на Fedora: систему запускаем в **виртуальной машине**
+> (QEMU/KVM). Скрипт ниже сам скачает ISO, соберёт его из частей, проверит контрольные суммы
+> и запустит виртуалку. Ничего не сломает в твоей Garuda: виртуалка — это «компьютер в окне».
+>
+> **Время:** 5 минут на подготовку + скачивание (~4,3 ГБ, зависит от интернета) + 10–20 минут установка.
+> **Место:** ~5 ГБ под ISO и части + виртуальный диск (файл «разреженный»: занимает столько, сколько реально записано).
+
+---
+
+## Вариант «быстро»: 5 команд
+
+```bash
+# 1. Обновить систему (на Garuda для этого есть своя команда)
+garuda-update
+
+# 2. Поставить виртуалку и UEFI-прошивку
+sudo pacman -S --needed qemu-desktop edk2-ovmf
+
+# 3. Дать себе доступ к аппаратному ускорению
+#    ВАЖНО: после этого выйти из сессии и войти заново (или перезагрузиться)
+sudo usermod -aG kvm "$USER"
+
+# 4. Скачать наш скрипт запуска
+curl -fsSL -o ~/framz-vm.sh \
+  https://raw.githubusercontent.com/Dirkae8/Framz-os/arena/01a0ee0e-framz-os/scripts/framz-vm.sh
+chmod +x ~/framz-vm.sh
+
+# 5. Скачать ISO (с докачкой), проверить суммы и запустить виртуалку
+~/framz-vm.sh all
+```
+
+Дальше откроется окно виртуалки → см. раздел «Что делать в окне виртуалки».
+
+**Полезные флаги скрипта:**
+
+```bash
+~/framz-vm.sh all --memory 8192 --cpus 6    # если у тебя много RAM/ядер
+~/framz-vm.sh all --gl                      # включить 3D-ускорение (virtio-vga-gl)
+~/framz-vm.sh all --sound                   # звук в виртуалке (нужен qemu-audio-pipewire)
+~/framz-vm.sh all --display sdl             # если окно GTK глючит на Wayland
+~/framz-vm.sh run                           # просто запустить ещё раз (диск сохраняется)
+~/framz-vm.sh clean                         # удалить ISO, части и виртуальный диск
+```
+
+Проверить, что нужно именно тебе и что уже установлено: `~/framz-vm.sh deps`.
+
+---
+
+## Вариант «руками»: если хочется всё контролировать
+
+### 1. Пакеты
+
+```bash
+garuda-update
+sudo pacman -S --needed qemu-desktop edk2-ovmf
+sudo pacman -S --needed qemu-audio-pipewire     # необязательно: звук в ВМ
+sudo usermod -aG kvm "$USER"                    # потом выйти и войти заново
+ls -l /dev/kvm                                  # должно быть: crw-rw---- root kvm
+```
+
+Если `/dev/kvm` нет вообще — включи виртуализацию (VT-x / AMD-V / SVM) в BIOS/UEFI.
+Без неё виртуалка работает, но ужасно медленно (установка может занять часы).
+
+### 2. Скачать ISO
+
+Файлы лежат на странице релиза: <https://github.com/Dirkae8/Framz-os/releases/tag/v1.0-preview>
+ISO выложен тремя частями (GitHub не принимает файлы больше 2 ГиБ):
+
+```bash
+mkdir -p ~/framz && cd ~/framz
+BASE=https://github.com/Dirkae8/Framz-os/releases/download/v1.0-preview
+
+curl -fL -C - -O "$BASE/framz-os-1.0.iso.parts-SHA256"
+curl -fL -C - -O "$BASE/framz-os-1.0.iso.part-aa"
+curl -fL -C - -O "$BASE/framz-os-1.0.iso.part-ab"
+curl -fL -C - -O "$BASE/framz-os-1.0.iso.part-ac"
+curl -fL -C - -O "$BASE/framz-os-1.0.iso-SHA256"
+```
+
+`-C -` — докачка: если интернет оборвался, повтори команду, и curl продолжит с места обрыва.
+
+**Если скорость низкая**, можно качать в несколько потоков (одной командой поставить `aria2`):
+`sudo pacman -S --needed aria2`, затем, например,
+`aria2c -x4 -s4 -c "$BASE/framz-os-1.0.iso.part-aa"`.
+
+### 3. Собрать ISO и проверить
+
+```bash
+cd ~/framz
+cat framz-os-1.0.iso.part-* > framz-os-1.0.iso
+
+# проверка частей
+while read -r sum name; do actual=$(sha256sum "$(basename "$name")" | cut -d' ' -f1); \
+  [ "$actual" = "$sum" ] && echo "OK  $(basename "$name")" || echo "БИТО  $(basename "$name")"; done \
+  < framz-os-1.0.iso.parts-SHA256
+
+# проверка собранного ISO
+expected=$(cut -d' ' -f1 framz-os-1.0.iso-SHA256)
+actual=$(sha256sum framz-os-1.0.iso | cut -d' ' -f1)
+[ "$expected" = "$actual" ] && echo "ISO ЦЕЛЫЙ" || echo "ISO БИТЫЙ — скачай заново"
+```
+
+Ожидаемый размер: примерно 4,2 ГиБ (4294967296 байт и больше).
+
+### 4. Запустить виртуалку
+
+```bash
+~/framz-vm.sh run --iso ~/framz/framz-os-1.0.iso --dir ~/framz
+```
+
+Скрипт создаст виртуальный диск (по умолчанию 40 ГБ) и запустит QEMU с UEFI и без Secure Boot.
+Если хочется GUI-менеджер вместо командной строки — используй virt-manager (см. ниже).
+
+---
+
+## Что делать в окне виртуалки
+
+1. **Загрузка.** Появится окружение установщика Fedora в оформлении Kinoite.
+   Если увидишь рабочий стол — запусти ярлык **«Установить на жёсткий диск»**.
+2. **Язык** → `Русский` (или English — на твой вкус).
+3. **Установка destination / Хранилище.** Выбери виртуальный диск `40 GiB` (virtio).
+   Диск пустой, поэтому подойдёт **автоматическая разметка**. Подтверди удаление данных
+   на этом диске (это виртуальный диск, твои файлы в Garuda не тронуты).
+4. **Пользователь.** Создай учётку, отметь **«Сделать администратором»**, задай пароль root.
+   Шифрование диска можно включить или пропустить — в виртуалке это не критично.
+5. **Начать установку.** 10–20 минут (зависит от диска и ядер).
+6. **Перезагрузка.** Дальше система грузится уже с виртуального диска — это и есть FRAMZ OS.
+
+После перезагрузки запускай виртуалку снова той же командой `~/framz-vm.sh run`
+(порядок загрузки `диск → CD`, поэтому она сразу загрузится с диска, а не с ISO).
+
+**Честное предупреждение:** внутри виртуалки видеокарта виртуальная, поэтому производительность
+рендера/монтажа не показательная. В ВМ оценивай интерфейс, удобство и то, что нужные инструменты
+стоят и работают; для реальных творческих задач ставить лучше на железо (см. «На реальный компьютер»).
+
+## Проверить, что ты правда в FRAMZ OS
+
+Терминал внутри системы:
+
+```bash
+cat /etc/os-release | head -3                 # видно Fedora/Kinoite-базу
+rpm -q btop distrobox pipewire-jack-audio-connection-kit libwacom argyllcms
+flatpak list --app                            # Firefox, Flatseal, Warehouse
+rpm-ostree status                             # состояние системы и откаты
+```
+
+Что уже вшито в образ: RPM Fusion (кодеки), `pipewire-jack` + `qjackctl` (звук без задержек),
+`libwacom` (графические планшеты), `colord` + `argyllcms` + расширенные ICC-профили (цвет),
+шрифты JetBrains Mono и Noto, `distrobox`/`podman`, `btop`, KDE Connect, `ark`, `filelight`,
+`partitionmanager`; из Flatpak — Firefox, Flatseal, Warehouse.
+
+Чего пока нет: нашей темы, своих панели/дока/лаунчера, мастера первого запуска и магазина
+FRAMZ — рабочий стол пока штатный KDE Plasma (этапы 2–3 из `docs/VISION.md`).
+
+## Работа с системой (то, за что мы выбрали атомарную модель)
+
+Внутри виртуалки, в терминале:
+
+```bash
+rpm-ostree upgrade          # обновить систему целиком (атомарно)
+systemctl reboot            # применить обновление
+
+rpm-ostree rollback         # вернуть предыдущее состояние, если что-то не так
+rpm-ostree status           # список состояний: текущее, предыдущее, откаты
+```
+
+То есть «сломалось после обновления» лечится одной командой и перезагрузкой. Это главная причина,
+по которой FRAMZ OS собран на образах, а не на обычных пакетах.
+
+## Если что-то не работает
+
+| Симптом | Что делать |
+|---|---|
+| `target not found: qemu-desktop` / `edk2-ovmf` | Сначала `garuda-update` (устаревшие базы пакетов) |
+| «Нет /dev/kvm» | Включить VT-x/AMD-V в BIOS/UEFI; `sudo usermod -aG kvm "$USER"` и **войти заново** |
+| `Permission denied` на `/dev/kvm` | То же: группа `kvm` + повторный вход в сессию |
+| Ужасно медленно | Работает без ускорения: проверь `ls -l /dev/kvm`; не используй `--no-kvm` |
+| `No bootable device` | ISO не подключён или битый: запусти `~/framz-vm.sh run --boot cd` и проверь суммы |
+| Окно GTK не открывается / чёрное | `~/framz-vm.sh run --display sdl` (или запусти с `--gl`) |
+| Мышь «застряла» в окне | `Ctrl+Alt+G` — выпустить курсор из виртуалки |
+| Закрыть виртуалку | `Ctrl+Alt+F` или просто закрыть окно |
+| Звука в виртуалке нет | `sudo pacman -S --needed qemu-audio-pipewire` и запуск с `--sound` |
+| Скачивание оборвалось | Просто повтори команду — curl и скрипт продолжают с места обрыва |
+| «Сумма не совпала» сразу после скачивания | Возможна плановая пересборка релиза на GitHub (идёт ~25 мин): подожди полчаса и скачай снова, либо удали части (`rm -f ~/framz/framz-os-1.0.iso.part-*`) и повтори |
+| Хочу всё удалить | `~/framz-vm.sh clean`, затем `sudo pacman -Rns qemu-desktop edk2-ovmf` |
+
+## Вариант с virt-manager (если хочется GUI)
+
+```bash
+sudo pacman -S --needed virt-manager libvirt dnsmasq iptables-nft
+sudo systemctl enable --now libvirtd.socket
+sudo virsh net-start default && sudo virsh net-autostart default
+sudo usermod -aG libvirt,kvm "$USER"        # потом выйти и войти заново
+```
+
+Затем в virt-manager: **Create a new virtual machine → Local install media → выбрать ISO** →
+Linux / Fedora / Fedora 44 → 6 ГБ RAM, 4 CPU, 40 ГБ диска → в конце **Customize configuration**
+и **снять галочку Secure Boot** (ISO пока не подписан, с включённым Secure Boot система не загрузится).
+Плюс virt-manager: удобный буфер обмена и проброс USB-устройств (например, планшета) в виртуалку.
+
+## На реальный компьютер (загрузка с флешки)
+
+Понадобится свободная флешка ≥ 8 ГБ — **всё на ней будет стёрто**.
+
+```bash
+lsblk                                     # найди свою флешку, например /dev/sdb
+sudo dd if=~/framz/framz-os-1.0.iso of=/dev/sdX bs=4M status=progress oflag=sync conv=fsync
+```
+
+`of=/dev/sdX` — именно флешка, **не** раздел (`/dev/sdb`, а не `/dev/sdb1`) и не твой системный диск.
+Вместо `dd` можно взять GNOME Disks («Восстановить образ диска») или balenaEtcher — результат тот же.
+
+В BIOS/UEFI **выключи Secure Boot** и оставь загрузку UEFI. Установщик сам поставит систему на диск.
+Важно: у нас атомарная Fedora, поэтому в меню загрузчика появится её собственная запись с
+возможностью отката. Для экспериментов лучше отдельный диск или отдельная машина, чтобы не рисковать
+загрузчиком Garuda.
+
+## Ссылки
+
+- Релиз с ISO: <https://github.com/Dirkae8/Framz-os/releases/tag/v1.0-preview>
+- Общая инструкция по запуску: [`START-HERE.md`](START-HERE.md)
+- Зачем всё так устроено: [`VISION.md`](VISION.md), [`SPEC.md`](SPEC.md), [`BRAND.md`](BRAND.md)
+- Что внутри образа: [`APPS.md`](APPS.md)
