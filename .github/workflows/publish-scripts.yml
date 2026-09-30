@@ -1,0 +1,35 @@
+name: publish-scripts
+
+# Обновляет только скрипты запуска в релизах (без пересборки ISO).
+# Нужно, когда поправлен скрипт, а образ пересобирать не требуется.
+# Запуск: Actions → publish-scripts → Run workflow.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Забрать репозиторий
+        uses: actions/checkout@v4
+
+      - name: Выложить скрипты в релизы
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          cp scripts/framz-quickstart.sh scripts/framz-vm.sh scripts/framz-usb.sh /tmp/
+          for tag in v1.0-arch v1.0; do
+            if ! gh release view "$tag" >/dev/null 2>&1; then
+              echo "релиза $tag нет — пропускаю"
+              continue
+            fi
+            gh release upload "$tag" \
+              /tmp/framz-quickstart.sh /tmp/framz-vm.sh /tmp/framz-usb.sh --clobber
+            echo "скрипты обновлены в $tag"
+          done

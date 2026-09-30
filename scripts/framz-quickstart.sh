@@ -215,8 +215,14 @@ else
   if [ "$DRY_RUN" = 1 ] && [ -n "${FRAMZ_BASE_URL:-}" ]; then
     info "(в тестовом режиме скрипт не скачиваю)"
   else
-    curl -fsSL -o "$VM_SH" "$RAW_URL/scripts/framz-vm.sh" \
-      || die "не удалось скачать $RAW_URL/scripts/framz-vm.sh (проверь интернет)"
+    # Файл в релизе лежит под своим именем; путь scripts/… пробуем первым
+    # на случай, если релиз собран из дерева с каталогами.
+    ok=0
+    for u in "$RAW_URL/scripts/framz-vm.sh" "$RAW_URL/framz-vm.sh"; do
+      if curl -fsSL -o "$VM_SH" "$u" 2>/dev/null; then ok=1; break; fi
+    done
+    [ "$ok" = 1 ] || die "не удалось скачать скрипт запуска из релиза (проверь интернет)"
+    info "скрипт запуска скачан"
   fi
   chmod +x "$VM_SH" 2>/dev/null || true
 fi
