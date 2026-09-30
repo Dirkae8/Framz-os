@@ -1,9 +1,13 @@
 /* FRAMZ OS — оформление установщика. Стиль «Minimal Mono»: белый фон, чёрный акцент.
+ * Маркер для проверок в CI: FRAMZ-BRANDING-v2
  *
- * Подключается установщиком (Anaconda WebUI) через брендинг Cockpit:
- *   /usr/share/cockpit/branding/framz/branding.css
- * Цвета задаются переменными, дальше они раскладываются по токенам PatternFly —
- * так оформление работает и в светлой, и в тёмной схеме установщика.
+ * Подключается установщиком (Anaconda WebUI) как оформление Cockpit:
+ *   /usr/share/cockpit/static/branding.css
+ * а также кладётся в каталоги брендинга framz и fedora (см. iso/make-branding-template.sh).
+ *
+ * ВАЖНО: файл самодостаточный — логотип вшит как data-URI, поэтому не зависит
+ * от того, по какому пути установщик его подгружает. Генератор шаблона
+ * (iso/make-branding-template.sh) подставляет data-URI на место url("logo.png").
  */
 
 .anaconda {
@@ -14,6 +18,9 @@
 
     .logo {
         background-image: url("logo.png");
+        /* Убираем инверсию и «свечение», которые Fedora навешивает на свой знак */
+        filter: none;
+        mix-blend-mode: normal;
     }
 }
 
@@ -29,30 +36,30 @@
     --pf-t--global--color--brand--hover: var(--brand-default);
 }
 
-/* Верхняя полоса установщика: вместо чужого градиента — чистый белый
- * с тонкой линией. Знак FRAMZ тёмный, поэтому ему нужен светлый фон. */
-:not(.pf-v6-theme-dark) .anaconda .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child {
+/* Верхняя полоса установщика: у Fedora это синий градиент из встроенных стилей,
+ * поэтому перекрываем тем же селектором — наш файл подключается позже. */
+.pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child {
     --_text: #0B0B12;
     background: #FFFFFF;
     border-bottom: 1px solid #E4E4EA;
 }
 
-.pf-v6-theme-dark .anaconda .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child {
+.pf-v6-theme-dark .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child {
     --_text: #EDEDF2;
     background: #0B0B12;
     border-bottom: 1px solid #2A2A38;
 }
 
 /* Кнопка-«кебаб» наследует цвет текста полосы */
-.anaconda #toggle-kebab path {
+#toggle-kebab path {
     fill: var(--_text);
 }
 
-.anaconda #toggle-kebab:hover path {
+#toggle-kebab:hover path {
     fill: color-mix(in lch, var(--_text) 75%, transparent);
 }
 
-/* Номера шагов слева: активный шаг подчёркиваем нашим акцентом */
-html:not(.pf-v6-theme-dark) .anaconda .pf-v6-c-wizard__nav-link.pf-m-current::before {
+/* Активный шаг в списке слева подчёркиваем нашим акцентом */
+html:not(.pf-v6-theme-dark) .pf-v6-c-wizard__nav-link.pf-m-current::before {
     --pf-v6-c-wizard__nav-link--m-current--before--BackgroundColor: var(--brand-default);
 }

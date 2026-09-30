@@ -50,7 +50,11 @@ RAW="${WORK}/raw.txt"
 NORM="${WORK}/norm.txt"
 isoinfo -f -i "${ISO}" 2>/dev/null | tr -d '\r' > "${RAW}"
 sed 's/;[0-9]*$//' "${RAW}" | tr '[:upper:]' '[:lower:]' > "${NORM}"
+paste -d'\t' "${RAW}" "${NORM}" > "${WORK}/pair.txt"
 TOTAL="$(wc -l < "${NORM}")"
+
+# path_of <нормализованный путь> → путь как записан в ISO (верхний регистр, «;1»)
+path_of() { awk -F'\t' -v want="$1" '$2 == want { print $1; exit }' "${WORK}/pair.txt"; }
 echo "всего файлов на ISO: ${TOTAL}"
 echo
 
@@ -67,7 +71,7 @@ find_first() { grep -m1 -E "$1" "${NORM}" || true; }
 KERNEL="$(find_first '/vmlinuz')"
 INITRD="$(find_first '/initrd[^/]*\.img$')"
 GRUB_UEFI="$(find_first '/efi/boot/(grub\.cfg|bootx64\.efi)$')"
-ISOLINUX="$(find_first '/(isolinux|syslinux)/(isolinux|syslinux)\.cfg$')"
+ISOLINUX="$(find_first '/(isolinux|syslinux)/(isolinux|syslinux)\.(cfg|bin)$|/images/eltorito\.img$')"
 TREEINFO="$(find_first '/\.treeinfo$')"
 DISCINFO="$(find_first '/\.discinfo$')"
 for pair in "ядро:${KERNEL}" "initrd:${INITRD}" "загрузчик UEFI:${GRUB_UEFI}" "загрузчик BIOS:${ISOLINUX}" ".treeinfo:${TREEINFO}" ".discinfo:${DISCINFO}"; do
@@ -78,11 +82,11 @@ echo
 
 # ── 4. Среда установщика и наш брендинг в ней ────────────────────────────────
 echo "--- среда установщика ---"
-SQUASH="$(grep -m1 -E '\.(img|squashfs)$' "${NORM}" || true)"
+SQUASH="$(path_of '/images/install.img')"
+[ -n "${SQUASH}" ] || SQUASH="$(awk -F'\t' '$2 ~ /\/(install|squashfs)[^\/]*\.(img|squashfs)$/ { print $1; exit }' "${WORK}/pair.txt")"
 if [ -n "${SQUASH}" ]; then
-  echo "образ среды: ${SQUASH}"
-  ISO_PATH="$(grep -m1 -F "${SQUASH}" "${RAW}" | tr -d '\r')"
-  echo "путь в ISO: ${ISO_PATH}"
+  ISO_PATH="${SQUASH}"
+  echo "образ среды: ${ISO_PATH}"
   if have unsquashfs; then
     echo "распаковываю список файлов среды…"
     isoinfo -i "${ISO}" -x "${ISO_PATH}" > "${WORK}/install.img" 2>/dev/null
@@ -120,7 +124,8 @@ echo
 echo "--- наш системный образ внутри ISO ---"
 BLOBS="$(grep -c '/blobs/sha256/' "${NORM}" || true)"
 echo "слоёв (файлов blobs) найдено: ${BLOBS}"
-INDEX_IN_ISO="$(grep -m1 -E '(^|/)index\.json$' "${RAW}" | tr -d '\r' || true)"
+INDEX_IN_ISO="$(path_of '/framz/index.json')"
+[ -n "${INDEX_IN_ISO}" ] || INDEX_IN_ISO="$(awk -F'\t' '$2 ~ /(^|\/)index\.json$/ { print $1; exit }' "${WORK}/pair.txt")"
 if [ -n "${INDEX_IN_ISO}" ]; then
   echo "индекс образа: ${INDEX_IN_ISO}"
   isoinfo -i "${ISO}" -x "${INDEX_IN_ISO}" > "${WORK}/index.json" 2>/dev/null

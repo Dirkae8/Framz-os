@@ -88,56 +88,19 @@ jobs:
           bash scripts/iso-selfcheck.sh "iso/${ISO_NAME}" 2>&1 \
             | tee "ci-logs/iso-verify-${{ github.run_id }}.txt" || true
 
-      - name: "Загрузка в QEMU: снимки экрана каждые 5 минут"
+      - name: "Разбор среды установщика (оформление, настройки)"
+        shell: bash
+        run: |
+          bash scripts/iso-installer-probe.sh "iso/${ISO_NAME}" 2>&1 | tee "ci-logs/iso-probe-${{ github.run_id }}.txt" || true
+
+      - name: "Загрузка в QEMU: BIOS и UEFI, снимки экрана"
         if: ${{ github.event_name == 'push' || github.event.inputs.boot_test == 'true' }}
         shell: bash
         run: |
           set -uo pipefail
-          MINUTES="${{ github.event.inputs.boot_minutes }}"; MINUTES="${MINUTES:-20}"
-          LOG="ci-logs/iso-boot-${{ github.run_id }}.txt"
-          mkdir -p ci-logs "${HOME}/boots"
-          {
-            echo "=== Загрузка FRAMZ OS в QEMU (программная эмуляция, без KVM) ==="
-            date -u +"начало: %Y-%m-%d %H:%M UTC"
-            echo "снимки каждые 5 минут, всего ${MINUTES} мин"
-            echo "процессор: $(nproc), память: $(free -g | awk '/Mem:/{print $2}') ГБ"
-            echo
-          } > "${LOG}"
-
-          SOCK=/tmp/qemu-monitor.sock
-          rm -f "${SOCK}"
-          qemu-system-x86_64 \
-            -machine q35 -m 4096 -smp 4 -accel tcg \
-            -drive file=iso/${ISO_NAME},media=cdrom,readonly=on \
-            -boot d -display none -vnc none \
-            -monitor unix:${SOCK},server,nowait \
-            -serial file:/tmp/serial.log \
-            >/dev/null 2>&1 &
-          QPID=$!
-          echo "QEMU запущен (pid ${QPID})" | tee -a "${LOG}"
-
-          shot() { # $1 = номер снимка
-            python3 scripts/iso-qemu-shot.py "${SOCK}" "$1" 2>&1 | tee -a "${LOG}"
-          }
-
-          STEP=$((MINUTES / 5)); [ "${STEP}" -lt 1 ] && STEP=1
-          for i in $(seq 1 "${STEP}"); do
-            sleep 300
-            shot "${i}"
-            if [ -f "/tmp/boot-${i}.ppm" ]; then
-              convert "/tmp/boot-${i}.ppm" "ci-logs/iso-boot-${{ github.run_id }}-${i}.png" 2>/dev/null \
-                && echo "снимок ${i} сохранён (png)" | tee -a "${LOG}" \
-                || cp "/tmp/boot-${i}.ppm" "ci-logs/iso-boot-${{ github.run_id }}-${i}.ppm"
-            else
-              echo "снимок ${i} не получился" | tee -a "${LOG}"
-            fi
-          done
-
-          echo | tee -a "${LOG}"
-          echo "--- последние строки последовательного порта ---" | tee -a "${LOG}"
-          tail -30 /tmp/serial.log 2>/dev/null | tee -a "${LOG}" || echo "(пусто)" | tee -a "${LOG}"
-          kill ${QPID} 2>/dev/null || true
-          date -u +"окончание: %Y-%m-%d %H:%M UTC" | tee -a "${LOG}"
+          MINUTES="${{ github.event.inputs.boot_minutes }}"; MINUTES="${MINUTES:-15}"
+          bash scripts/iso-qemu-boot.sh "iso/${ISO_NAME}" bios "${MINUTES}" ci-logs "${{ github.run_id }}"
+          bash scripts/iso-qemu-boot.sh "iso/${ISO_NAME}" uefi "${MINUTES}" ci-logs "${{ github.run_id }}"
 
       - name: Сохранить отчёт и снимки в ветку ci-logs
         if: always()
