@@ -22,6 +22,14 @@
 брендинг системы (`os-release` = FRAMZ OS), творческая настройка (звук, планшеты, цвет),
 творческий набор приложений в образе, один универсальный ISO, автосборка в CI.
 
+**Arch-издание (новая база):** собирается отдельно — профиль `framz-arch/`, установщик Calamares
+в нашем оформлении, живой режим с нашим рабочим столом, меню загрузки BIOS/UEFI. Сборка:
+`.github/workflows/build-arch.yml` → релиз **v1.0-arch** (тег `v1.0-arch`). Запуск для теста:
+
+```bash
+bash -c "$(curl -fsSL https://github.com/Dirkae8/Framz-os/releases/download/v1.0-arch/framz-quickstart.sh)" --edition arch
+```
+
 **Впереди:** полностью свой набор иконок (сейчас — открытый Kora; подборка в `docs/brand/ICONS.md`),
 расширенный мастер первого запуска, подпись образов (для Secure Boot). Подробности — [`docs/VISION.md`](docs/VISION.md).
 
