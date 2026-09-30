@@ -203,6 +203,9 @@ jobs:
             exit 1
           fi
           ls -lh output/
+          # Фирменное меню загрузки ISO (пункты, фон, время ожидания).
+          # Скрипт безопасный: не справился — ISO остаётся как был.
+          bash scripts/iso-brand-boot.sh "output/${ISO_NAME}" || true
           (cd output && sha256sum "${ISO_NAME}" > "${ISO_NAME}-SHA256")
           cat "output/${ISO_NAME}-SHA256"
 

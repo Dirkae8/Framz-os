@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# FRAMZ OS — «Обновления FRAMZ»: обновление системы понятным окном.
+#
+# Показывает текущее состояние, спрашивает подтверждение, обновляет систему,
+# а если что-то пошло не так — предлагает откат. Работает поверх rpm-ostree/bootc.
+#
+# Зачем своё окно: штатное обновление в KDE говорит «обновление доступно» без
+# объяснений. Здесь видно, что произойдёт и как вернуться назад.
+set -uo pipefail
+
+TITLE="Обновления FRAMZ"
+RU=1; case "${LANG:-ru}" in en*) RU=0 ;; esac
+say() { [ "${RU}" = 1 ] && printf '%s' "$1" || printf '%s' "${2:-$1}"; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+if ! have kdialog; then
+  echo "kdialog недоступен — обновление в терминале"
+  have bootc && exec sudo bootc upgrade
+  exec sudo rpm-ostree upgrade
+fi
+
+# ── чем обновляемся ──────────────────────────────────────────────────────────
+if have bootc; then TOOL="bootc"; else TOOL="rpm-ostree"; fi
+
+state_text() {
+  if [ "${TOOL}" = "bootc" ]; then
+    bootc status 2>/dev/null | head -14
+  else
+    rpm-ostree status 2>/dev/null | head -14
+  fi
+}
+
+AUTONOMOUS="${1:-}"
+
+if [ "${AUTONOMOUS}" = "--check" ]; then
+  # тихая проверка: есть ли что обновлять (для ярлыка/уведомления)
+  if [ "${TOOL}" = "bootc" ]; then
+    out="$(bootc upgrade --check 2>&1 || true)"
+  else
+    out="$(rpm-ostree upgrade --check 2>&1 || true)"
+  fi
+  echo "${out}" | head -5
+  exit 0
+fi
+
+kdialog --title "${TITLE}" --yesno "$(say \
+"Система FRAMZ OS обновляется целиком, одним куском.
+Если после обновления что-то будет не так — вернёмся назад одной кнопкой.
+
+Текущее состояние:
+$(state_text)
+
+Обновить сейчас?" \
+"FRAMZ OS updates as a whole.
+If something goes wrong, we can roll back with one button.
+
+Current state:
+$(state_text)
+
+Update now?")" --yes-label "$(say Обновить Update)" --no-label "$(say Отмена Cancel)" || exit 0
+
+# ── обновление ───────────────────────────────────────────────────────────────
+LOG="$(mktemp)"
+if [ "${TOOL}" = "bootc" ]; then
+  kdialog --title "${TITLE}" --passivepopup "$(say "Обновляю… это несколько минут" "Updating… this takes a few minutes")" 5
+  sudo bootc upgrade > "${LOG}" 2>&1
+  rc=$?
+else
+  kdialog --title "${TITLE}" --passivepopup "$(say "Обновляю… это несколько минут" "Updating… this takes a few minutes")" 5
+  sudo rpm-ostree upgrade > "${LOG}" 2>&1
+  rc=$?
+fi
+
+if [ "${rc}" -eq 0 ]; then
+  kdialog --title "${TITLE}" --yesno "$(say \
+"Готово. Обновление скачано и подготовлено.
+Чтобы оно вступило в силу, нужна перезагрузка.
+
+Перезагрузить сейчас?" \
+"Done. The update is staged.
+A reboot is required to apply it.
+
+Reboot now?")" && systemctl reboot
+else
+  kdialog --title "${TITLE}" --yesno "$(say \
+"Обновление не удалось.
+
+Вот что сказала система:
+$(tail -8 "${LOG}")
+
+Хочешь попробовать откатить систему к прошлому состоянию?" \
+"Update failed.
+
+System said:
+$(tail -8 "${LOG}")
+
+Roll back to the previous state?")" && framz rollback
+fi
+rm -f "${LOG}"

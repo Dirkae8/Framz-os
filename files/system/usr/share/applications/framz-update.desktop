@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Обновления FRAMZ
+Name[en]=FRAMZ Updates
+GenericName=Обновление системы
+GenericName[en]=System update
+Comment=Обновить систему целиком и откатиться при проблеме
+Comment[en]=Update the whole system and roll back if needed
+Exec=framz-update
+Icon=system-software-update
+Terminal=false
+Categories=System;Settings;
+Keywords=обновление;update;откат;rollback;framz;
+StartupNotify=true

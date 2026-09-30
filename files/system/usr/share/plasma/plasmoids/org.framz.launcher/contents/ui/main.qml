@@ -52,6 +52,8 @@ PlasmoidItem {
         { "name": "Терминал",         "nameEn": "Terminal",     "icon": "utilities-terminal", "app": "org.kde.konsole.desktop",     "tab": "system" },
         { "name": "Архивы",           "nameEn": "Archives",     "icon": "ark",            "app": "org.kde.ark.desktop",              "tab": "system" },
         { "name": "Профиль нагрузки", "nameEn": "Performance",  "icon": "speedometer",    "app": "framz-tune.desktop",               "tab": "system" },
+        { "name": "Обновления FRAMZ", "nameEn": "FRAMZ Updates", "icon": "system-software-update", "app": "framz-update.desktop",      "tab": "system" },
+        { "name": "Справка FRAMZ",    "nameEn": "FRAMZ Help",   "icon": "help-contents",  "app": "framz-help.desktop",               "tab": "system" },
         { "name": "Первый запуск",    "nameEn": "First run",    "icon": "framz-logo",     "app": "framz-welcome.desktop",            "tab": "system" }
     ]
 

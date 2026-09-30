@@ -1,0 +1,20 @@
+# FRAMZ OS — поведение окон и эффектов.
+# Цель: система ощущается быстрее. Анимации короче обычных (не выключаем совсем —
+# без них переходы «дёргаются»), приоритет отдан отзывчивости окон.
+
+[Compositing]
+AnimationDurationFactor=0.6
+LatencyPolicy=Low
+MaxFPS=0
+
+[KDE]
+AnimationDurationFactor=0.6
+
+[Plugins]
+# Полезные для работы эффекты оставляем, тяжёлые «красивости» — выключаем
+blurEnabled=true
+contrastEnabled=false
+translucencyEnabled=false
+wobblywindowsEnabled=false
+magiclampEnabled=false
+slidingpopupsEnabled=true

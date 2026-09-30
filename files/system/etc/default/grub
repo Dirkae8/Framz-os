@@ -1,0 +1,13 @@
+# FRAMZ OS — настройки загрузчика GRUB.
+#
+# Здесь мы включаем СВОЮ тему загрузчика: тёмный фон, знак FRAMZ, наши пункты.
+# Сам файл /boot/grub2/grub.cfg собирается скриптом framz-grub-theme при первом
+# запуске системы (и повторно — если тему перезапишет обновление).
+
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="FRAMZ OS"
+GRUB_THEME="/boot/grub2/themes/framz/theme.txt"
+GRUB_TERMINAL_OUTPUT="gfxterm"
+GRUB_GFXMODE="auto"
+GRUB_DISABLE_SUBMENU="true"
+GRUB_DISABLE_OS_PROBER="true"

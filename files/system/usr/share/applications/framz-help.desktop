@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Справка FRAMZ
+Name[en]=FRAMZ Help
+GenericName=Справка по системе
+GenericName[en]=System help
+Comment=Что где лежит: программы, обновления, настройки, профили
+Comment[en]=Where things are: apps, updates, settings, profiles
+Exec=framz-help
+Icon=help-contents
+Terminal=false
+Categories=System;Documentation;
+Keywords=справка;помощь;help;framz;
+StartupNotify=true

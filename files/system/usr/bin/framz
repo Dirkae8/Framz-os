@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# FRAMZ OS — одна команда для всего.
+#
+# Что умеет:
+#   framz help              — эта справка
+#   framz status            — что за система, профиль нагрузки, состояние обновлений
+#   framz tune [профиль]    — профили под задачи: balanced | game | dev | studio
+#   framz update            — обновить систему (окно с понятными кнопками)
+#   framz rollback          — вернуться к прошлому состоянию системы
+#   framz help-me           — справка «что где лежит» в нашей системе
+#   framz version           — версия системы
+set -uo pipefail
+
+RU=1; case "${LANG:-ru}" in en*) RU=0 ;; esac
+say() { [ "${RU}" = 1 ] && echo "$1" || echo "${2:-$1}"; }
+
+case "${1:-help}" in
+  help|-h|--help)
+    cat <<'EOF'
+FRAMZ OS — команды (одна команда для всего)
+
+  framz status            что за система, профиль нагрузки, обновления
+  framz tune game         профиль под игры (планировщик, приоритеты, звук)
+  framz tune dev          профиль под разработку
+  framz tune studio       профиль под творчество (малая задержка звука)
+  framz tune balanced     обычный режим
+  framz update            обновить систему (окно с кнопками)
+  framz rollback          откатить систему к прошлому состоянию
+  framz help-me           справка: что где лежит
+  framz version           версия системы
+
+Полная справка по профилям: framz-tune --help
+EOF
+    ;;
+
+  status)
+    echo "=== FRAMZ OS ==="
+    grep -E '^(NAME|VERSION|PRETTY_NAME)=' /etc/os-release 2>/dev/null | sed 's/^/  /'
+    echo
+    echo "=== Профиль нагрузки ==="
+    if [ -r /var/lib/framz/profile ]; then
+      echo "  сейчас: $(cat /var/lib/framz/profile)"
+    else
+      echo "  сейчас: balanced (по умолчанию)"
+    fi
+    echo
+    echo "=== Состояние системы ==="
+    if command -v rpm-ostree >/dev/null 2>&1; then
+      rpm-ostree status 2>/dev/null | head -12 | sed 's/^/  /'
+    elif command -v bootc >/dev/null 2>&1; then
+      bootc status 2>/dev/null | head -12 | sed 's/^/  /'
+    fi
+    ;;
+
+  tune)
+    shift
+    exec framz-tune "${@:-balanced}"
+    ;;
+
+  update)
+    if command -v framz-update >/dev/null 2>&1; then
+      exec framz-update
+    fi
+    say "нет окна обновления — обновляю в терминале" "no update window — updating in terminal"
+    if command -v bootc >/dev/null 2>&1; then
+      exec sudo bootc upgrade
+    fi
+    exec sudo rpm-ostree upgrade
+    ;;
+
+  rollback)
+    say "возвращаю прошлое состояние системы" "rolling back to the previous system state"
+    if command -v rpm-ostree >/dev/null 2>&1; then
+      sudo rpm-ostree rollback && say "готово. Перезагрузи систему: systemctl reboot" "done. Reboot: systemctl reboot"
+    else
+      say "откат доступен только на системах с rpm-ostree/bootc" "rollback is only available on rpm-ostree/bootc systems"
+    fi
+    ;;
+
+  help-me)
+    exec framz-help
+    ;;
+
+  version)
+    grep -E '^PRETTY_NAME=' /etc/os-release 2>/dev/null | cut -d'"' -f2 || echo "FRAMZ OS"
+    ;;
+
+  *)
+    say "не знаю команду «$1». Попробуй: framz help" "unknown command '$1'. Try: framz help"
+    exit 1
+    ;;
+esac

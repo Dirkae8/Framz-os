@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# FRAMZ OS — включает нашу тему загрузчика GRUB.
+#
+# Что делает:
+#   1. копирует тему из /usr/share/grub/themes/framz в /boot/grub2/themes/framz
+#      (GRUB читает файлы только со своего раздела, поэтому копия обязательна);
+#   2. собирает новый /boot/grub2/grub.cfg;
+#   3. подменяет рабочий конфиг ТОЛЬКО если новый собрался и в нём есть пункты
+#      загрузки — иначе оставляет всё как было (система обязана загружаться).
+#
+# Запускается один раз при первом входе (systemd-юнит framz-grub-theme.service).
+set -uo pipefail
+
+THEME_SRC="/usr/share/grub/themes/framz"
+THEME_DST="/boot/grub2/themes/framz"
+GRUB_CFG="/boot/grub2/grub.cfg"
+MARK="/var/lib/framz/grub-themed"
+
+log() { echo "framz-grub-theme: $*"; }
+
+# Уже применено и тема на месте — выходим быстро
+if [ -f "${MARK}" ] && [ -f "${GRUB_CFG}" ] && grep -q "themes/framz" "${GRUB_CFG}" 2>/dev/null; then
+  exit 0
+fi
+
+[ -d /boot/grub2 ] || { log "нет /boot/grub2 — не GRUB-система, пропускаю"; exit 0; }
+[ -f "${THEME_SRC}/theme.txt" ] || { log "нет нашей темы — пропускаю"; exit 0; }
+
+# 1. тема внутри /boot
+mkdir -p "${THEME_DST}"
+cp -f "${THEME_SRC}"/* "${THEME_DST}/" 2>/dev/null || true
+
+# 2. сборка конфига
+NEW="$(mktemp /boot/grub2/grub.cfg.new.XXXXXX)" || exit 0
+if command -v grub2-mkconfig >/dev/null 2>&1; then
+  grub2-mkconfig -o "${NEW}" >/dev/null 2>&1 || true
+elif command -v grub-mkconfig >/dev/null 2>&1; then
+  grub-mkconfig -o "${NEW}" >/dev/null 2>&1 || true
+else
+  log "нет grub2-mkconfig — оставляю как есть"
+  rm -f "${NEW}"
+  exit 0
+fi
+
+# 3. проверка перед подменой: конфиг непустой и содержит пункты загрузки
+if [ -s "${NEW}" ] && grep -q "menuentry" "${NEW}"; then
+  [ -f "${GRUB_CFG}" ] && cp -f "${GRUB_CFG}" "${GRUB_CFG}.framz-backup" 2>/dev/null || true
+  mv -f "${NEW}" "${GRUB_CFG}"
+  mkdir -p "$(dirname "${MARK}")"
+  date -u +"тема применена: %Y-%m-%d %H:%M UTC" > "${MARK}"
+  log "тема FRAMZ включена"
+else
+  log "новый конфиг пустой или без пунктов — оставляю прежний (система загрузится)"
+  rm -f "${NEW}"
+fi

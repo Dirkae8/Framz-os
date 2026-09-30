@@ -4,10 +4,19 @@
 # (наш фирменный элемент), которые загораются по мере загрузки. Никаких надписей —
 # система загружается молча и аккуратно.
 #
+# Дополнительно:
+#   · пароль для шифрованного диска (LUKS) — тот же стиль, спокойный текст;
+#   · выключение и перезагрузка — только знак, без «прогресса»;
+#   · сообщения системы не показываем (экран должен оставаться чистым).
+#
 # Все вызовы только из базового API Plymouth Script: Sprite/Image/Window/Plymouth.
 
+# ── режим: загрузка / выключение / перезагрузка ──────────────────────────────
+mode = Plymouth.GetMode();
+is_boot = (mode == "boot");
+
 # ── фон ──────────────────────────────────────────────────────────────────────
-# #0B0B12 = (11, 18, 18)/255 → (0.043, 0.043, 0.071)
+# #0B0B12 = (11, 11, 18)/255 → (0.043, 0.043, 0.071)
 Window.SetBackgroundTopColor(0.043, 0.043, 0.071);
 Window.SetBackgroundBottomColor(0.024, 0.024, 0.043);
 
@@ -29,14 +38,77 @@ row_y = Window.GetHeight() / 2 + 60;
 
 progress = 0.0;
 phase = 0.0;
+ticks_visible = is_boot;
 
 for (i = 0; i < TICKS; i++) {
     sprite = Sprite(tick_image);
     sprite.SetX(row_x + i * (tick_width + TICK_GAP));
     sprite.SetY(row_y);
     sprite.SetZ(10);
-    sprite.SetOpacity(0.15);
+    sprite.SetOpacity(is_boot ? 0.15 : 0.0);
     tick_sprites[i] = sprite;
+}
+
+# ── текст: пароль и сообщения системы ────────────────────────────────────────
+text_y = Window.GetHeight() / 2 + 140;
+
+password_prompt_sprite = Sprite();
+password_prompt_sprite.SetZ(30);
+password_prompt_sprite.SetOpacity(0.0);
+
+password_bullets_sprite = Sprite();
+password_bullets_sprite.SetZ(31);
+password_bullets_sprite.SetOpacity(0.0);
+
+message_sprite = Sprite();
+message_sprite.SetZ(30);
+message_sprite.SetOpacity(0.0);
+
+fun center_sprite(sprite, image, offset)
+{
+    sprite.SetImage(image);
+    sprite.SetX(Window.GetWidth() / 2 - image.GetWidth() / 2);
+    sprite.SetY(text_y + offset);
+    sprite.SetOpacity(1.0);
+}
+
+# Пароль для расшифровки диска: тот же монохром, крупный спокойный текст.
+fun password_display_callback(prompt, bullets)
+{
+    # Пока спрашивают пароль, «прогресс» не нужен — прячем метки
+    for (i = 0; i < TICKS; i++)
+        tick_sprites[i].SetOpacity(0.0);
+
+    prompt_image = Image.Text(prompt, 0.88, 0.88, 0.94, 1.0);
+    center_sprite(password_prompt_sprite, prompt_image, 0);
+
+    dots = "";
+    for (i = 0; i < bullets; i++)
+        dots = dots + "•";
+    if (bullets == 0)
+        dots = " ";
+    dots_image = Image.Text(dots, 1.0, 1.0, 1.0, 1.0);
+    center_sprite(password_bullets_sprite, dots_image, 36);
+}
+
+fun password_answer_callback(answer)
+{
+    password_prompt_sprite.SetOpacity(0.0);
+    password_bullets_sprite.SetOpacity(0.0);
+}
+
+# Системные сообщения: показываем редко и коротко (например «проверка диска»).
+fun message_callback(text)
+{
+    if (text == "") {
+        message_sprite.SetOpacity(0.0);
+        return;
+    }
+    message_image = Image.Text(text, 0.62, 0.62, 0.70, 1.0);
+    message_sprite.SetImage(message_image);
+    message_sprite.SetX(Window.GetWidth() / 2 - message_image.GetWidth() / 2);
+    message_sprite.SetY(Window.GetHeight() / 2 + 190);
+    message_sprite.SetOpacity(1.0);
 }
 
 # ── отрисовка: тики до текущего прогресса светятся ───────────────────────────
@@ -47,6 +119,10 @@ fun refresh_callback()
     if (phase > 6.2832)
         phase = phase - 6.2832;
     pulse = 0.15 + 0.10 * Math.Sin(phase);
+
+    # при выключении и перезагрузке никакого «прогресса» — только знак
+    if (!ticks_visible)
+        return;
 
     lit = Math.Int(progress * TICKS);
     for (i = 0; i < TICKS; i++) {
@@ -64,13 +140,9 @@ fun boot_progress_callback(duration, progress_value)
     progress = progress_value;
 }
 
-fun message_callback(text)
-{
-    # Сообщения ядра не показываем: экран должен оставаться чистым.
-    # Если понадобится диагностика — раскомментируй печать ниже.
-    # print("FRAMZ plymouth: " + text);
-}
-
+# ── подключение колбэков ─────────────────────────────────────────────────────
 Plymouth.SetRefreshFunction(refresh_callback);
 Plymouth.SetBootProgressFunction(boot_progress_callback);
-Plymouth.SetMessageFunction(message_callback);
+Plymouth.SetDisplayPasswordFunction(password_display_callback);
+Plymouth.SetPasswordFunction(password_answer_callback);
+Plymouth.SetDisplayMessageFunction(message_callback);

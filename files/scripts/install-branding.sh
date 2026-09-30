@@ -47,7 +47,7 @@ fi
 
 # ── 3. Службы, которые должны работать «из коробки» ─────────────────────────
 # Включаем офлайн (в образе), чтобы у человека ничего не требовалось запускать руками.
-for unit in irqbalance.service gamemoded.service; do
+for unit in irqbalance.service gamemoded.service framz-grub-theme.service; do
   if systemctl enable "${unit}" >/dev/null 2>&1; then
     echo "▸ FRAMZ: служба включена — ${unit}"
   elif [ -f "/usr/lib/systemd/system/${unit}" ]; then
@@ -58,6 +58,13 @@ for unit in irqbalance.service gamemoded.service; do
     echo "▸ FRAMZ: служба включена вручную — ${unit}"
   fi
 done
+
+# Тема загрузчика GRUB: копию темы кладём сразу (юнит при первом запуске соберёт grub.cfg)
+if [ -d /usr/share/grub/themes/framz ] && [ -d /boot/grub2 ]; then
+  mkdir -p /boot/grub2/themes/framz 2>/dev/null || true
+  cp -f /usr/share/grub/themes/framz/* /boot/grub2/themes/framz/ 2>/dev/null && \
+    echo "▸ FRAMZ: тема загрузчика подготовлена (framz)" || true
+fi
 
 # Экран загрузки: выбираем наш Plymouth-тему (и обновляем initramfs, если инструмент есть)
 if command -v plymouth-set-default-theme >/dev/null 2>&1 && [ -d /usr/share/plymouth/themes/framz ]; then
