@@ -89,11 +89,11 @@ jobs:
             | tee "ci-logs/iso-verify-${{ github.run_id }}.txt" || true
 
       - name: Загрузка в QEMU: снимки экрана каждые 5 минут
-        if: ${{ inputs.boot_test == true || github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' || github.event.inputs.boot_test == 'true' }}
         shell: bash
         run: |
           set -uo pipefail
-          MINUTES="${{ inputs.boot_minutes }}"; MINUTES="${MINUTES:-20}"
+          MINUTES="${{ github.event.inputs.boot_minutes }}"; MINUTES="${MINUTES:-20}"
           LOG="ci-logs/iso-boot-${{ github.run_id }}.txt"
           mkdir -p ci-logs "${HOME}/boots"
           {
