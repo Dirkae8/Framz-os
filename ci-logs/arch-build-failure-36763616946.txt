@@ -1,0 +1,83 @@
+=== сборка Arch-издания: сбой ===
+время: 2026-09-30 19:12 UTC
+
+    libxau: required by floppyd
+installing lzo...
+installing squashfs-tools...
+installing archiso...
+Optional dependencies for archiso
+    edk2-ovmf: for emulating UEFI with run_archiso
+    gnupg: for OpenPGP signature verification of rootfs over PXE [installed]
+    grub: for grub support in the ISO [pending]
+    openssl: for CMS signature verification of PXE artifacts and rootfs over PXE [installed]
+    qemu-desktop: for run_archiso
+installing grub...
+:: Install your bootloader and generate configuration with:
+     # grub-install ...
+     # grub-mkconfig -o /boot/grub/grub.cfg
+Optional dependencies for grub
+    dosfstools: For grub-mkrescue FAT FS and EFI support [installed]
+    efibootmgr: For grub-install EFI support
+    freetype2: For grub-mkfont usage
+    fuse3: For grub-mount usage
+    libisoburn: Provides xorriso for generating grub rescue iso using grub-mkrescue [installed]
+    libusb: For grub-emu USB support [installed]
+    lzop: For grub-mkrescue LZO support
+    mtools: For grub-mkrescue FAT FS support [installed]
+    os-prober: To detect other OSes when generating grub.cfg in BIOS systems
+    sdl: For grub-emu SDL support
+installing db5.3...
+installing perl...
+installing perl-error...
+installing perl-timedate...
+installing perl-mailtools...
+installing zlib-ng...
+installing git...
+Optional dependencies for git
+    git-zsh-completion: upstream zsh completion
+    tk: gitk and git gui
+    openssh: ssh transport and crypto
+    man: show help with `git command --help`
+    perl-libwww: git svn
+    perl-term-readkey: git svn and interactive.singlekey setting
+    perl-io-socket-ssl: git send-email TLS support
+    perl-authen-sasl: git send-email TLS support
+    perl-cgi: gitweb (web interface) support
+    python: git svn & git p4
+    subversion: git svn
+    org.freedesktop.secrets: keyring credential helper
+    libsecret: libsecret credential helper [installed]
+    less: the default pager for git
+:: Running post-transaction hooks...
+(1/4) Creating system user accounts...
+Creating group 'git' with GID 969.
+Creating user 'git' (git daemon user) with UID 969 and GID 969.
+(2/4) Reloading system manager configuration...
+  Skipped: Current root is not booted.
+(3/4) Arming ConditionNeedsUpdate...
+(4/4) Checking for old perl modules...
+=== собираем содержимое ISO (airootfs) ===
+▸ FRAMZ OS: сборка airootfs
+  · наши файлы системы: 47
+  · живой режим и установщик добавлены
+  · живого пользователя создали: framz
+  · службы включены: 5
+  · иконки Kora: добавлены
+  · знак установщика на месте: да
+▸ airootfs готов: 9906 файлов, 45M
+=== проверяем, какие пакеты есть в репозиториях Arch ===
+  пропускаю (нет в Arch): libva-mesa-driver
+  пропускаю (нет в Arch): plasma-wayland-session
+  пропускаю (нет в Arch): calamares
+пакетов к установке: 71
+=== собираем ISO (долго: ставим пакеты и сжимаем систему) ===
+[mkarchiso] INFO: Validating options...
+[mkarchiso] WARNING: The 'bios.syslinux.mbr' boot mode is deprecated. Use 'bios.syslinux' instead.
+[mkarchiso] ERROR: Validating 'bios.syslinux.mbr': The 'syslinux' package is missing from the package list!
+[mkarchiso] INFO: Validating 'bios.syslinux.mbr': 'memtest86+' is not in the package list. Memmory testing will not be available from syslinux.
+[mkarchiso] WARNING: The 'bios.syslinux.eltorito' boot mode is deprecated. Use 'bios.syslinux' instead.
+[mkarchiso] WARNING: The 'uefi-x64.grub.esp' boot mode is deprecated. Use 'uefi.grub' instead.
+[mkarchiso] INFO: 'edk2-shell' is not in the package list. The ISO will not contain a bootable UEFI shell.
+[mkarchiso] INFO: Validating 'uefi-x64.grub.esp': 'memtest86+-efi' is not in the package list. Memory testing will not be available from the UEFI boot loader.
+[mkarchiso] WARNING: The 'uefi-x64.grub.eltorito' boot mode is deprecated. Use 'uefi.grub' instead.
+[mkarchiso] ERROR: 1 errors were encountered while validating the profile. Aborting.
