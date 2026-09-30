@@ -79,6 +79,28 @@ jobs:
               echo "=== собираем ISO (долго: ставим пакеты и сжимаем систему) ==="
               mkdir -p /repo/out
               mkarchiso -v -w /tmp/framz-work -o /repo/out /repo/framz-arch
+
+              # --- проверяем, что образ получился пригодным для загрузки ---
+              ISO_FILE=$(ls /repo/out/*.iso | head -1)
+              echo "=== проверяем собранный образ ==="
+              echo "файл: ${ISO_FILE} ($(stat -c%s "${ISO_FILE}") байт)"
+              if xorriso -indev "${ISO_FILE}" -find /arch/x86_64/airootfs.sfs 2>/dev/null | grep -q airootfs.sfs; then
+                echo "· система на флешке внутри образа: есть"
+              else
+                echo "! в образе нет /arch/x86_64/airootfs.sfs — такую флешку не поставить"
+                exit 1
+              fi
+              echo "· содержимое /arch/boot:"; xorriso -indev "${ISO_FILE}" -find /arch/boot -maxdepth 2 2>/dev/null | head -8 || true
+              echo "· загрузочные записи:"; xorriso -indev "${ISO_FILE}" -report_el_torito plain 2>/dev/null | head -4 || true
+              echo "· файлы UEFI:"; xorriso -indev "${ISO_FILE}" -find /EFI -maxdepth 3 2>/dev/null | head -6 || true
+              mkdir -p /tmp/framz-check
+              if xorriso -osirrox on -indev "${ISO_FILE}" -extract /arch/boot/syslinux/syslinux.cfg /tmp/framz-check/ 2>/dev/null; then
+                if grep -q "Установить FRAMZ OS" /tmp/framz-check/syslinux.cfg; then
+                  echo "· меню загрузки: наши пункты на месте"
+                else
+                  echo "! в меню загрузки нет пункта установки FRAMZ OS"
+                fi
+              fi
             ' 2>&1 | tee out/arch-build.log
           echo "код возврата сборки: ${PIPESTATUS[0]}"
 
