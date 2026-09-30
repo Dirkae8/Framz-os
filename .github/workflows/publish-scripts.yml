@@ -2,7 +2,7 @@ name: publish-scripts
 
 # Обновляет только скрипты запуска в релизах (без пересборки ISO).
 # Нужно, когда поправлен скрипт, а образ пересобирать не требуется.
-# Запуск: Actions → publish-scripts → Run workflow.
+# Запуск: Actions → publish-scripts → Run workflow (или любое изменение этого файла).
 
 on:
   workflow_dispatch:
