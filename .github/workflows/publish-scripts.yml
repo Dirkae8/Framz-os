@@ -6,6 +6,12 @@ name: publish-scripts
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - arena/01a0ee0e-framz-os
+    paths:
+      - ".github/workflows/publish-scripts.yml"
 
 permissions:
   contents: write
