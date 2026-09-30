@@ -1,0 +1,41 @@
+=== FRAMZ OS — самопроверка ISO ===
+время: 2026-09-30 09:18 UTC
+файл: output/framz-os-1.0.iso
+размер: 4554424320 байт
+
+--- параметры ISO ---
+System id: 
+Volume id: FRAMZ_OS_1
+Volume set id: 
+Publisher id: 
+Data preparer id: XORRISO-1.5.8 2026.05.22.150001, LIBISOBURN-1.5.8, LIBISOFS-1.5.8, LIBBURN-1.5.8
+Logical block size is: 2048
+
+метка тома: 'FRAMZ_OS_1'
+ВЕРНО  метка содержит FRAMZ
+
+--- файлы загрузки ISO ---
+НЕТ    /images/install.img
+НЕТ    /images/pxeboot/vmlinuz
+НЕТ    /images/pxeboot/initrd.img
+НЕТ    /.treeinfo
+НЕТ    /isolinux/isolinux.cfg
+НЕТ    /EFI/BOOT/grub.cfg
+
+всего файлов на ISO: 602
+
+--- верхний уровень ISO ---
+/.DISCINFO;1
+/BOOT
+/EFI
+/FEDORA_LEGAL_README.TXT;1
+/FRAMZ
+/IMAGES
+/LICENSE.;1
+
+на ISO нет /images/install.img — структура необычная
+
+--- наш системный образ внутри ISO ---
+в ISO не найден index.json (OCI) — возможно, другая структура
+
+=== ИТОГ: замечаний 8 ===
