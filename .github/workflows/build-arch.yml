@@ -47,15 +47,17 @@ jobs:
       - name: Собрать ISO в контейнере Arch
         shell: bash
         run: |
-          set -euo pipefail
+          set -o pipefail
           mkdir -p out
           # Сборка целиком внутри Arch: archiso ставит пакеты, собирает squashfs и ISO.
+          # Весь вывод пишем в файл — если что-то упадёт, он сохранится в ci-logs.
           sudo docker run --privileged --rm \
             --volume "$PWD:/repo" --workdir /repo \
             archlinux:latest bash -c '
-              set -euo pipefail
-              echo "=== обновляем базы пакетов ==="
-              pacman -Sy --noconfirm --needed archiso git curl which >/dev/null
+              set -eo pipefail
+              echo "=== обновляем базы пакетов и ключи ==="
+              pacman -Sy --noconfirm archlinux-keyring
+              pacman -S --noconfirm --needed archiso grub dosfstools mtools squashfs-tools libisoburn git curl
 
               echo "=== собираем содержимое ISO (airootfs) ==="
               bash framz-arch/prepare.sh
@@ -77,11 +79,36 @@ jobs:
               echo "=== собираем ISO (долго: ставим пакеты и сжимаем систему) ==="
               mkdir -p /repo/out
               mkarchiso -v -w /tmp/framz-work -o /repo/out /repo/framz-arch
-            '
+            ' 2>&1 | tee out/arch-build.log
+          echo "код возврата сборки: ${PIPESTATUS[0]}"
 
       - name: Показать результат
+        if: always()
         shell: bash
-        run: ls -lh out/ && du -sh out/ || true
+        run: |
+          ls -lh out/ 2>/dev/null || true
+          du -sh out/ 2>/dev/null || true
+          echo "=== последние строки сборки ==="
+          tail -40 out/arch-build.log 2>/dev/null || echo "(лога нет)"
+
+      - name: Сохранить лог сборки при сбое
+        if: failure()
+        shell: bash
+        run: |
+          mkdir -p ci-logs
+          { echo "=== сборка Arch-издания: сбой ==="
+            date -u +"время: %Y-%m-%d %H:%M UTC"
+            echo
+            tail -80 out/arch-build.log 2>/dev/null || echo "(лог пуст)"
+          } > "ci-logs/arch-build-failure-${{ github.run_id }}.txt"
+          git config user.name "framz-ci"
+          git config user.email "ci@framz.local"
+          git add -f ci-logs
+          git commit -m "ci: лог сбоя сборки Arch-издания (${{ github.run_id }})" || true
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" >/dev/null 2>&1 || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" >/dev/null 2>&1 && break || sleep 5
+          done
 
       - name: Опубликовать ISO в релизе
         shell: bash
