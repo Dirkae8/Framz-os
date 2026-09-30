@@ -1,4 +1,4 @@
-# Что именно «наше» в FRAMZ OS 1.0 (preview)
+# Что именно «наше» в FRAMZ OS 1.0
 
 > Прямой ответ на вопрос «что сейчас изменено в системе». Источник правды — файлы репозитория:
 > [`recipes/recipe.yml`](../recipes/recipe.yml) (что ставим) и [`files/system/`](../files/system/) (что кладём).
@@ -26,7 +26,18 @@
 | **Шрифты по умолчанию**: Noto Sans в интерфейсе, JetBrains Mono в терминале | `.../contents/defaults` |
 | **18 пакетов** под творчество (звук, планшеты, цвет, утилиты, контейнеры) | `recipes/recipe.yml` |
 | **3 Flatpak-приложения** (Firefox, Flatseal, Warehouse) + Flathub | `recipes/recipe.yml` |
-| **Настройки ядра** под низкую задержку и большие проекты | `/etc/sysctl.d/90-framz.conf` |
+| **Настройки ядра** под низкую задержку и большие проекты | `/etc/sysctl.d/99-framz.conf` |
+| **Меню загрузки ISO** (пункты «Установить FRAMZ OS», фон, цвета) | `scripts/iso-brand-boot.sh` |
+| **Тема загрузчика GRUB** + сборка конфига при первом запуске | `/usr/share/grub/themes/framz/`, юнит `framz-grub-theme.service` |
+| **Экран загрузки**: знак, метки, пароль шифрованного диска, спокойное выключение | `/usr/share/plymouth/themes/framz/` |
+| **Экран входа** (SDDM) | `/usr/share/sddm/themes/framz/`, `/etc/sddm.conf.d/10-framz.conf` |
+| **Свой лаунчер** в панели (Творчество · Медиа · Система) | `/usr/share/plasma/plasmoids/org.framz.launcher/` |
+| **Профили нагрузки**: `framz-tune game\|dev\|studio` | `/usr/bin/framz-tune`, профиль пишется в `/var/lib/framz/profile` |
+| **Одна команда `framz`**: status, tune, update, rollback, help-me | `/usr/bin/framz` |
+| **Окно «Обновления FRAMZ»** с точкой отката | `/usr/bin/framz-update` + ярлык в меню |
+| **Справка «что где лежит»** | `/usr/bin/framz-help` + ярлык в меню |
+| **Терминал**: наш профиль и раскраска по умолчанию | `/usr/share/konsole/Framz.profile`, `/etc/xdg/konsolerc` |
+| **Быстрые окна и эффекты** (короткие анимации, низкая задержка) | `/etc/xdg/kwinrc` |
 
 ### Один образ для всех устройств
 
@@ -125,7 +136,15 @@ Krita, Inkscape, GIMP, Blender, darktable, Kdenlive, Ardour, OBS и осталь
 | Файл | Что внутри и зачем |
 |---|---|
 | `/etc/sysctl.d/90-framz.conf` | настройки ядра под творческие задачи: `vm.swappiness = 10` (меньше свопинга на большом проекте), `vm.max_map_count = 1048576` (нужно тяжёлым 3D-приложениям и Wine), `kernel.sched_rt_runtime_us = 950000` (realtime-приоритеты для PipeWire/JACK — запись без «щелчков»), `kernel.sched_autogroup_enabled = 0` (предсказуемая отзывчивость под нагрузкой), `vm.dirty_ratio = 10` / `dirty_background_ratio = 5` (меньше «залипаний» при записи больших файлов), `vm.vfs_cache_pressure = 50` (агрессивнее держит кэш — быстрее повторное открытие проектов) |
-| `/usr/share/framz/branding/README.md` | папка под будущий брендинг (логотип, обои, иконки, курсоры, звуки). Сейчас — только описание-заглушка |
+| `/usr/share/framz/branding/README.md` | папка под будущий брендинг (логотип, обои, иконки, курсоры, звуки) |
+| `/etc/default/grub` | включаем нашу тему загрузчика: `GRUB_THEME=/boot/grub2/themes/framz/theme.txt`, `GRUB_DISTRIBUTOR="FRAMZ OS"`, ожидание 5 секунд |
+| `/usr/bin/framz-grub-theme` | копирует тему в `/boot`, собирает `grub.cfg` и подменяет рабочий конфиг **только если новый собрался и содержит пункты загрузки** (иначе всё остаётся как было) |
+| `/usr/bin/framz` | одна команда: `framz status`, `framz tune game`, `framz update`, `framz rollback`, `framz help-me` |
+| `/usr/bin/framz-update` | окно обновления: показывает состояние системы, обновляет, предлагает откат при ошибке |
+| `/usr/bin/framz-help` | справка: где программы, как обновляться, что делать если сломалось |
+| `/etc/xdg/kwinrc` | короткие анимации (0.6), низкая задержка отрисовки, тяжёлые эффекты выключены — система ощущается быстрее |
+| `/usr/share/konsole/Framz.profile`, `FRAMZ.colorscheme` | терминал в нашей палитре, профиль по умолчанию |
+| `/etc/xdg/autostart/framz-welcome.desktop` | окно первого запуска (выбор темы, проверка железа, ссылки) |
 
 ## Что мы сознательно НЕ меняли
 
