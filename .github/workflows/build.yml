@@ -14,6 +14,8 @@ on:
     paths:
       - "recipes/**"
       - "files/**"
+      - "iso/**"
+      - "scripts/**"
       - ".github/workflows/build.yml"
   schedule:
     - cron: "30 5 * * *"
@@ -38,6 +40,12 @@ jobs:
   # ===========================================================================
   image:
     name: Образ FRAMZ OS
+    # Сборка НЕ запускается, если в сообщении коммита есть [skip ci] —
+    # так обычные правки кода не тратят время. Собрать: коммит без [skip ci]
+    # или кнопка Actions -> build-framz -> Run workflow.
+    if: >-
+      github.event_name != 'push'
+      || !contains(github.event.head_commit.message, '[skip ci]')
     runs-on: ubuntu-latest
     permissions:
       contents: write   # нужно, чтобы при сбое сохранять логи в ci-logs/
@@ -106,6 +114,9 @@ jobs:
   iso:
     name: ISO FRAMZ OS
     needs: image
+    if: >-
+      github.event_name != 'push'
+      || !contains(github.event.head_commit.message, '[skip ci]')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -118,6 +129,10 @@ jobs:
         uses: jlumbroso/free-disk-space@v1.3.1
         with:
           tool-cache: true
+
+      - name: Собрать оформление установщика (наш шаблон для lorax)
+        shell: bash
+        run: bash iso/make-branding-template.sh iso/framz-branding.tmpl
 
       - name: Определить тег образа в реестре
         id: tag
@@ -158,6 +173,7 @@ jobs:
           sudo docker run --privileged --rm \
             --volume "$PWD/output:/build-container-installer/build" \
             --volume "$PWD/dnf-cache:/cache/dnf" \
+            --volume "$PWD/iso:/framz-iso:ro" \
             "${INSTALLER_IMAGE}" \
             IMAGE_REPO="ghcr.io/${{ needs.image.outputs.namespace }}" \
             IMAGE_NAME="${IMAGE_NAME}" \
@@ -168,10 +184,31 @@ jobs:
             ISO_NAME="build/${ISO_NAME}" \
             WEB_UI="false" \
             DNF_CACHE="/cache/dnf" \
+            ADDITIONAL_TEMPLATES="/framz-iso/framz-branding.tmpl" \
             _VOLID="FRAMZ_OS_1" 2>&1 | tee "${LOG}"
           ls -lh output/
           (cd output && sha256sum "${ISO_NAME}" > "${ISO_NAME}-SHA256")
           cat "output/${ISO_NAME}-SHA256"
+
+      - name: Проверить ISO и сохранить отчёт
+        shell: bash
+        run: |
+          set -uo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq genisoimage squashfs-tools xorriso >/dev/null 2>&1 || true
+          mkdir -p ci-logs
+          REPORT="ci-logs/iso-check-${{ github.run_id }}.txt"
+          bash scripts/iso-selfcheck.sh "output/${ISO_NAME}" > "${REPORT}" 2>&1 || true
+          echo "=== текст отчёта ==="
+          cat "${REPORT}"
+          git config user.name "framz-ci"
+          git config user.email "ci@framz.local"
+          git add -f ci-logs
+          git commit -m "ci: отчёт самопроверки ISO (${{ github.run_id }})" || true
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" >/dev/null 2>&1 || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" >/dev/null 2>&1 && break || sleep 5
+          done
 
       - name: Загрузить ISO как артефакт
         uses: actions/upload-artifact@v4
@@ -205,6 +242,8 @@ jobs:
             gh release create "v1.0" --title "FRAMZ OS 1.0" --notes-file .github/release-notes.md || true
           fi
           gh release upload "v1.0" ${FILES} --clobber
+          # Скрипты запуска/записи — рядом с ISO, чтобы можно было ставить одной командой
+          gh release upload "v1.0" scripts/framz-quickstart.sh scripts/framz-vm.sh scripts/framz-usb.sh --clobber
 
       - name: Сохранить логи при сбое
         if: failure()

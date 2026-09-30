@@ -1,0 +1,58 @@
+/* FRAMZ OS — оформление установщика. Стиль «Minimal Mono»: белый фон, чёрный акцент.
+ *
+ * Подключается установщиком (Anaconda WebUI) через брендинг Cockpit:
+ *   /usr/share/cockpit/branding/framz/branding.css
+ * Цвета задаются переменными, дальше они раскладываются по токенам PatternFly —
+ * так оформление работает и в светлой, и в тёмной схеме установщика.
+ */
+
+.anaconda {
+    /* Палитра FRAMZ (монохром) */
+    --brand-default-light: #3A3A46;
+    --brand-default: #0B0B12;
+    --brand-default-dark: #000000;
+
+    .logo {
+        background-image: url("logo.png");
+    }
+}
+
+:not(.pf-v6-theme-dark) .anaconda {
+    /* Светлая схема: чёрный акцент на белом */
+    --pf-t--global--color--brand--default: var(--brand-default);
+    --pf-t--global--color--brand--hover: var(--brand-default-light);
+}
+
+.pf-v6-theme-dark .anaconda {
+    /* Тёмная схема: светлый акцент на почти чёрном */
+    --pf-t--global--color--brand--default: var(--brand-default-light);
+    --pf-t--global--color--brand--hover: var(--brand-default);
+}
+
+/* Верхняя полоса установщика: вместо чужого градиента — чистый белый
+ * с тонкой линией. Знак FRAMZ тёмный, поэтому ему нужен светлый фон. */
+:not(.pf-v6-theme-dark) .anaconda .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child {
+    --_text: #0B0B12;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E4E4EA;
+}
+
+.pf-v6-theme-dark .anaconda .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child {
+    --_text: #EDEDF2;
+    background: #0B0B12;
+    border-bottom: 1px solid #2A2A38;
+}
+
+/* Кнопка-«кебаб» наследует цвет текста полосы */
+.anaconda #toggle-kebab path {
+    fill: var(--_text);
+}
+
+.anaconda #toggle-kebab:hover path {
+    fill: color-mix(in lch, var(--_text) 75%, transparent);
+}
+
+/* Номера шагов слева: активный шаг подчёркиваем нашим акцентом */
+html:not(.pf-v6-theme-dark) .anaconda .pf-v6-c-wizard__nav-link.pf-m-current::before {
+    --pf-v6-c-wizard__nav-link--m-current--before--BackgroundColor: var(--brand-default);
+}

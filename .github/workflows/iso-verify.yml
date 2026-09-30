@@ -1,0 +1,181 @@
+name: iso-verify
+
+# ПРОВЕРКА ГОТОВОГО ISO — ничего не собирает, только проверяет выложенное.
+#
+# 1) скачивает части ISO из релиза v1.0 и проверяет контрольные суммы;
+# 2) склеивает ISO и прогоняет самопроверку структуры и брендинга;
+# 3) грузит ISO в QEMU (без аппаратного ускорения) и делает снимки экрана
+#    каждые несколько минут — видно, дошёл ли установщик;
+# 4) кладёт отчёт и снимки в ветку ci-logs/.
+#
+# Запуск: кнопкой (Actions -> iso-verify) или коммитом файла-метки:
+#   date > verify-iso/trigger.txt && git commit && git push
+
+on:
+  workflow_dispatch:
+    inputs:
+      boot_test:
+        description: "Грузить ISO в QEMU и снимать экран"
+        type: boolean
+        default: true
+      boot_minutes:
+        description: "Сколько минут наблюдать за загрузкой"
+        type: string
+        default: "18"
+  push:
+    paths:
+      - "verify-iso/**"
+
+permissions:
+  contents: write
+
+env:
+  ISO_NAME: framz-os-1.0.iso
+  RELEASE_TAG: v1.0
+
+jobs:
+  verify:
+    name: Проверка ISO
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Освободить место на диске
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: true
+
+      - name: Скачать части ISO из релиза
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p iso "${HOME}/boots"
+          BASE="https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"
+          for p in aa ab ac ad ae; do
+            if curl -fsSL -o "iso/${ISO_NAME}.part-${p}" "${BASE}/${ISO_NAME}.part-${p}" 2>/dev/null; then
+              echo "часть ${p}: $(stat -c%s "iso/${ISO_NAME}.part-${p}") байт"
+            else
+              rm -f "iso/${ISO_NAME}.part-${p}"
+            fi
+          done
+          curl -fsSL -o "iso/${ISO_NAME}.parts-SHA256" "${BASE}/${ISO_NAME}.parts-SHA256"
+          curl -fsSL -o "iso/${ISO_NAME}-SHA256" "${BASE}/${ISO_NAME}-SHA256"
+          ls -lh iso/
+
+      - name: Проверить суммы и склеить ISO
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd iso
+          echo "--- суммы частей ---"
+          sha256sum -c "${ISO_NAME}.parts-SHA256"
+          cat ${ISO_NAME}.part-* > "${ISO_NAME}"
+          echo "--- сумма целого ISO ---"
+          sha256sum -c "${ISO_NAME}-SHA256"
+          ls -lh "${ISO_NAME}"
+
+      - name: Установить инструменты проверки
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq genisoimage squashfs-tools xorriso qemu-system-x86 imagemagick >/dev/null
+
+      - name: Самопроверка ISO (структура и брендинг)
+        shell: bash
+        run: |
+          mkdir -p ci-logs
+          bash scripts/iso-selfcheck.sh "iso/${ISO_NAME}" 2>&1 \
+            | tee "ci-logs/iso-verify-${{ github.run_id }}.txt" || true
+
+      - name: Загрузка в QEMU: снимки экрана каждые 5 минут
+        if: ${{ inputs.boot_test == true || github.event_name == 'push' }}
+        shell: bash
+        run: |
+          set -uo pipefail
+          MINUTES="${{ inputs.boot_minutes }}"; MINUTES="${MINUTES:-20}"
+          LOG="ci-logs/iso-boot-${{ github.run_id }}.txt"
+          mkdir -p ci-logs "${HOME}/boots"
+          {
+            echo "=== Загрузка FRAMZ OS в QEMU (программная эмуляция, без KVM) ==="
+            date -u +"начало: %Y-%m-%d %H:%M UTC"
+            echo "снимки каждые 5 минут, всего ${MINUTES} мин"
+            echo "процессор: $(nproc), память: $(free -g | awk '/Mem:/{print $2}') ГБ"
+            echo
+          } > "${LOG}"
+
+          SOCK=/tmp/qemu-monitor.sock
+          rm -f "${SOCK}"
+          qemu-system-x86_64 \
+            -machine q35 -m 4096 -smp 4 -accel tcg \
+            -drive file=iso/${ISO_NAME},media=cdrom,readonly=on \
+            -boot d -display none -vnc none \
+            -monitor unix:${SOCK},server,nowait \
+            -serial file:/tmp/serial.log \
+            >/dev/null 2>&1 &
+          QPID=$!
+          echo "QEMU запущен (pid ${QPID})" | tee -a "${LOG}"
+
+          shot() { # $1 = номер снимка
+            python3 - "$SOCK" "$1" <<'PY' 2>&1 | tee -a "${LOG}"
+import socket, sys, time
+sock, n = sys.argv[1], sys.argv[2]
+def send(cmd, wait=3.0):
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    s.settimeout(60)
+    s.connect(sock); s.recv(4096)
+    s.sendall((cmd + "\n").encode())
+    time.sleep(wait)
+    try:    out = s.recv(65536).decode(errors="replace")
+    except Exception as exc: out = f"(нет ответа: {exc})"
+    s.close(); return out
+print(f"--- снимок {n} ---")
+print(send("info status"))
+print(send(f"screendump /tmp/boot-{n}.ppm", wait=5.0))
+PY
+          }
+
+          STEP=$((MINUTES / 5)); [ "${STEP}" -lt 1 ] && STEP=1
+          for i in $(seq 1 "${STEP}"); do
+            sleep 300
+            shot "${i}"
+            if [ -f "/tmp/boot-${i}.ppm" ]; then
+              convert "/tmp/boot-${i}.ppm" "ci-logs/iso-boot-${{ github.run_id }}-${i}.png" 2>/dev/null \
+                && echo "снимок ${i} сохранён (png)" | tee -a "${LOG}" \
+                || cp "/tmp/boot-${i}.ppm" "ci-logs/iso-boot-${{ github.run_id }}-${i}.ppm"
+            else
+              echo "снимок ${i} не получился" | tee -a "${LOG}"
+            fi
+          done
+
+          echo | tee -a "${LOG}"
+          echo "--- последние строки последовательного порта ---" | tee -a "${LOG}"
+          tail -30 /tmp/serial.log 2>/dev/null | tee -a "${LOG}" || echo "(пусто)" | tee -a "${LOG}"
+          kill ${QPID} 2>/dev/null || true
+          date -u +"окончание: %Y-%m-%d %H:%M UTC" | tee -a "${LOG}"
+
+      - name: Сохранить отчёт и снимки в ветку ci-logs
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "framz-ci"
+          git config user.email "ci@framz.local"
+          git add -f ci-logs
+          git commit -m "ci: отчёт проверки ISO (запуск ${{ github.run_id }})" || true
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" >/dev/null 2>&1 || true
+            if git push origin "HEAD:${GITHUB_REF_NAME}" >/dev/null 2>&1; then break; fi
+            sleep 5
+          done
+
+      - name: Показать отчёт в сводке запуска
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Проверка ISO"
+            echo
+            echo '```'
+            head -150 "ci-logs/iso-verify-${{ github.run_id }}.txt" 2>/dev/null || true
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}" || true

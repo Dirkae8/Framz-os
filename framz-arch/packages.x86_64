@@ -1,0 +1,73 @@
+# FRAMZ OS — набор пакетов Arch-версии (черновик).
+# Правило: лёгкая система; творческие приложения и игры — из Flatpak, ничего лишнего.
+
+# --- база ---
+base
+linux-zen
+linux-zen-headers
+linux-firmware
+mkinitcpio
+sudo
+nano
+vim
+git
+curl
+wget
+
+# --- загрузка и вход ---
+grub
+efibootmgr
+os-prober
+plymouth
+sddm
+
+# --- звук, видео, графика ---
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+mesa
+vulkan-radeon
+vulkan-intel
+libva-mesa-driver
+sof-firmware
+
+# --- сеть ---
+networkmanager
+network-manager-applet
+firewalld
+
+# --- рабочий стол KDE Plasma ---
+plasma-meta
+plasma-wayland-session
+kde-gtk-config
+breeze-gtk
+kde-cli-tools
+dolphin
+ark
+konsole
+spectacle
+gwenview
+
+# --- наши инструменты и творческая настройка ---
+kora-icon-theme
+libwacom
+colord
+argyllcms
+distrobox
+podman
+btop
+kdeconnect
+
+# --- откат и обслуживание ---
+btrfs-progs
+snapper
+grub-btrfs
+snap-pac
+zram-generator
+gamemode
+ananicy-cpp
+
+# --- установка ---
+calamares
