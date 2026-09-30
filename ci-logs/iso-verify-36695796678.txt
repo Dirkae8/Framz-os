@@ -1,0 +1,51 @@
+=== FRAMZ OS — самопроверка ISO ===
+время: 2026-09-30 09:30 UTC
+файл: iso/framz-os-1.0.iso
+размер: 4554424320 байт (4343 МБ)
+
+--- параметры ISO ---
+System id: 
+Volume id: FRAMZ_OS_1
+Volume set id: 
+Logical block size is: 2048
+метка тома: 'FRAMZ_OS_1'
+ВЕРНО  метка содержит FRAMZ
+
+всего файлов на ISO: 602
+
+--- карта структуры (два уровня) ---
+/.discinfo                   файлов: 0
+/boot                        файлов: 307
+    grub2
+/efi                         файлов: 11
+    boot
+/fedora_legal_readme.txt     файлов: 0
+/framz                       файлов: 272
+    blobs
+    index.json
+    oci_layout.
+/images                      файлов: 5
+    eltorito.img
+    install.img
+    pxeboot
+/license.                    файлов: 0
+
+--- файлы загрузки ---
+ЕСТЬ   ядро — /images/pxeboot/vmlinuz.
+ЕСТЬ   initrd — /images/pxeboot/initrd.img
+ЕСТЬ   загрузчик UEFI — /efi/boot/bootx64.efi
+НЕТ    загрузчик BIOS
+НЕТ    .treeinfo
+ЕСТЬ   .discinfo — /.discinfo
+
+--- среда установщика ---
+образ среды: /images/eltorito.img
+путь в ISO: 
+распаковываю список файлов среды…
+не удалось извлечь образ среды из ISO
+
+--- наш системный образ внутри ISO ---
+слоёв (файлов blobs) найдено: 268
+index.json внутри ISO не найден — возможно, образ лежит иначе
+
+=== ИТОГ: замечаний 3 ===

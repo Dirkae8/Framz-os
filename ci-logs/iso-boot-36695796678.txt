@@ -1,0 +1,41 @@
+=== Загрузка FRAMZ OS в QEMU (программная эмуляция, без KVM) ===
+начало: 2026-09-30 09:30 UTC
+снимки каждые 5 минут, всего 20 мин
+процессор: 4, память: 15 ГБ
+
+QEMU запущен (pid 17738)
+--- снимок 1 ---
+i[K[Din[K[D[Dinf[K[D[D[Dinfo[K[D[D[D[Dinfo [K[D[D[D[D[Dinfo s[K[D[D[D[D[D[Dinfo st[K[D[D[D[D[D[D[Dinfo sta[K[D[D[D[D[D[D[D[Dinfo stat[K[D[D[D[D[D[D[D[D[Dinfo statu[K[D[D[D[D[D[D[D[D[D[Dinfo status[K
+VM status: running
+(qemu)
+s[K[Dsc[K[D[Dscr[K[D[D[Dscre[K[D[D[D[Dscree[K[D[D[D[D[Dscreen[K[D[D[D[D[D[Dscreend[K[D[D[D[D[D[D[Dscreendu[K[D[D[D[D[D[D[D[Dscreendum[K[D[D[D[D[D[D[D[D[Dscreendump[K[D[D[D[D[D[D[D[D[D[Dscreendump [K[D[D[D[D[D[D[D[D[D[D[Dscreendump /[K[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /t[K[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tm[K[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/b[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/bo[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boo[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-1[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-1.[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-1.p[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-1.pp[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-1.ppm[K
+(qemu)
+снимок записан: /tmp/boot-1.ppm (3072016 байт)
+снимок 1 сохранён (png)
+--- снимок 2 ---
+(qemu) i[K[Din[K[D[Dinf[K[D[D[Dinfo[K[D[D[D[Dinfo [K[D[D[D[D[Dinfo s[K[D[D[D[D[D[Dinfo st[K[D[D[D[D[D[D[Dinfo sta[K[D[D[D[D[D[D[D[Dinfo stat[K[D[D[D[D[D[D[D[D[Dinfo statu[K[D[D[D[D[D[D[D[D[D[Dinfo status[K
+VM status: running
+(qemu)
+(qemu) s[K[Dsc[K[D[Dscr[K[D[D[Dscre[K[D[D[D[Dscree[K[D[D[D[D[Dscreen[K[D[D[D[D[D[Dscreend[K[D[D[D[D[D[D[Dscreendu[K[D[D[D[D[D[D[D[Dscreendum[K[D[D[D[D[D[D[D[D[Dscreendump[K[D[D[D[D[D[D[D[D[D[Dscreendump [K[D[D[D[D[D[D[D[D[D[D[Dscreendump /[K[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /t[K[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tm[K[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/b[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/bo[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boo[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-2[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-2.[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-2.p[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-2.pp[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-2.ppm[K
+(qemu)
+снимок записан: /tmp/boot-2.ppm (3072016 байт)
+снимок 2 сохранён (png)
+--- снимок 3 ---
+i[K[Din[K[D[Dinf[K[D[D[Dinfo[K[D[D[D[Dinfo [K[D[D[D[D[Dinfo s[K[D[D[D[D[D[Dinfo st[K[D[D[D[D[D[D[Dinfo sta[K[D[D[D[D[D[D[D[Dinfo stat[K[D[D[D[D[D[D[D[D[Dinfo statu[K[D[D[D[D[D[D[D[D[D[Dinfo status[K
+VM status: running
+(qemu)
+(qemu) s[K[Dsc[K[D[Dscr[K[D[D[Dscre[K[D[D[D[Dscree[K[D[D[D[D[Dscreen[K[D[D[D[D[D[Dscreend[K[D[D[D[D[D[D[Dscreendu[K[D[D[D[D[D[D[D[Dscreendum[K[D[D[D[D[D[D[D[D[Dscreendump[K[D[D[D[D[D[D[D[D[D[Dscreendump [K[D[D[D[D[D[D[D[D[D[D[Dscreendump /[K[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /t[K[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tm[K[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/b[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/bo[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boo[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-3[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-3.[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-3.p[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-3.pp[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-3.ppm[K
+(qemu)
+снимок записан: /tmp/boot-3.ppm (3072016 байт)
+снимок 3 сохранён (png)
+--- снимок 4 ---
+(qemu) i[K[Din[K[D[Dinf[K[D[D[Dinfo[K[D[D[D[Dinfo [K[D[D[D[D[Dinfo s[K[D[D[D[D[D[Dinfo st[K[D[D[D[D[D[D[Dinfo sta[K[D[D[D[D[D[D[D[Dinfo stat[K[D[D[D[D[D[D[D[D[Dinfo statu[K[D[D[D[D[D[D[D[D[D[Dinfo status[K
+VM status: running
+(qemu)
+(qemu) s[K[Dsc[K[D[Dscr[K[D[D[Dscre[K[D[D[D[Dscree[K[D[D[D[D[Dscreen[K[D[D[D[D[D[Dscreend[K[D[D[D[D[D[D[Dscreendu[K[D[D[D[D[D[D[D[Dscreendum[K[D[D[D[D[D[D[D[D[Dscreendump[K[D[D[D[D[D[D[D[D[D[Dscreendump [K[D[D[D[D[D[D[D[D[D[D[Dscreendump /[K[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /t[K[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tm[K[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/b[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/bo[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boo[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-4[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-4.[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-4.p[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-4.pp[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Dscreendump /tmp/boot-4.ppm[K
+(qemu)
+снимок записан: /tmp/boot-4.ppm (3072016 байт)
+снимок 4 сохранён (png)
+
+--- последние строки последовательного порта ---
+окончание: 2026-09-30 09:51 UTC
