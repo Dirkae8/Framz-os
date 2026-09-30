@@ -108,20 +108,5 @@ if [ -f "${KORA_DIR}/index.theme" ] && [ -f "${AIROOT}/etc/xdg/kdeglobals" ]; th
   sed -i 's/^Theme=.*/Theme=kora/' "${AIROOT}/etc/xdg/kdeglobals"
 fi
 
-# ── 8. Знак и картинка для установщика ───────────────────────────────────────
-BRAND_DIR="${AIROOT}/etc/calamares/branding/framz"
-mkdir -p "${BRAND_DIR}"
-if [ -f "${ROOT}/iso/branding/logo.png" ]; then
-  cp -f "${ROOT}/iso/branding/logo.png" "${BRAND_DIR}/logo.png"
-fi
-WALL="${AIROOT}/usr/share/framz/branding/wallpapers/framz-studio-light.jpg"
-[ -f "${WALL}" ] && cp -f "${WALL}" "${BRAND_DIR}/welcome.png"
-if [ ! -f "${BRAND_DIR}/logo.png" ]; then
-  # запасной вариант: знак из темы иконок, чтобы окно не осталось без картинки
-  FALLBACK="$(find "${AIROOT}/usr/share" -name 'framz-logo.svg' 2>/dev/null | head -1)"
-  [ -n "${FALLBACK}" ] && cp -f "${FALLBACK}" "${BRAND_DIR}/logo.png" || true
-fi
-echo "  · знак установщика на месте: $([ -f "${BRAND_DIR}/logo.png" ] && echo да || echo нет)"
-
 # ── 9. Итог ──────────────────────────────────────────────────────────────────
 echo "▸ airootfs готов: $(find "${AIROOT}" -type f | wc -l) файлов, $(du -sh "${AIROOT}" | cut -f1)"

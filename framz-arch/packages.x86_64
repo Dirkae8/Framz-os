@@ -19,6 +19,7 @@ unzip
 bash-completion
 
 # --- загрузка и вход ---
+syslinux
 grub
 efibootmgr
 os-prober
@@ -37,7 +38,6 @@ wireplumber
 mesa
 vulkan-radeon
 vulkan-intel
-libva-mesa-driver
 sof-firmware
 noto-fonts
 noto-fonts-cjk
@@ -52,7 +52,6 @@ firewalld
 
 # --- рабочий стол KDE Plasma ---
 plasma-meta
-plasma-wayland-session
 kde-gtk-config
 breeze-gtk
 kde-cli-tools
@@ -85,9 +84,12 @@ btrfs-progs
 snapper
 snap-pac
 
-# --- установщик и живой режим ---
-calamares
+# --- установщик (наш, свой) и живой режим ---
 mkinitcpio-archiso
 squashfs-tools
 kde-cli-tools
 discover
+parted
+gptfdisk
+rsync
+arch-install-scripts

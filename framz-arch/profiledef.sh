@@ -15,7 +15,7 @@ iso_version="1.0"
 install_dir="arch"
 buildmodes=('iso')
 # BIOS: syslinux (MBR + El Torito), UEFI: GRUB
-bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.grub.esp' 'uefi-x64.grub.eltorito')
+bootmodes=('bios.syslinux' 'uefi.grub')
 arch="x86_64"
 pacman_conf="pacman.conf"
 airootfs_image_type="squashfs"
@@ -32,5 +32,5 @@ file_permissions=(
   ["/usr/bin/framz-update"]="0:0:755"
   ["/usr/bin/framz-help"]="0:0:755"
   ["/usr/bin/framz-grub-theme"]="0:0:755"
-  ["/usr/local/bin/framz-initramfs.sh"]="0:0:755"
+  ["/usr/local/bin/framz-install"]="0:0:755"
 )

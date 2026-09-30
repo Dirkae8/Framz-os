@@ -1,0 +1,223 @@
+#!/usr/bin/env bash
+# FRAMZ OS — свой установщик (Arch-издание).
+#
+# Что делает: спрашивает диск, размечает его (EFI + корень), переносит систему
+# с флешки на диск, настраивает загрузчик, пользователя и службы.
+# Работает офлайн: система копируется с флешки, интернет не нужен.
+#
+# Почему свой, а не Calamares: Calamares нет в официальных репозиториях Arch,
+# а тянуть его из AUR в сборку — лишний риск. Зато это ровно наш стиль
+# «Minimal Mono» и наши тексты.
+#
+# Лог: /tmp/framz-install.log (кнопка «Показать лог» в окне).
+set -uo pipefail
+
+TITLE="Установка FRAMZ OS"
+LOG="/tmp/framz-install.log"
+: > "${LOG}"
+exec > >(tee -a "${LOG}") 2>&1
+
+say()  { echo "▸ $*"; }
+warn() { echo "! $*" >&2; }
+die()  { echo "✖ $*" >&2; kdialog --title "${TITLE}" --error "$*"; exit 1; }
+
+command -v kdialog >/dev/null 2>&1 || die "нет kdialog (пакет kde-cli-tools) — установщик не может показать окно"
+
+# ── 0. Проверки ──────────────────────────────────────────────────────────────
+[ "$(id -u)" = "0" ] || die "установщик должен запускаться с правами администратора"
+
+SFS="$(find /run/archiso -maxdepth 6 -name 'airootfs.sfs' 2>/dev/null | head -1)"
+if [ -z "${SFS}" ]; then
+  warn "образ системы на флешке не найден — переносим обычным копированием"
+else
+  say "образ системы: ${SFS}"
+fi
+
+# ── 1. Диск ──────────────────────────────────────────────────────────────────
+list_args=()
+while read -r name size model type; do
+  [ -z "${name}" ] && continue
+  [ "${type}" = "disk" ] || continue
+  case "${name}" in zram*|loop*|sr*|ram*) continue ;; esac
+  list_args+=("/dev/${name}" "${model:-диск} · ${size} · /dev/${name}")
+done < <(lsblk -dno NAME,SIZE,MODEL,TYPE | awk '{name=$1; size=$2; $1=""; $2=""; type=$NF; $NF=""; model=$0; gsub(/^ +| +$/,"",model); print name, size, model, type}')
+
+[ "${#list_args[@]}" -gt 0 ] || die "не нашёл ни одного диска для установки"
+
+DISK="$(kdialog --title "${TITLE}" --menu "Куда установить FRAMZ OS?\n\nВНИМАНИЕ: всё, что на этом диске, будет стёрто." "${list_args[@]}")" || exit 0
+[ -n "${DISK}" ] || exit 0
+
+kdialog --title "${TITLE}" --yesno "Диск: ${DISK}
+
+На нём ВСЁ будет стёрто и заменено на FRAMZ OS.
+Второго шанса не будет.
+
+Продолжаем?" --yes-label "Стереть и установить" --no-label "Отмена" || exit 0
+# Второй вопрос — защита от случайного нажатия
+kdialog --title "${TITLE}" --yesno "Точно? Стираю ${DISK} безвозвратно." || exit 0
+
+# ── 2. Пользователь ──────────────────────────────────────────────────────────
+USERNAME="$(kdialog --title "${TITLE}" --inputbox "Имя пользователя (латиницей, без пробелов):" "framz")" || exit 0
+USERNAME="$(echo "${USERNAME}" | tr -d ' ' | tr '[:upper:]' '[:lower:]')"
+case "${USERNAME}" in
+  ""|root|framz-live) die "такое имя нельзя: ${USERNAME}" ;;
+  *[!a-z0-9_-]*) die "в имени можно только латиницу, цифры, дефис и подчёркивание" ;;
+esac
+
+PASS1="$(kdialog --title "${TITLE}" --password "Пароль для ${USERNAME}:")" || exit 0
+PASS2="$(kdialog --title "${TITLE}" --password "Повтори пароль:")" || exit 0
+[ -n "${PASS1}" ] || die "пустой пароль не подойдёт"
+[ "${PASS1}" = "${PASS2}" ] || die "пароли не совпадают"
+[ "${#PASS1}" -ge 6 ] || die "пароль короче 6 символов"
+
+# ── 3. Разметка диска ────────────────────────────────────────────────────────
+kdialog --title "${TITLE}" --passivepopup "Размечаю диск…" 4
+part_progress() { kdialog --title "${TITLE}" --progressbar "$1" 0 >/dev/null 2>&1 || true; }
+
+part_progress "Разметка диска"
+say "разметка ${DISK}"
+parted -s "${DISK}" mklabel gpt || die "не удалось разметить диск (он занят?)"
+parted -s "${DISK}" mkpart ESP fat32 1MiB 513MiB || die "не удалось создать раздел EFI"
+parted -s "${DISK}" set 1 esp on
+parted -s "${DISK}" mkpart root ext4 513MiB 100% || die "не удалось создать корневой раздел"
+sleep 2
+
+# Имена разделов: /dev/sda1, но /dev/nvme0n1p1
+if [ -b "${DISK}1" ]; then P1="${DISK}1"; P2="${DISK}2"; else P1="${DISK}p1"; P2="${DISK}p2"; fi
+say "разделы: ${P1} (EFI), ${P2} (система)"
+
+part_progress "Форматирование"
+mkfs.fat -F32 -n FRAMZ_EFI "${P1}" || die "не удалось разметить раздел EFI"
+mkfs.ext4 -F -L FRAMZ_ROOT "${P2}" || die "не удалось разметить корневой раздел"
+
+# ── 4. Перенос системы ───────────────────────────────────────────────────────
+TARGET="/mnt"
+mkdir -p "${TARGET}"
+mount "${P2}" "${TARGET}" || die "не удалось смонтировать корневой раздел"
+mkdir -p "${TARGET}/boot/efi"
+mount "${P1}" "${TARGET}/boot/efi" || die "не удалось смонтировать раздел EFI"
+
+part_progress "Переношу систему на диск (это самая долгая часть, 5–15 минут)"
+say "копирую систему"
+if [ -n "${SFS}" ]; then
+  # Быстрый путь: распаковка образа
+  unsquashfs -f -d "${TARGET}" "${SFS}" >/dev/null 2>&1 || {
+    warn "распаковка не удалась — копирую обычным способом"
+    rsync -aAXH --info=progress2 \
+      --exclude=/dev/* --exclude=/proc/* --exclude=/sys/* --exclude=/tmp/* --exclude=/run/* \
+      --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found \
+      --exclude=/var/cache/pacman/pkg/* --exclude=/root/.cache/* \
+      / "${TARGET}/" || die "не удалось скопировать систему на диск"
+  }
+else
+  rsync -aAXH --info=progress2 \
+    --exclude=/dev/* --exclude=/proc/* --exclude=/sys/* --exclude=/tmp/* --exclude=/run/* \
+    --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found \
+    --exclude=/var/cache/pacman/pkg/* --exclude=/root/.cache/* \
+    / "${TARGET}/" || die "не удалось скопировать систему на диск"
+fi
+
+# ── 5. Настройка установленной системы ───────────────────────────────────────
+part_progress "Настраиваю систему"
+say "правлю настройки под установленную систему"
+
+# Убираем всё «живое»: автологин, пароль без спроса, живого пользователя
+rm -f "${TARGET}/etc/sddm.conf.d/20-framz-live.conf" \
+      "${TARGET}/etc/sudoers.d/10-framz-live" \
+      "${TARGET}/etc/xdg/autostart/framz-live-install.desktop"
+sed -i '/^framz:/d' "${TARGET}/etc/passwd" "${TARGET}/etc/shadow" "${TARGET}/etc/group" 2>/dev/null || true
+rm -rf "${TARGET}/home/framz"
+# Иконки и настройки живого режима больше не нужны
+rm -f "${TARGET}/etc/mkinitcpio.conf.orig" 2>/dev/null || true
+
+# initramfs установленной системы: без хуков archiso, но с нашим экраном загрузки
+cat > "${TARGET}/etc/mkinitcpio.conf" <<'EOF'
+# FRAMZ OS — initramfs установленной системы.
+HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont plymouth block filesystems fsck)
+COMPRESSION="zstd"
+COMPRESSION_OPTIONS=(-T0)
+MODULES=()
+BINARIES=()
+FILES=()
+EOF
+
+# fstab по фактическим UUID
+ROOT_UUID="$(blkid -s UUID -o value "${P2}")"
+EFI_UUID="$(blkid -s UUID -o value "${P1}")"
+cat > "${TARGET}/etc/fstab" <<EOF
+# FRAMZ OS — смонтированные разделы
+UUID=${ROOT_UUID}  /           ext4  defaults,noatime  0 1
+UUID=${EFI_UUID}   /boot/efi   vfat  umask=0077        0 2
+EOF
+
+# Сеть и имя системы
+echo "framz" > "${TARGET}/etc/hostname"
+cat > "${TARGET}/etc/hosts" <<'EOF'
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   framz.localdomain framz
+EOF
+
+# ── 6. Chroot: пользователь, загрузчик, службы ───────────────────────────────
+say "настраиваю пользователя, загрузчик и службы"
+mount --bind /dev "${TARGET}/dev" 2>/dev/null || true
+mount --bind /proc "${TARGET}/proc" 2>/dev/null || true
+mount --bind /sys "${TARGET}/sys" 2>/dev/null || true
+mount --bind /run "${TARGET}/run" 2>/dev/null || true
+
+arch-chroot "${TARGET}" bash -e <<CHROOT
+# Часовой пояс и локаль
+ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+hwclock --systohc || true
+sed -i 's/^#\(en_US.UTF-8\|ru_RU.UTF-8\)/\1/' /etc/locale.gen || true
+locale-gen || true
+echo "LANG=ru_RU.UTF-8" > /etc/locale.conf
+echo "KEYMAP=us" > /etc/vconsole.conf
+
+# Пользователь
+if ! id -u "${USERNAME}" >/dev/null 2>&1; then
+  useradd -m -G wheel,audio,video,storage,network,rfkill,power -s /bin/bash "${USERNAME}"
+fi
+echo "${USERNAME}:${PASS1}" | chpasswd
+echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/10-wheel
+chmod 440 /etc/sudoers.d/10-wheel
+
+# Наш экран загрузки
+plymouth-set-default-theme framz >/dev/null 2>&1 || true
+mkinitcpio -P >/dev/null 2>&1 || true
+
+# Загрузчик: UEFI + запасной путь (грузится на любом компьютере)
+mkdir -p /boot/efi
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=FRAMZ --removable || true
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=FRAMZ || true
+grub-mkconfig -o /boot/grub/grub.cfg || true
+
+# Службы
+systemctl enable sddm NetworkManager bluetooth irqbalance firewalld >/dev/null 2>&1 || true
+systemctl set-default graphical.target >/dev/null 2>&1 || true
+CHROOT
+CHROOT_RC=$?
+
+# Размонтируем
+for m in run sys proc dev; do umount -R "${TARGET}/${m}" 2>/dev/null || true; done
+sync
+
+if [ "${CHROOT_RC}" != "0" ]; then
+  kdialog --title "${TITLE}" --error "Настройка системы прошла с ошибками.\nДиск уже размечен и система скопирована.\nПокажи лог разработчику: ${LOG}"
+  exit 1
+fi
+
+# ── 7. Готово ────────────────────────────────────────────────────────────────
+if kdialog --title "${TITLE}" --yesno "FRAMZ OS установлена.
+
+Что дальше:
+  · вынь флешку;
+  · перезагрузись — система загрузится с диска;
+  · вход: пользователь ${USERNAME}, пароль, который ты задал;
+  · первый запуск покажет наше окно с настройкой.
+
+Перезагрузиться сейчас?" --yes-label "Перезагрузиться" --no-label "Позже"; then
+  umount -R "${TARGET}" 2>/dev/null || true
+  systemctl reboot
+fi
+exit 0
