@@ -1,0 +1,48 @@
+=== FRAMZ OS — разбор среды установщика ===
+время: 2026-09-30 16:29 UTC
+файл: iso/framz-os-1.0.iso
+
+образ среды: /IMAGES/INSTALL.IMG;1
+размер образа: 872 МБ
+
+--- содержимое среды (unsquashfs) ---
+файлов: 39609
+
+--- где живёт веб-интерфейс установщика ---
+
+--- все файлы оформления в среде ---
+usr/share/cockpit/branding
+usr/share/cockpit/branding/fedora
+usr/share/cockpit/branding/fedora/branding.css
+usr/share/cockpit/branding/fedora/logo.png
+usr/share/cockpit/branding/framz
+usr/share/cockpit/branding/framz/branding.css
+usr/share/cockpit/branding/framz/logo.png
+usr/share/cockpit/static/branding.css
+usr/share/static/branding.css
+usr/static/branding.css
+
+--- символические ссылки, связанные с оформлением ---
+
+--- подхватился ли НАШ стиль (ищем маркер FRAMZ-BRANDING) ---
+нет    файла нет — /usr/share/cockpit/static/branding.css
+нет    файла нет — /usr/share/cockpit/branding/framz/branding.css
+нет    файла нет — /usr/share/cockpit/branding/fedora/branding.css
+нет    файла нет — /usr/static/branding.css
+нет    файла нет — /usr/share/static/branding.css
+ВНИМАНИЕ: наш стиль в среду установщика не попал
+
+--- что подключает веб-интерфейс (строки со стилями) ---
+
+--- настройки установщика ---
+нет    /etc/anaconda/cockpit/conf.d/50-framz.conf
+нет    /etc/cockpit/conf.d/50-framz.conf
+
+--- имя системы в среде установщика ---
+    NAME="Fedora Linux"
+    ID=fedora
+    VERSION_ID=44
+    PRETTY_NAME="Fedora Linux 44 (Kinoite)"
+    VARIANT="Kinoite"
+
+=== конец разбора ===
