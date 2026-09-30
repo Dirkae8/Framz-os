@@ -24,6 +24,20 @@
     }
 }
 
+/* Знак системы в шапке установщика (у Fedora тут её логотип со словом). */
+#badge {
+    inline-size: 225px;
+    block-size: 80px;
+    background-image: url("logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Подпись рядом со знаком в шапке. */
+#brand::before {
+    content: "Установка FRAMZ OS";
+}
+
 :not(.pf-v6-theme-dark) .anaconda {
     /* Светлая схема: чёрный акцент на белом */
     --pf-t--global--color--brand--default: var(--brand-default);

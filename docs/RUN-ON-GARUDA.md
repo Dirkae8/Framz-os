@@ -13,7 +13,7 @@
 ```bash
 # 1) скачать скрипт-помощник (одна строка)
 curl -fsSL -o ~/framz-quickstart.sh \
-  https://raw.githubusercontent.com/Dirkae8/Framz-os/arena/01a0ee0e-framz-os/scripts/framz-quickstart.sh
+  https://github.com/Dirkae8/Framz-os/releases/download/v1.0/framz-quickstart.sh
 
 # 2) запустить его
 bash ~/framz-quickstart.sh
@@ -48,19 +48,22 @@ bash ~/framz-vm.sh clean                                    # удалить ISO
 
 **Что ты увидишь в окне виртуалки (по порядку):**
 
-1. Загрузится окружение установщика Fedora в оформлении Kinoite.
+1. Загрузится установщик FRAMZ OS: сверху — надпись **«Установка FRAMZ OS»** и наш знак,
+   цвета — чёрно-белые (наш стиль «Minimal Mono»). Если видишь синюю панель и логотип Fedora —
+   это старый ISO, скачай свежий из релиза.
 2. Выбери язык (`Русский`).
-3. На рабочем столе запусти ярлык **«Установить на жёсткий диск»**.
-4. В разделе **Хранилище** выбери виртуальный диск `40 GiB` и вариант **«Автоматически»**
+3. В разделе **Хранилище** выбери виртуальный диск `40 GiB` и вариант **«Автоматически»**
    (диск пустой, терять нечего) → «Готово» → подтверди.
-5. Создай пользователя, поставь пароль и **отметь галочку «Сделать администратором»**.
-6. Нажми **«Начать установку»** и подожди 10–20 минут.
-7. **«Перезагрузить»** — после этого система грузится уже с диска. Это и есть FRAMZ OS.
+4. Создай пользователя, поставь пароль и **отметь галочку «Сделать администратором»**.
+5. Нажми **«Начать установку»** и подожди 10–20 минут.
+6. **«Перезагрузить»** — дальше система грузится уже с диска: наш экран загрузки (Plymouth),
+   наш экран входа (SDDM), рабочий стол с нашим лаунчером в панели. Это и есть FRAMZ OS.
 
-Честно про содержимое: внутри — рабочая атомарная Fedora с нашими добавками (звук для DAW,
-поддержка планшетов, цветовые профили, шрифты, контейнеры, утилиты). Точный список того,
-что «наше», — в [`WHAT-IS-OURS.md`](WHAT-IS-OURS.md). Нашей темы и оболочки пока нет:
-рабочий стол — штатная KDE Plasma (этапы 2–3).
+Честно про содержимое: основа — атомарная Fedora Kinoite (KDE Plasma), сверху наши слой и
+настройки. В 1.0 уже наши: экран загрузки, экран входа, лаунчер в панели, окно первого запуска,
+профили ядра (`framz-tune game|dev|studio`), набор иконок Kora, творческий набор приложений,
+оформление установщика. Точный список — в [`WHAT-IS-OURS.md`](WHAT-IS-OURS.md).
+Полный форк с базой Arch — в работе: план в [`ARCH-PLAN.md`](ARCH-PLAN.md).
 
 **Если скачивание не сходится по контрольной сумме** (бывает, когда релиз пересобирается прямо
 во время скачивания): просто повтори команду — скрипт сам удалит части и перекачает их
@@ -83,7 +86,7 @@ sudo usermod -aG kvm "$USER"
 
 # 4. Скачать наш скрипт запуска
 curl -fsSL -o ~/framz-vm.sh \
-  https://raw.githubusercontent.com/Dirkae8/Framz-os/arena/01a0ee0e-framz-os/scripts/framz-vm.sh
+  https://github.com/Dirkae8/Framz-os/releases/download/v1.0/framz-vm.sh
 chmod +x ~/framz-vm.sh
 
 # 5. Скачать ISO (с докачкой), проверить суммы и запустить виртуалку
@@ -124,12 +127,12 @@ ls -l /dev/kvm                                  # должно быть: crw-rw-
 
 ### 2. Скачать ISO
 
-Файлы лежат на странице релиза: <https://github.com/Dirkae8/Framz-os/releases/tag/v1.0-preview>
+Файлы лежат на странице релиза: <https://github.com/Dirkae8/Framz-os/releases/tag/v1.0>
 ISO выложен тремя частями (GitHub не принимает файлы больше 2 ГиБ):
 
 ```bash
 mkdir -p ~/framz && cd ~/framz
-BASE=https://github.com/Dirkae8/Framz-os/releases/download/v1.0-preview
+BASE=https://github.com/Dirkae8/Framz-os/releases/download/v1.0
 
 curl -fL -C - -O "$BASE/framz-os-1.0.iso.parts-SHA256"
 curl -fL -C - -O "$BASE/framz-os-1.0.iso.part-aa"
@@ -199,19 +202,25 @@ actual=$(sha256sum framz-os-1.0.iso | cut -d' ' -f1)
 Терминал внутри системы:
 
 ```bash
-cat /etc/os-release | head -3                 # видно Fedora/Kinoite-базу
+cat /etc/os-release | head -3                 # NAME="FRAMZ OS"
+framz-tune --status                           # текущий профиль нагрузки (balanced/game/dev/studio)
+framz-tune game                               # профиль под игры: планировщик, приоритеты, звук
 rpm -q btop distrobox pipewire-jack-audio-connection-kit libwacom argyllcms
 flatpak list --app                            # Firefox, Flatseal, Warehouse
 rpm-ostree status                             # состояние системы и откаты
 ```
+
+Что должно броситься в глаза: наш экран загрузки с знаком FRAMZ, наш экран входа,
+наш лаунчер в панели (Творчество / Медиа / Система), окно первого запуска при входе.
 
 Что уже вшито в образ: RPM Fusion (кодеки), `pipewire-jack` + `qjackctl` (звук без задержек),
 `libwacom` (графические планшеты), `colord` + `argyllcms` + расширенные ICC-профили (цвет),
 шрифты JetBrains Mono и Noto, `distrobox`/`podman`, `btop`, KDE Connect, `ark`, `filelight`,
 `partitionmanager`; из Flatpak — Firefox, Flatseal, Warehouse.
 
-Чего пока нет: нашей темы, своих панели/дока/лаунчера, мастера первого запуска и магазина
-FRAMZ — рабочий стол пока штатный KDE Plasma (этапы 2–3 из `docs/VISION.md`).
+Чего пока нет: собственного набора иконок (сейчас открытый Kora), расширенного мастера
+первого запуска, своего магазина (используем штатный Discover с Flathub) и полной замены
+оболочки — это следующие этапы (`docs/VISION.md`, `docs/INTERFACE.md`).
 
 ## Работа с системой (то, за что мы выбрали атомарную модель)
 
@@ -278,7 +287,7 @@ sudo dd if=~/framz/framz-os-1.0.iso of=/dev/sdX bs=4M status=progress oflag=sync
 
 ## Ссылки
 
-- Релиз с ISO: <https://github.com/Dirkae8/Framz-os/releases/tag/v1.0-preview>
+- Релиз с ISO: <https://github.com/Dirkae8/Framz-os/releases/tag/v1.0>
 - Общая инструкция по запуску: [`START-HERE.md`](START-HERE.md)
 - Зачем всё так устроено: [`VISION.md`](VISION.md), [`SPEC.md`](SPEC.md), [`BRAND.md`](BRAND.md)
 - Что внутри образа: [`APPS.md`](APPS.md)

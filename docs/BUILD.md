@@ -21,10 +21,18 @@ Workflow **`.github/workflows/build.yml`** (имя `build-framz`) делает �
 | **iso** | скачивает собранный образ и запускает установщик `ghcr.io/jasonn3/build-container-installer` | `framz-os-1.0.iso` в артефактах и в Release `v1.0-preview` |
 
 Запускается:
-- автоматически при изменениях в `recipes/**`, `files/**`, `.github/workflows/build.yml`
-  (ветки `main` и текущая рабочая ветка);
+- автоматически при изменениях в `recipes/**`, `files/**`, `iso/**`, `scripts/**`
+  и самом workflow (ветки `main` и рабочая ветка);
 - по расписанию — ежедневно в 05:30 UTC (свежая база Fedora + обновления);
-- вручную: **Actions → build-framz → Run workflow**.
+- вручную: **Actions → build-framz → Run workflow** (кнопка есть, если workflow
+  присутствует в ветке по умолчанию; иначе просто пушни коммит без `[skip ci]`).
+
+**Как не запускать сборку лишний раз:** в сообщении коммита напиши `[skip ci]` —
+тогда образ и ISO не пересобираются, а изменения просто ложатся в репозиторий.
+
+**Если упало на сети:** job `iso` тянет системный образ из реестра. При обрыве
+(в логе `received unexpected EOF`) сборка повторяется автоматически — две попытки.
+Ничего делать не нужно.
 
 **Особенности первой сборки:**
 - Подписи (cosign) **нет**: в репозиторий пока нельзя добавить секрет ключа, поэтому сборка идёт
@@ -60,7 +68,63 @@ systemctl reboot
 
 Это же — путь для миграции пользователей с других атомарных Fedora.
 
-## 5. ISO локально (если нужен свой ISO без CI)
+## 5. Проверить ISO, не устанавливая систему
+
+Три скрипта (работают на Linux, нужны `genisoimage`, `squashfs-tools`, `qemu-system-x86`,
+по желанию `ovmf` и `imagemagick`):
+
+```bash
+bash scripts/iso-selfcheck.sh output/framz-os-1.0.iso        # структура: метка, загрузчики, среда, наш образ
+bash scripts/iso-installer-probe.sh output/framz-os-1.0.iso  # разбор среды установщика: оформление, настройки
+bash scripts/iso-qemu-boot.sh output/framz-os-1.0.iso bios 15 ci-logs проба   # загрузка в QEMU + снимки экрана
+bash scripts/iso-qemu-boot.sh output/framz-os-1.0.iso uefi 15 ci-logs проба   # то же на UEFI (OVMF)
+```
+
+Снимки экрана кладутся в `ci-logs/`: видно, дошёл ли установщик и как он выглядит.
+
+В CI это делает workflow **`.github/workflows/iso-verify.yml`**: скачивает части ISO из релиза,
+проверяет суммы, склеивает, прогоняет разбор и грузит ISO в QEMU на двух прошивках.
+Запускается коммитом файла-метки:
+
+```bash
+date > verify-iso/trigger.txt && git add verify-iso/trigger.txt \
+  && git commit -m "ci: проверка ISO" && git push
+```
+
+Для быстрой проверки (только суммы и оформление, без 15-минутной загрузки) — создай
+рядом пустой файл-метку `verify-iso/skip-boot`.
+
+Отчёт и снимки workflow сам складывает в `ci-logs/` рабочей ветки.
+
+## 6. ISO локально (если нужен свой ISO без CI)
+
+Сборка «как в CI» (так в ISO попадёт наше оформление установщика — надпись,
+знак, цвета; `bluebuild generate-iso` этого не делает, поэтому используем тот же
+установщик, что и workflow). Нужен `podman` или `docker` и права root:
+
+```bash
+# 1) собрать наш шаблон оформления (его передадим установщику)
+bash iso/make-branding-template.sh iso/framz-branding.tmpl
+
+# 2) собрать ISO из опубликованного образа
+mkdir -p output dnf-cache
+sudo podman run --privileged --rm \
+  --volume "$PWD/output:/build-container-installer/build" \
+  --volume "$PWD/dnf-cache:/cache/dnf" \
+  --volume "$PWD/iso:/framz-iso:ro" \
+  ghcr.io/jasonn3/build-container-installer:v1.5.0 \
+  IMAGE_REPO="ghcr.io/dirkae8" IMAGE_NAME="framz" IMAGE_TAG="latest" \
+  IMAGE_SIGNED="false" VERSION="44" VARIANT="kinoite" \
+  ISO_NAME="build/framz-os-1.0.iso" WEB_UI="false" DNF_CACHE="/cache/dnf" \
+  ADDITIONAL_TEMPLATES="/framz-iso/framz-branding.tmpl" _VOLID="FRAMZ_OS_1"
+
+ls -lh output/    # здесь появится framz-os-1.0.iso
+```
+
+Это ровно те же параметры, что в `.github/workflows/build.yml`, поэтому локальный ISO
+и ISO из CI эквивалентны.
+
+Вариант попроще (без нашего оформления установщика, только образ системы):
 
 ```bash
 # собрать ISO из уже опубликованного образа (образ тянется из реестра)
@@ -76,7 +140,7 @@ bluebuild generate-iso recipe recipes/recipe.yml \
 поэтому ISO из CI и ISO, собранный руками, эквивалентны. Нужен `podman` и права root
 (контейнер запускается с `--privileged`).
 
-## 6. Что проверять руками на каждом тесте (чек-лист)
+## 7. Что проверять руками на каждом тесте (чек-лист)
 
 - [ ] Система загружается, экран входа в FRAMZ-теме, вход без ошибок.
 - [ ] Wayland-сессия, звук, микрофон, веб-камера.
@@ -89,7 +153,7 @@ bluebuild generate-iso recipe recipes/recipe.yml \
 - [ ] Магазин: установка/удаление Flatpak, обновления видны, русский язык корректный.
 - [ ] Первый запуск: мастер проходит, приложения ставятся, раскладки применяются.
 
-## 7. Правила гигиены репозитория
+## 8. Правила гигиены репозитория
 
 - Не коммитить ISO и образы (`.gitignore` уже настроен).
 - Большие бинарные ассеты добавлять только в `files/system/usr/share/framz/...`,
