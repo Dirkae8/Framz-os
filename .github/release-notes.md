@@ -71,7 +71,11 @@ sudo dd if=framz-os-1.0.iso of=/dev/sdX bs=4M status=progress oflag=sync   # sdX
 
 **Наш интерфейс:**
 
-* **Экран загрузки (Plymouth)** — знак FRAMZ вместо логотипа Fedora.
+* **Меню загрузки флешки** — наше: «Установить FRAMZ OS», «Проверить носитель», тёмный фон со знаком.
+* **Загрузчик на диске (GRUB)** — наша тема: знак, «FRAMZ OS», аккуратные пункты; конфиг собирается
+  при первом запуске и подменяется только после проверки, что система загрузится.
+* **Экран загрузки (Plymouth)** — знак FRAMZ вместо логотипа Fedora, спокойное выключение.
+* **Пароль для шифрованного диска** — запрос в том же стиле: ровный текст, без «сырых» консолей.
 * **Экран входа (SDDM)** — своя тема: тёмные обои FRAMZ, наш знак, вход без лишнего.
 * **Лаунчер в панели** — свой, не штатный: разделы **Творчество · Медиа · Система**,
   поиск по приложениям, быстрый запуск.
@@ -81,6 +85,11 @@ sudo dd if=framz-os-1.0.iso of=/dev/sdX bs=4M status=progress oflag=sync   # sdX
   `sudo framz-tune game` (игры: планировщик, приоритеты, звук),
   `sudo framz-tune dev` (разработка), `sudo framz-tune studio` (творчество: маленькая задержка звука),
   `framz-tune --status` — что сейчас включено.
+* **Одна команда `framz`** — `framz status`, `framz tune game`, `framz update`, `framz rollback`, `framz help-me`.
+* **Окно «Обновления FRAMZ»** — показывает состояние системы, обновляет и предлагает откат одной кнопкой.
+* **Своя справка** — «Справка FRAMZ» в меню: где программы, как обновляться, что делать если сломалось.
+* **Терминал** — наш профиль и раскраска по умолчанию.
+* **Быстрые окна** — короткие анимации и низкая задержка отрисовки: система ощущается отзывчивее.
 * Тема **Frame Dark** (тёмная) и **Studio Light** (светлая), обои 4K, знак FRAMZ,
   шрифты Noto Sans + JetBrains Mono.
 
@@ -113,10 +122,10 @@ Firefox · Flatseal · Warehouse.
 ## Проверенные контрольные суммы
 
 ```
-framz-os-1.0.iso          a720489c7d877f111aa03f56f9d8fdccdbce409db7a36842920d21a6a7ccae74
-framz-os-1.0.iso.part-aa  86a5bfb91d8c68278630b27630175e349b10e639d03892097c6b453d5e44dfd9
-framz-os-1.0.iso.part-ab  5047bc83cf3aff6e32dae5e114ce25f4d53ecc9c3472b140d1a07db91f11b65b
-framz-os-1.0.iso.part-ac  5fe9a3107f3b93a7dd96eee1066002d335cb7d9aa3e2ebd3f1143140c861a403
+framz-os-1.0.iso          01ad3d156d4bcc81141e2ae5e6e741a7a71e80f20dbb7d1d9265a15995e7428d
+framz-os-1.0.iso.part-aa  cfe27391dc003e296ce94549d15160079b434cf1e1dc1fd0072c5e3fd5357ded
+framz-os-1.0.iso.part-ab  0ea2151dbc75e82da9fce7ab16b460f6b69c8812bef3d9a5e98bb12f91e99059
+framz-os-1.0.iso.part-ac  f57f857e31cbb9bdd2047dee0076b4147396d8d3b4a590d58ae5c6766a08bc3c
 
 framz-os-1.0-nvidia.iso   a70bcd69c6a32cbb30a87129de62b16f2c8545174242d4fbe4fd9dc965266ab5
 ```
