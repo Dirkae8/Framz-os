@@ -21,7 +21,7 @@ set -euo pipefail
 WORKDIR="${FRAMZ_DIR:-$HOME/framz}"
 # Скрипт запуска берём из релиза: он всегда соответствует выложенному ISO.
 RAW_URL="${FRAMZ_RAW_URL:-https://github.com/Dirkae8/Framz-os/releases/download/${FRAMZ_RELEASE_TAG:-v1.0}}"
-EDITION="base"
+EDITION="${FRAMZ_EDITION:-base}"
 ASSUME_YES=0
 SKIP_DEPS=0
 DRY_RUN=0
@@ -223,9 +223,10 @@ fi
 
 case "$EDITION" in
   base|"")     ISO_FILE="framz-os-1.0.iso" ;;
+  arch)        ISO_FILE="framz-os-arch-1.0-x86_64.iso" ;;
   nvidia)      ISO_FILE="framz-os-1.0-nvidia.iso" ;;
   studio|full) ISO_FILE="framz-os-1.0-studio.iso" ;;
-  *)           die "неизвестная редакция: $EDITION (доступно: base, nvidia, studio)" ;;
+  *)           die "неизвестная редакция: $EDITION (доступно: base, arch, nvidia, studio)" ;;
 esac
 info "редакция: $EDITION → файл $ISO_FILE"
 

@@ -146,7 +146,7 @@ jobs:
           **Как попробовать (одна команда):**
 
           \`\`\`bash
-          bash -c "\$(curl -fsSL https://github.com/Dirkae8/Framz-os/releases/download/${ARCH_RELEASE}/framz-quickstart.sh)" --edition arch
+          FRAMZ_EDITION=arch bash -c "\$(curl -fsSL https://github.com/Dirkae8/Framz-os/releases/download/${ARCH_RELEASE}/framz-quickstart.sh)"
           \`\`\`
 
           ISO выложен частями (GitHub не принимает файлы больше 2 ГиБ) — скрипт скачивает,
@@ -160,6 +160,9 @@ jobs:
             gh release create "${ARCH_RELEASE}" \
               --title "FRAMZ OS 1.0 — Arch-издание" \
               --notes-file /tmp/arch-notes.md || true
+          else
+            # релиз уже есть — обновляем описание, чтобы команда теста не устаревала
+            gh release edit "${ARCH_RELEASE}" --notes-file /tmp/arch-notes.md || true
           fi
 
           gh release upload "${ARCH_RELEASE}" ${FILES} out/framz-quickstart.sh out/framz-vm.sh out/framz-usb.sh --clobber

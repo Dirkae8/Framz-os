@@ -27,7 +27,7 @@
 `.github/workflows/build-arch.yml` → релиз **v1.0-arch** (тег `v1.0-arch`). Запуск для теста:
 
 ```bash
-bash -c "$(curl -fsSL https://github.com/Dirkae8/Framz-os/releases/download/v1.0-arch/framz-quickstart.sh)" --edition arch
+FRAMZ_EDITION=arch bash -c "$(curl -fsSL https://github.com/Dirkae8/Framz-os/releases/download/v1.0-arch/framz-quickstart.sh)"
 ```
 
 **Впереди:** полностью свой набор иконок (сейчас — открытый Kora; подборка в `docs/brand/ICONS.md`),
