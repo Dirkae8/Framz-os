@@ -88,7 +88,7 @@ jobs:
           bash scripts/iso-selfcheck.sh "iso/${ISO_NAME}" 2>&1 \
             | tee "ci-logs/iso-verify-${{ github.run_id }}.txt" || true
 
-      - name: Загрузка в QEMU: снимки экрана каждые 5 минут
+      - name: "Загрузка в QEMU: снимки экрана каждые 5 минут"
         if: ${{ github.event_name == 'push' || github.event.inputs.boot_test == 'true' }}
         shell: bash
         run: |
@@ -117,22 +117,7 @@ jobs:
           echo "QEMU запущен (pid ${QPID})" | tee -a "${LOG}"
 
           shot() { # $1 = номер снимка
-            python3 - "$SOCK" "$1" <<'PY' 2>&1 | tee -a "${LOG}"
-import socket, sys, time
-sock, n = sys.argv[1], sys.argv[2]
-def send(cmd, wait=3.0):
-    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    s.settimeout(60)
-    s.connect(sock); s.recv(4096)
-    s.sendall((cmd + "\n").encode())
-    time.sleep(wait)
-    try:    out = s.recv(65536).decode(errors="replace")
-    except Exception as exc: out = f"(нет ответа: {exc})"
-    s.close(); return out
-print(f"--- снимок {n} ---")
-print(send("info status"))
-print(send(f"screendump /tmp/boot-{n}.ppm", wait=5.0))
-PY
+            python3 scripts/iso-qemu-shot.py "${SOCK}" "$1" 2>&1 | tee -a "${LOG}"
           }
 
           STEP=$((MINUTES / 5)); [ "${STEP}" -lt 1 ] && STEP=1
