@@ -55,6 +55,12 @@ modules:
         # контейнеры для «Мастерской»
         - distrobox
         - podman
+        # производительность и профили нагрузки (пакет ядра под игры и разработку)
+        - gamemode
+        - zram-generator
+        - irqbalance
+        - kernel-tools
+        - scx-scheds
     remove:
       packages:
         - firefox

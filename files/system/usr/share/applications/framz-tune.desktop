@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Профиль нагрузки FRAMZ
+Name[en]=FRAMZ performance profile
+Comment=Переключить систему под игры, разработку или звук
+Comment[en]=Switch the system for gaming, development or audio
+Exec=konsole -e framz-tune --status
+Icon=speedometer
+Terminal=false
+Categories=System;Settings;
+Keywords=профиль;игры;разработка;звук;производительность;performance;gaming;

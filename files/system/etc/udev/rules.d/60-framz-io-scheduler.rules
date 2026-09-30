@@ -1,0 +1,7 @@
+# FRAMZ OS — планировщик ввода-вывода под тип диска.
+# NVMe: без планировщика (минимальная задержка) — важно для игр и рендера.
+ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/scheduler}="none"
+# SSD/SD-карты: mq-deadline
+ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
+# Жёсткие диски: bfq — честнее делит доступ, интерфейс не «замирает»
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"

@@ -1,0 +1,53 @@
+# FRAMZ OS — тема меню загрузки GRUB (стиль Minimal Mono).
+# Шрифты не задаём намеренно: так GRUB использует свой встроенный,
+# и тема не сломается, если шрифтовой файл не найдётся.
+
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#0B0B12"
+terminal-box: "terminal_box_*.png"
+terminal-font: ""
+
++ label {
+    left = 0
+    top = 6%
+    width = 100%
+    align = "center"
+    color = "#EDEDF2"
+    text = "FRAMZ OS 1.0"
+}
+
++ label {
+    left = 0
+    top = 11%
+    width = 100%
+    align = "center"
+    color = "#6E6E7E"
+    text = "Творческая система · выбери пункт стрелками и нажми Enter"
+}
+
++ boot_menu {
+    left = 25%
+    top = 26%
+    width = 50%
+    height = 45%
+    item_color = "#9A9AAB"
+    selected_item_color = "#FFFFFF"
+    item_height = 34
+    item_spacing = 8
+    item_pixmap_style = "select_*.png"
+    selected_item_pixmap_style = "select_*.png"
+    scrollbar = false
+}
+
++ progress_bar {
+    id = "__timeout__"
+    left = 25%
+    top = 78%
+    width = 50%
+    height = 8
+    fg_color = "#EDEDF2"
+    bg_color = "#2A2A38"
+    border_color = "#2A2A38"
+    text = ""
+}

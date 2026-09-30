@@ -1,0 +1,9 @@
+# FRAMZ OS — экран загрузки (Plymouth).
+# Подключается через /etc/plymouth/plyrushd.conf -> см. файл рядом.
+[Plymouth Theme]
+Name=FRAMZ
+Description=Экран загрузки FRAMZ OS — знак и тонкая линия прогресса
+
+[script]
+ImageDir=/usr/share/plymouth/themes/framz
+ScriptFile=/usr/share/plymouth/themes/framz/framz.script

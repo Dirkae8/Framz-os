@@ -45,7 +45,26 @@ if [ -f "${MARK}" ]; then
   install -Dm644 "${MARK}" "${DESTDIR}/usr/share/icons/hicolor/scalable/apps/framz-logo.svg"
 fi
 
-# ── 3. Кэш иконок ────────────────────────────────────────────────────────────
+# ── 3. Службы, которые должны работать «из коробки» ─────────────────────────
+# Включаем офлайн (в образе), чтобы у человека ничего не требовалось запускать руками.
+for unit in irqbalance.service gamemoded.service; do
+  if systemctl enable "${unit}" >/dev/null 2>&1; then
+    echo "▸ FRAMZ: служба включена — ${unit}"
+  elif [ -f "/usr/lib/systemd/system/${unit}" ]; then
+    # запасной путь: ручная ссылка, если systemctl в контейнере недоступен
+    wants="${DESTDIR}/etc/systemd/system/multi-user.target.wants"
+    mkdir -p "${wants}"
+    ln -sf "/usr/lib/systemd/system/${unit}" "${wants}/${unit}"
+    echo "▸ FRAMZ: служба включена вручную — ${unit}"
+  fi
+done
+
+# Экран загрузки: выбираем наш Plymouth-тему (и обновляем initramfs, если инструмент есть)
+if command -v plymouth-set-default-theme >/dev/null 2>&1 && [ -d /usr/share/plymouth/themes/framz ]; then
+  plymouth-set-default-theme framz >/dev/null 2>&1 && echo "▸ FRAMZ: экран загрузки — наш (framz)" || true
+fi
+
+# ── 4. Кэш иконок ────────────────────────────────────────────────────────────
 for theme in kora kora-pgrey; do
   if [ -d "${DESTDIR}/usr/share/icons/${theme}" ] && [ -x /usr/bin/gtk-update-icon-cache ]; then
     gtk-update-icon-cache -q -t -f "${DESTDIR}/usr/share/icons/${theme}" || true

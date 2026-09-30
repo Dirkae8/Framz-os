@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+# FRAMZ OS — переключатель профилей нагрузки.
+#
+# Профили:
+#   balanced  — как у людей: тихо, экономно, хорошо для всего (по умолчанию)
+#   game      — игры: максимальная частота, планировщик для отзывчивости кадров
+#   dev       — разработка: быстрые сборки, отзывчивость под компиляцией
+#   studio    — звук и видео: минимальная задержка аудио, стабильные такты
+#
+# Меняет только то, что есть в системе: отсутствующее пропускает и говорит об этом.
+# Запуск: framz-tune game   ·   framz-tune --status   ·   sudo нужен только для системных профилей
+set -uo pipefail
+
+STATE_DIR="/var/lib/framz"
+STATE="${STATE_DIR}/profile"
+RU=1
+[ "${LANG:-ru}" = "en" ] || [ "${LANG:-ru%%_*}" = "en" ] && RU=0
+say() { [ "${RU}" = 1 ] && echo "$1" || echo "$2"; }
+warn() { say "  · $1" "  · $2"; }
+ok() { say "  ✓ $1" "  ✓ $2"; }
+skip() { say "  – $1" "  – $2"; }
+
+need_root() {
+  [ "$(id -u)" = "0" ] || { say "Нужны права root: sudo framz-tune $1" "Root is required: sudo framz-tune $1"; exit 1; }
+}
+
+set_governor() { # $1 = performance | powersave | schedutil
+  local gov="$1" changed=0
+  if command -v cpupower >/dev/null 2>&1; then
+    cpupower frequency-set -g "${gov}" >/dev/null 2>&1 && changed=1
+  fi
+  for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+    [ -w "$f" ] || continue
+    echo "${gov}" > "$f" 2>/dev/null && changed=1
+  done
+  [ "${changed}" = 1 ] && ok "частота процессора: ${gov}" "CPU governor: ${gov}" \
+                       || skip "управление частотой недоступно" "CPU frequency control unavailable"
+}
+
+set_scheduler() { # $1 = имя планировщика scx (scx_lavd / scx_bpfland)
+  local name="$1"
+  if ! command -v "${name}" >/dev/null 2>&1; then
+    skip "планировщик ${name} не установлен (пакет scx-scheds)" "${name} scheduler not installed (package scx-scheds)"
+    return
+  fi
+  # современный способ: scx_loader; старый: юнит scx@
+  if systemctl list-unit-files 'scx_loader.service' >/dev/null 2>&1 &&
+     systemctl list-unit-files 'scx_loader.service' | grep -q scx_loader; then
+    mkdir -p /etc/systemd/system/scx_loader.service.d
+    printf '[Service]\nEnvironment=SCX_SCHEDULER=%s\n' "${name}" \
+      > /etc/systemd/system/scx_loader.service.d/99-framz.conf
+    systemctl daemon-reload 2>/dev/null || true
+    systemctl enable --now scx_loader.service >/dev/null 2>&1 \
+      && ok "планировщик: ${name}" "Scheduler: ${name}" \
+      || skip "не удалось включить scx_loader" "Could not enable scx_loader"
+  else
+    skip "служба scx_loader не найдена" "scx_loader service not found"
+  fi
+}
+
+set_audio_quantum() { # $1 = квант в кадрах
+  local q="$1"
+  mkdir -p /etc/pipewire/pipewire.conf.d
+  cat > /etc/pipewire/pipewire.conf.d/99-framz-profile.conf <<CONF
+# FRAMZ OS — профиль звука «$(cat "${STATE}" 2>/dev/null || echo balanced)»
+context.properties = {
+    default.clock.quantum = ${q}
+    default.clock.min-quantum = ${q}
+    default.clock.max-quantum = $((q * 8))
+}
+CONF
+  if command -v systemctl >/dev/null 2>&1; then
+    systemctl --user restart pipewire pipewire-pulse wireplumber >/dev/null 2>&1 || true
+  fi
+  ok "звук: квант ${q} кадров (меньше = ниже задержка)" "Audio quantum: ${q} frames"
+}
+
+apply_profile() {
+  local p="$1"
+  mkdir -p "${STATE_DIR}"
+  echo "${p}" > "${STATE}"
+  say "Профиль FRAMZ: ${p}" "FRAMZ profile: ${p}"
+  case "${p}" in
+    balanced)
+      set_governor schedutil
+      set_audio_quantum 1024
+      ;;
+    game)
+      set_governor performance
+      set_scheduler scx_lavd
+      set_audio_quantum 512
+      ;;
+    dev)
+      set_governor performance
+      set_scheduler scx_bpfland
+      set_audio_quantum 1024
+      ;;
+    studio)
+      set_governor performance
+      set_audio_quantum 128
+      # USB-звуковые интерфейсы не должны «засыпать» во время записи
+      for ctrl in /sys/bus/usb/devices/*/power/control; do
+        [ -w "${ctrl}" ] && echo on > "${ctrl}" 2>/dev/null || true
+      done
+      ok "USB: автосон отключён (для аудиоинтерфейсов)" "USB autosuspend disabled"
+      ;;
+    *)
+      say "Неизвестный профиль: ${p}" "Unknown profile: ${p}"
+      say "Доступно: balanced | game | dev | studio" "Available: balanced | game | dev | studio"
+      exit 1
+      ;;
+  esac
+  say "Готово. Профиль запомнен и вернётся после перезагрузки (см. framz-tune-boot)." \
+      "Done. The profile is remembered and restored on boot (see framz-tune-boot)."
+}
+
+case "${1:-}" in
+  --status|status|"")
+    say "Текущий профиль: $(cat "${STATE}" 2>/dev/null || echo 'balanced (по умолчанию)')" \
+        "Current profile: $(cat "${STATE}" 2>/dev/null || echo 'balanced (default)')"
+    [ -n "$(command -v scx_lavd 2>/dev/null)" ] && say "  планировщики scx: доступны" "  scx schedulers: available" \
+                                                  || say "  планировщики scx: не установлены" "  scx schedulers: not installed"
+    say "Сменить: sudo framz-tune game|dev|studio|balanced" "Switch: sudo framz-tune game|dev|studio|balanced"
+    ;;
+  balanced|game|dev|studio)
+    need_root "$1"
+    apply_profile "$1"
+    ;;
+  *)
+    say "Использование: framz-tune [balanced|game|dev|studio|--status]" "Usage: framz-tune [balanced|game|dev|studio|--status]"
+    exit 1
+    ;;
+esac

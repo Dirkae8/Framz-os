@@ -36,13 +36,12 @@ framzTry(function() {
     }
 });
 
-// Слева — запуск с нашим знаком вместо стандартной иконки
-var launcher = panel.addWidget("org.kde.plasma.kickoff");
-framzTry(function() {
-    launcher.currentConfigGroup = ["General"];
-    launcher.writeConfig("icon", "framz-logo");
-    launcher.writeConfig("useCustomButtonImage", true);
-});
+// Слева — НАШ лаунчер (свой плазмоид с нашим знаком).
+// Если понадобится вернуть штатное меню KDE — раскомментируй две строки ниже
+// и закомментируй добавление org.framz.launcher.
+panel.addWidget("org.framz.launcher");
+// var launcher = panel.addWidget("org.kde.plasma.kickoff");
+// framzTry(function() { launcher.currentConfigGroup = ["General"]; launcher.writeConfig("icon", "framz-logo"); });
 
 // По центру — задачи: только значки, без подписей (вид дока)
 panel.addWidget("org.kde.plasma.icontasks");

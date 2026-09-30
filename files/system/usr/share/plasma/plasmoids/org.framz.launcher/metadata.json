@@ -1,0 +1,24 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "FRAMZ OS"
+            }
+        ],
+        "Category": "Application Launchers",
+        "Description": "Меню запуска FRAMZ: творчество, медиа, система",
+        "Description[en]": "FRAMZ launcher: creativity, media, system",
+        "EnabledByDefault": false,
+        "Icon": "framz-logo",
+        "Id": "org.framz.launcher",
+        "License": "GPL-2.0+",
+        "Name": "FRAMZ Запуск",
+        "Name[en]": "FRAMZ Launcher",
+        "Version": "1.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [
+        "org.kde.plasma.launchermenu"
+    ]
+}

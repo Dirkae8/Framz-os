@@ -1,0 +1,76 @@
+# FRAMZ OS — экран загрузки (Plymouth), язык сценариев Plymouth Script.
+#
+# Задача: почти чёрный фон, знак FRAMZ по центру, под ним ряд «меток кадрирования»
+# (наш фирменный элемент), которые загораются по мере загрузки. Никаких надписей —
+# система загружается молча и аккуратно.
+#
+# Все вызовы только из базового API Plymouth Script: Sprite/Image/Window/Plymouth.
+
+# ── фон ──────────────────────────────────────────────────────────────────────
+# #0B0B12 = (11, 18, 18)/255 → (0.043, 0.043, 0.071)
+Window.SetBackgroundTopColor(0.043, 0.043, 0.071);
+Window.SetBackgroundBottomColor(0.024, 0.024, 0.043);
+
+# ── знак FRAMZ по центру ─────────────────────────────────────────────────────
+logo.image = Image("logo.png");
+logo.sprite = Sprite(logo.image);
+logo.sprite.SetX(Window.GetWidth() / 2 - logo.image.GetWidth() / 2);
+logo.sprite.SetY(Window.GetHeight() / 2 - logo.image.GetHeight() / 2 - 60);
+logo.sprite.SetZ(20);
+
+# ── ряд меток-тиков под знаком ───────────────────────────────────────────────
+TICKS = 21;
+TICK_GAP = 14;
+tick_image = Image("tick.png");
+tick_width = tick_image.GetWidth();
+row_width = TICKS * tick_width + (TICKS - 1) * TICK_GAP;
+row_x = Window.GetWidth() / 2 - row_width / 2;
+row_y = Window.GetHeight() / 2 + 60;
+
+progress = 0.0;
+phase = 0.0;
+
+for (i = 0; i < TICKS; i++) {
+    sprite = Sprite(tick_image);
+    sprite.SetX(row_x + i * (tick_width + TICK_GAP));
+    sprite.SetY(row_y);
+    sprite.SetZ(10);
+    sprite.SetOpacity(0.15);
+    tick_sprites[i] = sprite;
+}
+
+# ── отрисовка: тики до текущего прогресса светятся ───────────────────────────
+fun refresh_callback()
+{
+    # мягкое «дыхание» для ещё не пройденных тиков
+    phase = phase + 0.045;
+    if (phase > 6.2832)
+        phase = phase - 6.2832;
+    pulse = 0.15 + 0.10 * Math.Sin(phase);
+
+    lit = Math.Int(progress * TICKS);
+    for (i = 0; i < TICKS; i++) {
+        if (i < lit)
+            tick_sprites[i].SetOpacity(1.0);
+        else if (i == lit)
+            tick_sprites[i].SetOpacity(0.7);
+        else
+            tick_sprites[i].SetOpacity(pulse);
+    }
+}
+
+fun boot_progress_callback(duration, progress_value)
+{
+    progress = progress_value;
+}
+
+fun message_callback(text)
+{
+    # Сообщения ядра не показываем: экран должен оставаться чистым.
+    # Если понадобится диагностика — раскомментируй печать ниже.
+    # print("FRAMZ plymouth: " + text);
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+Plymouth.SetBootProgressFunction(boot_progress_callback);
+Plymouth.SetMessageFunction(message_callback);

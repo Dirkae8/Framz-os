@@ -45,6 +45,25 @@
 Файл: `usr/share/plasma/look-and-feel/org.framz.desktop/contents/layouts/org.kde.plasma.desktop-layout.js`.
 Применяется автоматически при первом входе; дальше пользователь может менять панель как хочет.
 
+**Наш экран загрузки (Plymouth):** почти чёрный фон, знак FRAMZ по центру, под ним ряд «меток
+кадрирования», которые загораются по мере загрузки. Файлы: `/usr/share/plymouth/themes/framz/`
+(+ `/etc/plymouth/plymouthd.conf` — тема выбрана наша).
+
+**Наш экран входа (SDDM):** обои FRAMZ, знак, список пользователей, выбор сессии, кнопки питания,
+сообщение о неверном пароле и Caps Lock, RU+EN по локали. Файлы: `/usr/share/sddm/themes/framz/`
+(+ `/etc/sddm.conf.d/10-framz.conf`). Откат на стандартную тему — одна строка: `Current=breeze`.
+
+**Наш лаунчер (плазмоид):** вкладки «Творчество / Медиа / Система», поиск, плитки приложений;
+кнопка запуска в панели — наш знак. Файлы: `/usr/share/plasma/plasmoids/org.framz.launcher/`.
+Вернуть штатное меню KDE — две строки в раскладке панели (они уже написаны рядом, закомментированы).
+
+**Ядро и производительность:** сеть на BBR, zram под память, планировщик ввода-вывода по типу диска,
+лимиты для игр и сборки (`/etc/sysctl.d/99-framz.conf`, `/etc/systemd/zram-generator.conf`,
+`/etc/udev/rules.d/60-framz-io-scheduler.rules`), служба `irqbalance` и `gamemode`.
+Переключатель профилей **`framz-tune game|dev|studio|balanced`** (+ ярлык «Профиль нагрузки» в меню):
+меняет частоту процессора, планировщик (`scx_lavd` для игр, `scx_bpfland` для разработки),
+квант звука (128 кадров для студии). Всё, чего нет в системе, пропускается с понятным сообщением.
+
 **Наш установщик:** цвета (стиль Minimal Mono — белый фон, чёрный акцент), знак FRAMZ в шапке,
 заголовок окна «Установка FRAMZ OS». Внутри ISO это файлы
 `/usr/share/cockpit/branding/framz/branding.css` и `/etc/anaconda/cockpit/conf.d/50-framz.conf`.

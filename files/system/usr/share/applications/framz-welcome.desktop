@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Первый запуск FRAMZ
+Name[en]=FRAMZ first run
+Comment=Настроить тему и проверить железо
+Comment[en]=Set the theme and check the hardware
+Exec=framz-welcome
+Icon=framz-logo
+Terminal=false
+Categories=System;Settings;
+Keywords=первый;запуск;настройка;welcome;setup;
