@@ -1,0 +1,2 @@
+# FRAMZ OS (Live) — в живом режиме пароля нет: это флешка, а не система с данными.
+framz ALL=(ALL) NOPASSWD: ALL

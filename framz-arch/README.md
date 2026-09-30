@@ -1,27 +1,42 @@
-# FRAMZ OS на Arch — профиль сборки
+# FRAMZ OS на Arch — наследие: профиль сборки
 
-Черновая версия профиля [archiso](https://wiki.archlinux.org/title/Archiso) для Arch-редакции FRAMZ OS.
-План и обоснование — [`../docs/ARCH-PLAN.md`](../docs/ARCH-PLAN.md); разбор интерфейса — [`../docs/INTERFACE.md`](../docs/INTERFACE.md).
+Arch-издание: **новая база**, лёгкая и полностью наша. Собирается профилем
+[archiso](https://wiki.archlinux.org/title/Archiso), установка — Calamares в нашем оформлении.
 
-## Сборка
+План и обоснование — [`../docs/ARCH-PLAN.md`](../docs/ARCH-PLAN.md), разбор интерфейса — [`../docs/INTERFACE.md`](../docs/INTERFACE.md).
+
+## Как собрать
 
 ```bash
-# нужен Arch (или контейнер archlinux:latest) и права root
-sudo pacman -S --needed archiso
-sudo mkarchiso -v -w /tmp/framz-work -o out framz-arch/
+# на Arch (или в контейнере archlinux:latest, права root)
+pacman -Sy --needed archiso
+bash framz-arch/prepare.sh          # собрать содержимое ISO из наших файлов
+sudo mkarchiso -v -w /tmp/framz-work -o out framz-arch
 # результат: out/framz-os-arch-1.0-x86_64.iso
 ```
 
-## Что уже есть в профиле
+Или просто запушить изменения в `framz-arch/**` — соберётся в CI
+(`.github/workflows/build-arch.yml`) и появится в релизе `v1.0-arch`.
 
-- `profiledef.sh` — имя ISO, метка тома, режимы загрузки (BIOS + UEFI), права на файлы;
-- `packages.x86_64` — наш список пакетов: лёгкая база, Plasma, творческая настройка, откат, Calamares;
-- `airootfs/` — то, что попадёт внутрь системы (сюда сборка подкладывает `../files/system/*`
-  и `../iso/branding/*`, чтобы не дублировать наш брендинг).
+## Что внутри профиля
 
-## Следующие шаги (этап 1 плана)
+| Что | Где |
+| --- | --- |
+| Описание ISO, режимы загрузки, права | `profiledef.sh` |
+| Пакеты (лёгкая база, Plasma, творческая настройка, Calamares) | `packages.x86_64` |
+| Репозитории | `pacman.conf` |
+| Меню загрузки UEFI | `grub/grub.cfg` |
+| Меню загрузки BIOS | `syslinux/syslinux.cfg` |
+| Надстройка живого режима: пользователь, автозапуск, установщик | `airootfs-seed/` |
+| Сборка содержимого ISO из наших файлов | `prepare.sh` |
 
-1. Дописать оверлей `airootfs`: автозапуск `framz-welcome` в Live-режиме, ярлык «Установить FRAMZ OS».
-2. Настроить `mkinitcpio` + Plymouth (наш знак), SDDM (наш экран входа).
-3. Подключить Calamares с нашим оформлением и разметкой Btrfs по умолчанию.
-4. Собрать ISO в CI (workflow `build-arch.yml`), прогнать жёсткий тест из `docs/ARCH-PLAN.md` (раздел 7).
+`airootfs/` не хранится в репозитории: его собирает `prepare.sh` из
+`files/system` (наш интерфейс, ядро, скрипты), `iso/branding` (оформление) и
+`airootfs-seed` (живой режим и Calamares). Так Arch-издание и Fedora-издание
+используют одни и те же наши файлы — расходиться им негде.
+
+## Что делает установщик
+
+Calamares, офлайн: система распаковывается из образа на флешке, интернет не нужен
+(приложения затем ставятся из Flatpak). Наш шаг `framz-initramfs` собирает initramfs
+установленной системы с нашим экраном загрузки; загрузчик — GRUB с нашей темой.

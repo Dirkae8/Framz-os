@@ -1,0 +1,149 @@
+name: build-arch
+
+# СБОРКА ARCH-ИЗДАНИЯ FRAMZ OS (новая база: Arch + KDE Plasma).
+# Собирается в контейнере archlinux, результат кладётся в релиз v1.0-arch.
+#
+# Запуск: автоматически при изменениях в framz-arch/**, files/**, iso/branding/**
+# или вручную: Actions → build-arch → Run workflow.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - arena/01a0ee0e-framz-os
+    paths:
+      - "framz-arch/**"
+      - "files/**"
+      - "iso/branding/**"
+      - "scripts/iso-brand-boot.sh"
+      - ".github/workflows/build-arch.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-arch-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ARCH_RELEASE: v1.0-arch
+  ISO_NAME: framz-os-arch-1.0-x86_64.iso
+
+jobs:
+  iso:
+    name: ISO FRAMZ OS (Arch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Забрать репозиторий
+        uses: actions/checkout@v4
+
+      - name: Освободить место на диске
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: true
+
+      - name: Собрать ISO в контейнере Arch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          # Сборка целиком внутри Arch: archiso ставит пакеты, собирает squashfs и ISO.
+          sudo docker run --privileged --rm \
+            --volume "$PWD:/repo" --workdir /repo \
+            archlinux:latest bash -c '
+              set -euo pipefail
+              echo "=== обновляем базы пакетов ==="
+              pacman -Sy --noconfirm --needed archiso git curl which >/dev/null
+
+              echo "=== собираем содержимое ISO (airootfs) ==="
+              bash framz-arch/prepare.sh
+
+              echo "=== проверяем, какие пакеты есть в репозиториях Arch ==="
+              : > /tmp/pkgs.list
+              while read -r pkg; do
+                [ -z "${pkg}" ] && continue
+                case "${pkg}" in \#*) continue ;; esac
+                if pacman -Si "${pkg}" >/dev/null 2>&1; then
+                  echo "${pkg}" >> /tmp/pkgs.list
+                else
+                  echo "  пропускаю (нет в Arch): ${pkg}"
+                fi
+              done < framz-arch/packages.x86_64
+              cp /tmp/pkgs.list framz-arch/packages.x86_64
+              echo "пакетов к установке: $(wc -l < framz-arch/packages.x86_64)"
+
+              echo "=== собираем ISO (долго: ставим пакеты и сжимаем систему) ==="
+              mkdir -p /repo/out
+              mkarchiso -v -w /tmp/framz-work -o /repo/out /repo/framz-arch
+            '
+
+      - name: Показать результат
+        shell: bash
+        run: ls -lh out/ && du -sh out/ || true
+
+      - name: Опубликовать ISO в релизе
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          ISO="out/${ISO_NAME}"
+          if [ ! -f "${ISO}" ]; then
+            echo "ISO не собрался — смотрите лог выше"
+            exit 1
+          fi
+
+          # Меню загрузки: подписываем пункты по-нашему (аккуратно, с запасным путём)
+          bash scripts/iso-brand-boot.sh "${ISO}" || true
+          (cd out && sha256sum "${ISO_NAME}" > "${ISO_NAME}-SHA256")
+
+          SIZE=$(stat -c%s "${ISO}")
+          LIMIT=$((1900 * 1024 * 1024))
+          if [ "${SIZE}" -le "${LIMIT}" ]; then
+            FILES="out/${ISO_NAME} out/${ISO_NAME}-SHA256"
+          else
+            split -b 1800M "${ISO}" "out/${ISO_NAME}.part-"
+            (cd out && sha256sum "${ISO_NAME}".part-* > "${ISO_NAME}.parts-SHA256")
+            FILES="out/${ISO_NAME}.part-* out/${ISO_NAME}.parts-SHA256 out/${ISO_NAME}-SHA256"
+          fi
+
+          # Скрипты установки кладём рядом с ISO: тест с флешки и в виртуалке
+          cp scripts/framz-quickstart.sh scripts/framz-vm.sh scripts/framz-usb.sh out/
+
+          # Описание релиза пишем в файл — так его не ломает разметка и кавычки
+          cat > /tmp/arch-notes.md <<EOF
+          Сборка на базе **Arch Linux** (KDE Plasma). Живой режим и установка через Calamares.
+
+          **Как попробовать (одна команда):**
+
+          \`\`\`bash
+          bash -c "\$(curl -fsSL https://github.com/Dirkae8/Framz-os/releases/download/${ARCH_RELEASE}/framz-quickstart.sh)" --edition arch
+          \`\`\`
+
+          ISO выложен частями (GitHub не принимает файлы больше 2 ГиБ) — скрипт скачивает,
+          проверяет контрольные суммы и склеивает их сам.
+
+          Что внутри: наш интерфейс (экран загрузки, экран входа, лаунчер, профили ядра
+          \`framz-tune\`), установщик в нашем оформлении, набор иконок Kora, Flatpak с Flathub.
+          EOF
+
+          if ! gh release view "${ARCH_RELEASE}" >/dev/null 2>&1; then
+            gh release create "${ARCH_RELEASE}" \
+              --title "FRAMZ OS 1.0 — Arch-издание" \
+              --notes-file /tmp/arch-notes.md || true
+          fi
+
+          gh release upload "${ARCH_RELEASE}" ${FILES} out/framz-quickstart.sh out/framz-vm.sh out/framz-usb.sh --clobber
+
+      - name: Загрузить ISO как артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: framz-os-arch-iso
+          path: |
+            out/*.iso
+            out/*.part-*
+            out/*-SHA256
+          compression-level: 0
+          retention-days: 14

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Установить FRAMZ OS
+Comment=Поставить систему на диск
+Exec=sudo -E calamares
+Icon=framz-logo
+Terminal=false
+Categories=System;

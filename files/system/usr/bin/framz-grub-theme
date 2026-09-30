@@ -12,9 +12,18 @@
 set -uo pipefail
 
 THEME_SRC="/usr/share/grub/themes/framz"
-THEME_DST="/boot/grub2/themes/framz"
-GRUB_CFG="/boot/grub2/grub.cfg"
 MARK="/var/lib/framz/grub-themed"
+
+# Где живёт GRUB: у Fedora — /boot/grub2, у Arch — /boot/grub. Поддерживаем оба.
+if [ -d /boot/grub2 ]; then
+  GRUB_DIR="/boot/grub2"
+elif [ -d /boot/grub ]; then
+  GRUB_DIR="/boot/grub"
+else
+  GRUB_DIR="/boot/grub2"   # ветка ниже всё равно корректно отработает «нет каталога»
+fi
+THEME_DST="${GRUB_DIR}/themes/framz"
+GRUB_CFG="${GRUB_DIR}/grub.cfg"
 
 log() { echo "framz-grub-theme: $*"; }
 
@@ -23,7 +32,7 @@ if [ -f "${MARK}" ] && [ -f "${GRUB_CFG}" ] && grep -q "themes/framz" "${GRUB_CF
   exit 0
 fi
 
-[ -d /boot/grub2 ] || { log "нет /boot/grub2 — не GRUB-система, пропускаю"; exit 0; }
+[ -d "${GRUB_DIR}" ] || { log "нет каталога GRUB (${GRUB_DIR}) — не GRUB-система, пропускаю"; exit 0; }
 [ -f "${THEME_SRC}/theme.txt" ] || { log "нет нашей темы — пропускаю"; exit 0; }
 
 # 1. тема внутри /boot
@@ -31,7 +40,7 @@ mkdir -p "${THEME_DST}"
 cp -f "${THEME_SRC}"/* "${THEME_DST}/" 2>/dev/null || true
 
 # 2. сборка конфига
-NEW="$(mktemp /boot/grub2/grub.cfg.new.XXXXXX)" || exit 0
+NEW="$(mktemp "${GRUB_DIR}/grub.cfg.new.XXXXXX")" || exit 0
 if command -v grub2-mkconfig >/dev/null 2>&1; then
   grub2-mkconfig -o "${NEW}" >/dev/null 2>&1 || true
 elif command -v grub-mkconfig >/dev/null 2>&1; then

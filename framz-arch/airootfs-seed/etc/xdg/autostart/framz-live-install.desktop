@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Установка FRAMZ OS
+Comment=Запускает установщик, если загрузка выбрана пунктом «Установить FRAMZ OS»
+Exec=bash -c 'grep -q framz_install=1 /proc/cmdline && exec sudo -E calamares'
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

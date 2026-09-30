@@ -3,7 +3,7 @@ Description=FRAMZ OS — тема загрузчика GRUB
 Documentation=man:grub2-mkconfig(8)
 # Тема нужна к следующей загрузке, поэтому запускаемся после монтирования /boot
 After=local-fs.target
-ConditionPathExists=/boot/grub2
+
 ConditionPathExists=!/var/lib/framz/grub-themed
 
 [Service]

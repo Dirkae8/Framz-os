@@ -10,6 +10,7 @@
 #   scripts/framz-vm.sh all                  # скачать ISO + собрать из частей + запустить ВМ
 #   scripts/framz-vm.sh all --edition studio # полная редакция со всеми приложениями
 #   scripts/framz-vm.sh all --edition nvidia # редакция с драйвером NVIDIA
+#   scripts/framz-vm.sh all --edition arch   # Arch-издание (новая база)
 #   scripts/framz-vm.sh run                  # только запустить (ISO уже скачан)
 #   scripts/framz-vm.sh run --memory 8192 --cpus 6 --gl
 #   scripts/framz-vm.sh download             # только скачать и проверить
@@ -60,7 +61,7 @@ FRAMZ OS — запуск в виртуальной машине
 
 Опции:
   --dir DIR       рабочий каталог                 (по умолчанию ~/framz)
-  --edition X     какая редакция: base | nvidia | studio
+  --edition X     какая редакция: base | nvidia | studio | arch (Arch-база)
                   base   — лёгкая система, софт из магазина   (framz-os-1.0.iso)
                   nvidia — драйвер NVIDIA и CUDA внутри       (framz-os-1.0-nvidia.iso)
                   studio — Krita, Blender, Kdenlive и др.     (framz-os-1.0-studio.iso)
@@ -486,7 +487,13 @@ case "$EDITION" in
   base|"")       [ -n "$ISO_NAME" ] || ISO_NAME="framz-os-1.0.iso" ;;
   nvidia)        [ -n "$ISO_NAME" ] || ISO_NAME="framz-os-1.0-nvidia.iso" ;;
   studio|full)   [ -n "$ISO_NAME" ] || ISO_NAME="framz-os-1.0-studio.iso" ;;
-  *)             die "неизвестная редакция: $EDITION (доступно: base, nvidia, studio)" ;;
+  arch)
+    [ -n "$ISO_NAME" ] || ISO_NAME="framz-os-arch-1.0-x86_64.iso"
+    # Arch-издание лежит в отдельном релизе
+    [ -n "${FRAMZ_RELEASE_TAG:-}" ] || TAG="v1.0-arch"
+    [ -n "${FRAMZ_BASE_URL:-}" ] || BASE_URL="https://github.com/${REPO}/releases/download/${TAG}"
+    ;;
+  *)             die "неизвестная редакция: $EDITION (доступно: base, nvidia, studio, arch)" ;;
 esac
 
 case "$CMD" in

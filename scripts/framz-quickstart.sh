@@ -40,6 +40,11 @@ have()  { command -v "$1" >/dev/null 2>&1; }
 # Заглушки для тестов: FRAMZ_TEST_PREFIX=/tmp/stub добавляет каталог в PATH
 [ -n "${FRAMZ_TEST_PREFIX:-}" ] && PATH="$FRAMZ_TEST_PREFIX:$PATH"
 
+# Arch-издание лежит в отдельном релизе — берём оттуда и скрипт запуска
+if [ "${EDITION}" = "arch" ] && [ -z "${FRAMZ_RAW_URL:-}" ]; then
+  RAW_URL="https://github.com/Dirkae8/Framz-os/releases/download/v1.0-arch"
+fi
+
 usage() {
   cat <<'EOF'
 FRAMZ OS — быстрый запуск на Garuda (одной командой)
@@ -58,7 +63,7 @@ FRAMZ OS — быстрый запуск на Garuda (одной командо�
   --disk ГБ        размер диска ВМ      (по умолчанию 40)
   --gl             включить 3D-ускорение
   --sound          включить звук в ВМ (нужен qemu-audio-pipewire)
-  --edition X      редакция: base (по умолчанию) | nvidia | studio
+  --edition X      редакция: base (по умолчанию) | nvidia | studio | arch
   --iso FILE       использовать готовый ISO по пути
   -h, --help       эта справка
 EOF
