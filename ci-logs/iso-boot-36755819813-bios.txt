@@ -1,0 +1,27 @@
+=== Загрузка FRAMZ OS в QEMU: прошивка bios ===
+начало: 2026-09-30 18:09 UTC
+образ: iso/framz-os-1.0.iso (4343 МБ)
+снимки: каждые 5 мин, всего 3 (15 мин), без KVM
+
+BIOS: SeaBIOS (по умолчанию)
+QEMU запущен (pid 17948)
+монитор готов: /tmp/qemu-bios-monitor.sock
+--- снимок 1 ---
+VM status: running
+снимок записан: /tmp/boot-bios-1.ppm (3072016 байт)
+файл: iso-boot-36755819813-bios-1.png (1286 байт)
+--- снимок 2 ---
+VM status: running
+снимок записан: /tmp/boot-bios-2.ppm (3072016 байт)
+файл: iso-boot-36755819813-bios-2.png (149093 байт)
+--- снимок 3 ---
+VM status: running
+снимок записан: /tmp/boot-bios-3.ppm (3072016 байт)
+файл: iso-boot-36755819813-bios-3.png (149093 байт)
+
+--- последние строки последовательного порта ---
+(пусто — установщик графический)
+--- QEMU за всё время сообщил ---
+[W][00609.802226] pw.conf      | [          conf.c: 1031 try_load_conf()] can't load config client.conf: No such file or directory
+[E][00609.802311] pw.conf      | [          conf.c: 1060 pw_conf_load_conf_for_context()] can't load config client.conf: No such file or directory
+окончание: 2026-09-30 18:24 UTC
