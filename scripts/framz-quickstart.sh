@@ -19,7 +19,8 @@ set -euo pipefail
 
 # ------------------------------ параметры -----------------------------------
 WORKDIR="${FRAMZ_DIR:-$HOME/framz}"
-RAW_URL="${FRAMZ_RAW_URL:-https://raw.githubusercontent.com/Dirkae8/Framz-os/arena/01a0ee0e-framz-os}"
+# Скрипт запуска берём из релиза: он всегда соответствует выложенному ISO.
+RAW_URL="${FRAMZ_RAW_URL:-https://github.com/Dirkae8/Framz-os/releases/download/${FRAMZ_RELEASE_TAG:-v1.0}}"
 EDITION="base"
 ASSUME_YES=0
 SKIP_DEPS=0

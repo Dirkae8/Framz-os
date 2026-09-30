@@ -1,11 +1,12 @@
 # FRAMZ OS 1.0
 
 **Творческая система на базе Fedora Atomic KDE Plasma.** Один установочный образ для всех устройств:
-система, своё оформление FRAMZ и творческий набор приложений — уже внутри.
+система, свой интерфейс FRAMZ и творческий набор приложений — уже внутри.
 
 > **Скачать:** `framz-os-1.0.iso` (обычная, для большинства компьютеров) ·
 > `framz-os-1.0-nvidia.iso` (для видеокарт NVIDIA, с драйвером и CUDA внутри).
-> GitHub не принимает файлы больше 2 ГиБ, поэтому ISO выложены **частями** — склей их, как написано ниже.
+> GitHub не принимает файлы больше 2 ГиБ, поэтому ISO выложены **частями** — склеиваются сами,
+> если ставить через скрипты ниже.
 
 | | `framz-os-1.0.iso` | `framz-os-1.0-nvidia.iso` |
 |---|---|---|
@@ -16,12 +17,78 @@
 
 ---
 
+## Как поставить
+
+### Путь 1 — попробовать в виртуалке (ничего не сломает, система не тронет)
+
+Одна команда, дальше скрипт всё делает сам: поставит виртуалку, скачает ISO частями,
+проверит контрольные суммы, склеит его и откроет окно установки.
+
+```bash
+bash -c "$(curl -fsSL https://github.com/Dirkae8/Framz-os/releases/download/v1.0/framz-quickstart.sh)"
+```
+
+Что делать в окне: язык `Русский` → **Хранилище** → диск `40 GiB` → **Автоматически** →
+создать пользователя (галочка «Сделать администратором») → **Начать установку** → **Перезагрузить**.
+После перезагрузки увидишь наш экран загрузки, наш экран входа и рабочий стол FRAMZ OS.
+
+Подробная инструкция для Garuda: [`docs/RUN-ON-GARUDA.md`](https://github.com/Dirkae8/Framz-os/blob/main/docs/RUN-ON-GARUDA.md).
+
+### Путь 2 — поставить на настоящий компьютер, с флешки
+
+Нужна флешка ≥ 8 ГБ. **Всё на ней будет стёрто.**
+
+```bash
+bash -c "$(curl -fsSL https://github.com/Dirkae8/Framz-os/releases/download/v1.0/framz-usb.sh)"
+```
+
+Скрипт спросит, куда писать, скачает ISO, проверит сумму и запишет на флешку.
+Дальше: загрузка с флешки (в BIOS/UEFI включена загрузка USB, **Secure Boot выключен** —
+образы пока без подписи) → тот же установщик FRAMZ OS.
+
+### Путь 3 — вручную, без скриптов
+
+```bash
+cd ~/Загрузки
+BASE=https://github.com/Dirkae8/Framz-os/releases/download/v1.0
+for p in aa ab ac; do curl -LO "$BASE/framz-os-1.0.iso.part-$p"; done
+curl -LO "$BASE/framz-os-1.0.iso.parts-SHA256"
+curl -LO "$BASE/framz-os-1.0.iso-SHA256"
+
+sha256sum -c framz-os-1.0.iso.parts-SHA256     # проверка частей
+cat framz-os-1.0.iso.part-* > framz-os-1.0.iso # склейка
+sha256sum -c framz-os-1.0.iso-SHA256           # проверка целого ISO: ждём «OK»
+
+lsblk                                          # найти свою флешку, например /dev/sdb
+sudo dd if=framz-os-1.0.iso of=/dev/sdX bs=4M status=progress oflag=sync   # sdX — именно флешка!
+```
+
+Для NVIDIA-редакции — то же с именем `framz-os-1.0-nvidia.iso` (части `part-aa…part-ad`).
+
+---
+
 ## Что внутри
 
-**Оформление FRAMZ (наше):**
-тема **Frame Dark** (тёмная, фиолетово-маджентовая) и **Studio Light** (светлая, тёплая),
-обои 4K (3840×2160), свой экран загрузки с метками кадрирования, знак FRAMZ, шрифты
-Noto Sans + JetBrains Mono, тема оформления `org.framz.desktop` применяется при первом входе.
+**Наш интерфейс:**
+
+* **Экран загрузки (Plymouth)** — знак FRAMZ вместо логотипа Fedora.
+* **Экран входа (SDDM)** — своя тема: тёмные обои FRAMZ, наш знак, вход без лишнего.
+* **Лаунчер в панели** — свой, не штатный: разделы **Творчество · Медиа · Система**,
+  поиск по приложениям, быстрый запуск.
+* **Оформление установщика** — установщик подписан и оформлен как FRAMZ OS
+  (чёрно-белый стиль «Minimal Mono»), а не как Fedora.
+* **Профили ядра `framz-tune`** — одним словом переключаешь систему под задачу:
+  `sudo framz-tune game` (игры: планировщик, приоритеты, звук),
+  `sudo framz-tune dev` (разработка), `sudo framz-tune studio` (творчество: маленькая задержка звука),
+  `framz-tune --status` — что сейчас включено.
+* Тема **Frame Dark** (тёмная) и **Studio Light** (светлая), обои 4K, знак FRAMZ,
+  шрифты Noto Sans + JetBrains Mono.
+
+**Настройка системы под творчество и разработку:** планировщик ввода-вывода под тип диска
+(NVMe/SSD/HDD), zram-сжатие памяти, BBR для сети, баланс отзывчивости и многозадачности
+(автогруппировка задач), звук без задержек (PipeWire + JACK), графические планшеты (libwacom),
+цвет и калибровка (colord + argyllcms), инструменты (btop, ark, filelight, partitionmanager,
+KDE Connect), контейнеры для «Мастерской» (distrobox, podman).
 
 **Иконки:** открытый набор [Kora](https://github.com/bikass/kora) (GPL-3.0) + серая версия Kora Grey.
 
@@ -29,10 +96,6 @@ Noto Sans + JetBrains Mono, тема оформления `org.framz.desktop` п
 быстрые ссылки на Discover, Krita, Blender, Kdenlive, OBS, Ardour, darktable. Показывается один раз.
 
 **Система видит себя как FRAMZ OS:** `PRETTY_NAME="FRAMZ OS 1.0"`, `ID=framz`, `ID_LIKE=fedora`.
-
-**Творческая настройка системы:** звук без задержек (PipeWire + JACK), графические планшеты (libwacom),
-цвет и калибровка (colord + argyllcms), инструменты (btop, ark, filelight, partitionmanager, KDE Connect),
-контейнеры для «Мастерской» (distrobox, podman). Firefox из системы убран — ставится Flatpak'ом.
 
 **Творческий набор (Flatpak из Flathub):**
 Krita · Inkscape · GIMP · Scribus · Blender · darktable · Kdenlive · OBS Studio · Ardour · LibreOffice ·
@@ -42,52 +105,24 @@ Firefox · Flatseal · Warehouse.
 
 **Магазин:** штатный **Discover** с Flathub — в нашей теме выглядит как часть FRAMZ.
 
-**Обновления:** атомарные, через `rpm-ostree` (`sudo bootc upgrade` / `rpm-ostree update`), с откатом при проблемах.
-
----
-
-## Установка (инструкция для Linux-системы, например Garuda)
-
-```bash
-# 1. Скачать все части и файлы контрольных сумм
-cd ~/Загрузки
-BASE=https://github.com/Dirkae8/Framz-os/releases/download/v1.0
-for p in aa ab ac; do curl -LO "$BASE/framz-os-1.0.iso.part-$p"; done
-curl -LO "$BASE/framz-os-1.0.iso.parts-SHA256"
-curl -LO "$BASE/framz-os-1.0.iso-SHA256"
-
-# 2. Проверить каждую часть и склеить в один ISO
-sha256sum -c framz-os-1.0.iso.parts-SHA256
-cat framz-os-1.0.iso.part-* > framz-os-1.0.iso
-
-# 3. Проверить целый ISO
-sha256sum -c framz-os-1.0.iso-SHA256
-#    ожидаем: framz-os-1.0.iso: OK
-
-# 4. Записать на флешку (8 ГБ и больше). ВНИМАНИЕ: /dev/sdX — именно флешка, не диск с данными!
-lsblk
-sudo dd if=framz-os-1.0.iso of=/dev/sdX bs=4M status=progress oflag=sync
-sync
-```
-
-Для NVIDIA-редакции — то же самое, заменив имя файла на `framz-os-1.0-nvidia.iso`
-(части `part-aa…part-ad`).
-
-**Установка на компьютер без операционной системы:** флешка грузится сама (BIOS/UEFI → USB),
-дальше штатный установщик Fedora Atomic: выбор диска → установка → перезагрузка.
-Автоматический помощник для скачивания и записи — в репозитории: `scripts/framz-usb.sh`.
-
-**Secure Boot:** сейчас образы без подписи. Если Secure Boot включён — либо отключи его на время установки,
-либо дождись подписанных сборок (в планах). В виртуальной машине Secure Boot не мешает.
+**Обновления и откат:** атомарные, через `rpm-ostree` / `bootc`. Обновился — стало плохо —
+одна команда `sudo rpm-ostree rollback` и перезагрузка возвращают прошлое состояние.
 
 ---
 
 ## Проверенные контрольные суммы
 
 ```
-framz-os-1.0.iso          85bc270424516cb337e3c9adcc3291bf1ba13696d5c370dcce0548f2b52c4214
+framz-os-1.0.iso          a720489c7d877f111aa03f56f9d8fdccdbce409db7a36842920d21a6a7ccae74
+framz-os-1.0.iso.part-aa  86a5bfb91d8c68278630b27630175e349b10e639d03892097c6b453d5e44dfd9
+framz-os-1.0.iso.part-ab  5047bc83cf3aff6e32dae5e114ce25f4d53ecc9c3472b140d1a07db91f11b65b
+framz-os-1.0.iso.part-ac  5fe9a3107f3b93a7dd96eee1066002d335cb7d9aa3e2ebd3f1143140c861a403
+
 framz-os-1.0-nvidia.iso   a70bcd69c6a32cbb30a87129de62b16f2c8545174242d4fbe4fd9dc965266ab5
 ```
+
+Скрипты (`framz-quickstart.sh`, `framz-vm.sh`, `framz-usb.sh`) проверяют суммы сами —
+руками считать не нужно.
 
 ---
 
@@ -96,9 +131,12 @@ framz-os-1.0-nvidia.iso   a70bcd69c6a32cbb30a87129de62b16f2c8545174242d4fbe4fd9d
 - своего набора иконок (используем открытый Kora; свой — в планах);
 - расширенного мастера первого запуска (сейчас упрощённое окно);
 - подписи образов для Secure Boot;
-- сборки с приложениями целиком внутри ISO (~11 ГБ, без докачивания) — будет, если понадобится.
+- сборки с приложениями целиком внутри ISO (~11 ГБ, без докачивания) — будет, если понадобится;
+- полного форка на своей базе: сейчас база — Fedora Kinoite, переход на Arch с откатом
+  через снапшоты описан в [`docs/ARCH-PLAN.md`](https://github.com/Dirkae8/Framz-os/blob/main/docs/ARCH-PLAN.md).
 
-Планы и устройство проекта — в репозитории: [`docs/VISION.md`](https://github.com/Dirkae8/Framz-os/blob/main/docs/VISION.md),
+Планы и устройство проекта — в репозитории:
+[`docs/VISION.md`](https://github.com/Dirkae8/Framz-os/blob/main/docs/VISION.md),
 [`docs/WHAT-IS-OURS.md`](https://github.com/Dirkae8/Framz-os/blob/main/docs/WHAT-IS-OURS.md).
 
 **Лицензии:** система — Fedora/Atomic (MIT и др.), оформление FRAMZ — наше, иконки Kora — GPL-3.0

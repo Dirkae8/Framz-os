@@ -50,18 +50,36 @@
     --pf-t--global--color--brand--hover: var(--brand-default);
 }
 
-/* Верхняя полоса установщика: у Fedora это синий градиент из встроенных стилей,
- * поэтому перекрываем тем же селектором — наш файл подключается позже. */
+/* Верхняя полоса установщика.
+ * У Fedora это синий градиент, причём стили Fedora вставляются сборщиком позже
+ * нашего файла. Поэтому поднимаем специфичность (body.anaconda + .anaconda)
+ * и ставим !important — иначе синий фон остаётся.
+ */
+body.anaconda .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child,
 .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child {
-    --_text: #0B0B12;
-    background: #FFFFFF;
-    border-bottom: 1px solid #E4E4EA;
+    --_text: #0B0B12 !important;
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #E4E4EA !important;
 }
 
+.pf-v6-theme-dark body.anaconda .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child,
 .pf-v6-theme-dark .pf-v6-c-page__main-group > .pf-v6-c-page__main-section:first-child {
-    --_text: #EDEDF2;
-    background: #0B0B12;
-    border-bottom: 1px solid #2A2A38;
+    --_text: #EDEDF2 !important;
+    background: #0B0B12 !important;
+    border-bottom: 1px solid #2A2A38 !important;
+}
+
+/* Кнопки: у Fedora синие — делаем чёрные (наш акцент) */
+.pf-v6-c-button.pf-m-primary,
+button.pf-v6-c-button.pf-m-primary {
+    --pf-v6-c-button--m-primary--BackgroundColor: #0B0B12 !important;
+    --pf-v6-c-button--m-primary--hover--BackgroundColor: #3A3A46 !important;
+    --pf-v6-c-button--m-primary--Color: #FFFFFF !important;
+}
+
+/* Синие акценты в списках и ссылках — на наш чёрный */
+.pf-v6-c-wizard__nav-link.pf-m-current {
+    --pf-v6-c-wizard__nav-link--m-current--Color: #0B0B12 !important;
 }
 
 /* Кнопка-«кебаб» наследует цвет текста полосы */

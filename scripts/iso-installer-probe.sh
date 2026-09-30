@@ -52,7 +52,8 @@ echo "--- содержимое среды (unsquashfs) ---"
 echo "файлов: $(wc -l < "${WORK}/list.txt")"
 echo
 
-in_env() { grep -qx "/$1" "${WORK}/list.txt"; }
+# В списке unsquashfs пути БЕЗ ведущего слэша — ищем по basename-виду
+in_env() { grep -qx "$1" "${WORK}/list.txt" || grep -qx "/$1" "${WORK}/list.txt"; }
 
 echo "--- где живёт веб-интерфейс установщика ---"
 grep -E '^/usr/share/cockpit/[^/]*/(index\.html|manifest\.json)$' "${WORK}/list.txt" | head -10 || true
@@ -105,6 +106,13 @@ for path in etc/anaconda/cockpit/conf.d/50-framz.conf etc/cockpit/conf.d/50-fram
 done
 echo
 
+echo "--- какие стили задают цвет верхней полосы (из index.css среды) ---"
+for css in $(grep -E '^/?usr/share/cockpit/[^/]*/index\.css$' "${WORK}/list.txt" | head -1); do
+  echo "    файл: ${css#/}"
+  unsquashfs -cat "${WORK}/install.img" "${css#/}" 2>/dev/null | tr '}' '}\n' \
+    | grep -E 'radial-gradient|brand-default-light' | head -4 | cut -c1-240 | sed 's/^/       /'
+done
+echo
 echo "--- имя системы в среде установщика ---"
 unsquashfs -cat "${WORK}/install.img" etc/os-release 2>/dev/null | grep -E '^(NAME|PRETTY_NAME|VERSION_ID|VARIANT|ID)=' | sed 's/^/    /'
 echo
