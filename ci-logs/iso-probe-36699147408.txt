@@ -1,0 +1,39 @@
+=== FRAMZ OS — разбор среды установщика ===
+время: 2026-09-30 09:59 UTC
+файл: iso/framz-os-1.0.iso
+
+образ среды: /IMAGES/INSTALL.IMG;1
+размер образа: 872 МБ
+
+--- содержимое среды (unsquashfs) ---
+файлов: 39597
+
+--- оформление: что лежит в среде ---
+squashfs-root/usr/share/cockpit/branding
+squashfs-root/usr/share/cockpit/branding/framz
+squashfs-root/usr/share/cockpit/branding/framz/branding.css
+squashfs-root/usr/share/cockpit/branding/framz/logo.png
+
+--- симлинки оформления (куда указывают) ---
+(симлинков нет)
+
+--- подхватился ли НАШ стиль ---
+НЕТ    файла нет — usr/share/cockpit/static/branding.css
+НЕТ    файла нет — usr/share/cockpit/branding/framz/branding.css
+НЕТ    файла нет — usr/share/cockpit/branding/fedora/branding.css
+ВНИМАНИЕ: наш стиль в среду установщика не попал
+
+--- настройки установщика ---
+НЕТ    etc/anaconda/cockpit/conf.d/50-framz.conf
+НЕТ    etc/cockpit/conf.d/50-framz.conf
+
+--- имя системы в среде установщика ---
+    NAME="Fedora Linux"
+    ID=fedora
+    VERSION_ID=44
+    PRETTY_NAME="Fedora Linux 44 (Kinoite)"
+    VARIANT="Kinoite"
+
+--- как установщик подключает оформление ---
+
+=== конец разбора ===

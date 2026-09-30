@@ -1,0 +1,93 @@
+=== FRAMZ OS — самопроверка ISO ===
+время: 2026-09-30 09:58 UTC
+файл: iso/framz-os-1.0.iso
+размер: 4554424320 байт (4343 МБ)
+
+--- параметры ISO ---
+System id: 
+Volume id: FRAMZ_OS_1
+Volume set id: 
+Logical block size is: 2048
+метка тома: 'FRAMZ_OS_1'
+ВЕРНО  метка содержит FRAMZ
+
+всего файлов на ISO: 602
+
+--- карта структуры (два уровня) ---
+/.discinfo                   файлов: 0
+/boot                        файлов: 307
+    grub2
+/efi                         файлов: 11
+    boot
+/fedora_legal_readme.txt     файлов: 0
+/framz                       файлов: 272
+    blobs
+    index.json
+    oci_layout.
+/images                      файлов: 5
+    eltorito.img
+    install.img
+    pxeboot
+/license.                    файлов: 0
+
+--- файлы загрузки ---
+ЕСТЬ   ядро — /images/pxeboot/vmlinuz.
+ЕСТЬ   initrd — /images/pxeboot/initrd.img
+ЕСТЬ   загрузчик UEFI — /efi/boot/bootx64.efi
+ЕСТЬ   загрузчик BIOS — /images/eltorito.img
+НЕТ    .treeinfo
+ЕСТЬ   .discinfo — /.discinfo
+
+--- среда установщика ---
+образ среды: /IMAGES/INSTALL.IMG;1
+распаковываю список файлов среды…
+файлов в среде установщика: 39597
+
+--- НАШ БРЕНДИНГ в установщике ---
+ЕСТЬ   оформление: branding.css
+ЕСТЬ   знак FRAMZ: logo.png
+ЕСТЬ   настройки установщика
+
+--- фрагмент нашего оформления ---
+/* FRAMZ OS — оформление установщика. Стиль «Minimal Mono»: белый фон, чёрный акцент.
+ *
+ * Подключается установщиком (Anaconda WebUI) через брендинг Cockpit:
+ *   /usr/share/cockpit/branding/framz/branding.css
+ * Цвета задаются переменными, дальше они раскладываются по токенам PatternFly —
+ * так оформление работает и в светлой, и в тёмной схеме установщика.
+ */
+
+
+--- настройки окна установщика ---
+[WebService]
+Branding = framz
+LoginTitle = Установка FRAMZ OS
+
+--- как называется система установщика ---
+NAME="Fedora Linux"
+VERSION_ID=44
+PRETTY_NAME="Fedora Linux 44 (Kinoite)"
+
+--- наш системный образ внутри ISO ---
+слоёв (файлов blobs) найдено: 268
+индекс образа: /FRAMZ/INDEX.JSON;1
+манифестов в индексе: 1
+прочитано слоёв образа: 0
+
+--- НАШИ ФАЙЛЫ ВНУТРИ СИСТЕМНОГО ОБРАЗА ---
+НЕТ    окно первого запуска   (искали: usr/bin/framz-welcome)
+НЕТ    профили нагрузки (ядро)   (искали: usr/bin/framz-tune)
+НЕТ    набор иконок Kora   (искали: usr/share/icons/kora/index.theme)
+НЕТ    знак FRAMZ в теме иконок   (искали: framz-logo.svg)
+НЕТ    тема оформления FRAMZ   (искали: org.framz.desktop/metadata.json)
+НЕТ    наш лаунчер (плазмоид)   (искали: org.framz.launcher/metadata.json)
+НЕТ    обои FRAMZ   (искали: framz/branding/wallpapers)
+НЕТ    экран входа SDDM   (искали: sddm/themes/framz/Main.qml)
+НЕТ    экран загрузки Plymouth   (искали: plymouth/themes/framz/framz.script)
+НЕТ    настройки ядра   (искали: sysctl.d/99-framz.conf)
+НЕТ    имя системы   (искали: etc/os-release)
+НЕТ    автозапуск окна первого запуска   (искали: framz-welcome.desktop)
+
+не найдено пунктов: 12
+
+=== ИТОГ: замечаний 1 ===
