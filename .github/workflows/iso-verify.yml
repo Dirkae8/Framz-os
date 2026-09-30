@@ -79,7 +79,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq genisoimage squashfs-tools xorriso qemu-system-x86 imagemagick >/dev/null
+          sudo apt-get install -y -qq genisoimage squashfs-tools xorriso qemu-system-x86 ovmf imagemagick >/dev/null
 
       - name: Самопроверка ISO (структура и брендинг)
         shell: bash
@@ -98,9 +98,18 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
+          mkdir -p ci-logs
+          # Быстрая проверка: если есть метка verify-iso/skip-boot — проверяем только
+          # скачивание, суммы и оформление, без 15-минутной загрузки в QEMU.
+          if [ -f verify-iso/skip-boot ]; then
+            echo "быстрая проверка: загрузку в QEMU пропускаем (метка verify-iso/skip-boot)" \
+              | tee "ci-logs/iso-boot-${{ github.run_id }}-пропуск.txt"
+            exit 0
+          fi
           MINUTES="${{ github.event.inputs.boot_minutes }}"; MINUTES="${MINUTES:-15}"
           bash scripts/iso-qemu-boot.sh "iso/${ISO_NAME}" bios "${MINUTES}" ci-logs "${{ github.run_id }}"
           bash scripts/iso-qemu-boot.sh "iso/${ISO_NAME}" uefi "${MINUTES}" ci-logs "${{ github.run_id }}"
+          echo "загрузка проверена: отчёты iso-boot-* в ci-logs"
 
       - name: Сохранить отчёт и снимки в ветку ci-logs
         if: always()

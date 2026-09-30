@@ -168,8 +168,11 @@ jobs:
           set -euo pipefail
           mkdir -p output dnf-cache
           LOG="$PWD/iso-build.log"
+          : > "${LOG}"
           # Параметры передаются АРГУМЕНТАМИ make, а не через -e:
           # значения из Makefile.inputs внутри образа установщика перекрывают окружение.
+          # Сборка тянет системный образ из реестра — при обрыве сети повторяем попытку.
+          build_iso() {
           sudo docker run --privileged --rm \
             --volume "$PWD/output:/build-container-installer/build" \
             --volume "$PWD/dnf-cache:/cache/dnf" \
@@ -185,7 +188,20 @@ jobs:
             WEB_UI="false" \
             DNF_CACHE="/cache/dnf" \
             ADDITIONAL_TEMPLATES="/framz-iso/framz-branding.tmpl" \
-            _VOLID="FRAMZ_OS_1" 2>&1 | tee "${LOG}"
+            _VOLID="FRAMZ_OS_1" 2>&1 | tee -a "${LOG}"
+          }
+          OK=0
+          for attempt in 1 2; do
+            echo "=== попытка сборки ISO ${attempt} из 2 ===" | tee -a "${LOG}"
+            if build_iso; then OK=1; break; fi
+            echo "попытка ${attempt} не удалась — повторяем через минуту" | tee -a "${LOG}"
+            sleep 60
+          done
+          if [ "${OK}" != "1" ]; then
+            echo "сборка ISO не удалась после двух попыток" | tee -a "${LOG}"
+            tail -30 "${LOG}" | tee -a "${LOG}"
+            exit 1
+          fi
           ls -lh output/
           (cd output && sha256sum "${ISO_NAME}" > "${ISO_NAME}-SHA256")
           cat "output/${ISO_NAME}-SHA256"

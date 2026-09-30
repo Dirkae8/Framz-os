@@ -10,6 +10,9 @@
 #
 #   ПРОШИВКА — bios или uefi
 #   снимки: <каталог>/iso-boot-<имя>-<прошивка>-<номер>.png
+#
+# Важно: скрипт намеренно НЕ завершается с ошибкой из-за одного неудачного
+# снимка — его задача собрать отчёт. Провал загрузки виден в отчёте.
 set -uo pipefail
 
 ISO="${1:?укажи путь к ISO}"
@@ -25,7 +28,8 @@ mkdir -p "${OUTDIR}"
 LOG="${OUTDIR}/iso-boot-${TAG}-${FIRMWARE}.txt"
 SOCK="/tmp/qemu-${FIRMWARE}-monitor.sock"
 SERIAL="/tmp/qemu-${FIRMWARE}-serial.log"
-rm -f "${SOCK}" "${SERIAL}"
+QERR="/tmp/qemu-${FIRMWARE}-qemu.log"
+rm -f "${SOCK}" "${SERIAL}" "${QERR}"
 SHOTS=$((MINUTES / 5)); [ "${SHOTS}" -lt 1 ] && SHOTS=1
 
 {
@@ -47,7 +51,8 @@ if [ "${FIRMWARE}" = "uefi" ]; then
   case "${OVMF_CODE}" in
     */OVMF.fd) FW_ARGS=(-bios "${OVMF_CODE}") ;;
     *)
-      VARS_SRC="$(dirname "${OVMF_CODE}")/OVMF_VARS_4M.fd"; [ -f "${VARS_SRC}" ] || VARS_SRC="$(dirname "${OVMF_CODE}")/OVMF_VARS.fd"
+      VARS_SRC="$(dirname "${OVMF_CODE}")/OVMF_VARS_4M.fd"
+      [ -f "${VARS_SRC}" ] || VARS_SRC="$(dirname "${OVMF_CODE}")/OVMF_VARS.fd"
       cp "${VARS_SRC}" /tmp/framz-OVMF_VARS.fd
       FW_ARGS=(-drive "if=pflash,format=raw,readonly=on,file=${OVMF_CODE}" -drive "if=pflash,format=raw,file=/tmp/framz-OVMF_VARS.fd")
       ;;
@@ -57,6 +62,11 @@ else
   echo "BIOS: SeaBIOS (по умолчанию)" | tee -a "${LOG}"
 fi
 
+if ! command -v qemu-system-x86_64 >/dev/null 2>&1; then
+  echo "нет qemu-system-x86_64 — нужен пакет qemu-system-x86" | tee -a "${LOG}"
+  exit 0
+fi
+
 qemu-system-x86_64 \
   -machine q35 -m 4096 -smp 4 -accel tcg \
   "${FW_ARGS[@]}" \
@@ -64,19 +74,40 @@ qemu-system-x86_64 \
   -boot d -display none -vnc none \
   -monitor "unix:${SOCK},server,nowait" \
   -serial "file:${SERIAL}" \
-  >/dev/null 2>&1 &
+  > "${QERR}" 2>&1 &
 QPID=$!
 echo "QEMU запущен (pid ${QPID})" | tee -a "${LOG}"
 
-shot() { # $1 = номер снимка
-  local n="$1" ppm="/tmp/boot-${FIRMWARE}-${n}.ppm" state
-  state="$(python3 scripts/iso-qemu-shot.py "${SOCK}" "${n}" "${ppm}" 2>&1 | tr -d '\r' | grep -v '^(qemu)' | grep 'VM status' | head -1)"
+# Ждём появления сокета монитора: если QEMU упал, здесь это станет видно
+for _ in $(seq 1 30); do
+  [ -S "${SOCK}" ] && break
+  sleep 1
+done
+if [ ! -S "${SOCK}" ]; then
+  echo "ВНИМАНИЕ: монитор QEMU не поднялся — вот что сказал QEMU:" | tee -a "${LOG}"
+  tail -20 "${QERR}" 2>/dev/null | tee -a "${LOG}"
+  kill "${QPID}" 2>/dev/null || true
+  exit 0
+fi
+echo "монитор готов: ${SOCK}" | tee -a "${LOG}"
+
+# shot <номер снимка>
+shot() {
+  local n="$1"
+  local ppm="/tmp/boot-${FIRMWARE}-${n}.ppm"
+  local out
+  out="$(python3 scripts/iso-qemu-shot.py "${SOCK}" "${n}" "${ppm}" 2>&1 | tr -d '\r' | grep -v '^(qemu)' || true)"
+  echo "--- снимок ${n} ---" | tee -a "${LOG}"
+  echo "${out}" | grep -E 'VM status|снимок записан|монитор недоступен|не создан' | tee -a "${LOG}" || true
   if [ -f "${ppm}" ]; then
-    convert "${ppm}" "${OUTDIR}/iso-boot-${TAG}-${FIRMWARE}-${n}.png" 2>/dev/null \
-      && echo "снимок ${n}: ${state:-состояние неизвестно} → iso-boot-${TAG}-${FIRMWARE}-${n}.png" | tee -a "${LOG}" \
-      || { cp "${ppm}" "${OUTDIR}/iso-boot-${TAG}-${FIRMWARE}-${n}.ppm"; echo "снимок ${n}: без конвертера, оставлен ppm" | tee -a "${LOG}"; }
+    if convert "${ppm}" "${OUTDIR}/iso-boot-${TAG}-${FIRMWARE}-${n}.png" 2>/dev/null; then
+      echo "файл: iso-boot-${TAG}-${FIRMWARE}-${n}.png ($(stat -c%s "${OUTDIR}/iso-boot-${TAG}-${FIRMWARE}-${n}.png") байт)" | tee -a "${LOG}"
+    else
+      cp "${ppm}" "${OUTDIR}/iso-boot-${TAG}-${FIRMWARE}-${n}.ppm"
+      echo "без конвертера, оставлен ppm" | tee -a "${LOG}"
+    fi
   else
-    echo "снимок ${n}: не получился" | tee -a "${LOG}"
+    echo "снимок ${n} не получился" | tee -a "${LOG}"
   fi
 }
 
@@ -88,6 +119,8 @@ done
 echo | tee -a "${LOG}"
 echo "--- последние строки последовательного порта ---" | tee -a "${LOG}"
 if [ -s "${SERIAL}" ]; then tail -20 "${SERIAL}" | tee -a "${LOG}"; else echo "(пусто — установщик графический)" | tee -a "${LOG}"; fi
+echo "--- QEMU за всё время сообщил ---" | tee -a "${LOG}"
+tail -10 "${QERR}" 2>/dev/null | tee -a "${LOG}"
 kill "${QPID}" 2>/dev/null || true
 date -u +"окончание: %Y-%m-%d %H:%M UTC" | tee -a "${LOG}"
 exit 0

@@ -2,10 +2,10 @@
 # FRAMZ OS — разбор среды установщика внутри ISO.
 #
 # Достаёт из ISO образ среды установщика (/images/install.img) и показывает:
-#   · какие файлы оформления там реально лежат и куда указывают симлинки;
+#   · какие файлы оформления там лежат и куда указывают симлинки;
 #   · подхватился ли наш стиль (ищем маркер FRAMZ-BRANDING);
 #   · какие настройки установщика применились;
-#   · чем называется система в среде установщика.
+#   · где живёт веб-интерфейс установщика и откуда он берёт оформление.
 #
 # Нужен, чтобы проверять оформление по факту, а не по предположению.
 # Ничего не меняет; печатает отчёт.
@@ -30,15 +30,12 @@ echo
 # Список файлов ISO: raw (как есть) и norm (строчные, без «;1») — строки совпадают
 isoinfo -f -i "${ISO}" 2>/dev/null | tr -d '\r' > "${WORK}/raw.txt"
 sed 's/;[0-9]*$//' "${WORK}/raw.txt" | tr '[:upper:]' '[:lower:]' > "${WORK}/norm.txt"
-rm -f "${WORK}/pair.txt"; paste -d'\t' "${WORK}/raw.txt" "${WORK}/norm.txt" > "${WORK}/pair.txt"
+paste -d'\t' "${WORK}/raw.txt" "${WORK}/norm.txt" > "${WORK}/pair.txt"
 
-# path_of <нормализованный путь> → путь как он записан в ISO
 path_of() { awk -F'\t' -v want="$1" '$2 == want { print $1; exit }' "${WORK}/pair.txt"; }
 
 ENV_IMG="$(path_of '/images/install.img')"
-if [ -z "${ENV_IMG}" ]; then
-  ENV_IMG="$(awk -F'\t' '$2 ~ /\.(squashfs|img)$/ && $2 ~ /install/ { print $1; exit }' "${WORK}/pair.txt")"
-fi
+[ -n "${ENV_IMG}" ] || ENV_IMG="$(awk -F'\t' '$2 ~ /(^|\/)(install|squashfs)[^\/]*\.(img|squashfs)$/ { print $1; exit }' "${WORK}/pair.txt")"
 [ -n "${ENV_IMG}" ] || { echo "образ среды установщика в ISO не найден"; exit 1; }
 echo "образ среды: ${ENV_IMG}"
 
@@ -47,47 +44,63 @@ isoinfo -i "${ISO}" -x "${ENV_IMG}" > "${WORK}/install.img" 2>/dev/null
 echo "размер образа: $(( $(stat -c%s "${WORK}/install.img") / 1048576 )) МБ"
 echo
 
+unsquashfs -l "${WORK}/install.img" 2>/dev/null | tr -d '\r' > "${WORK}/list-raw.txt"
+# В списке unsquashfs пути идут с префиксом squashfs-root/ — убираем его,
+# иначе сравнение с путями внутри системы всегда даёт «нет файла».
+sed 's#^squashfs-root/*##' "${WORK}/list-raw.txt" > "${WORK}/list.txt"
 echo "--- содержимое среды (unsquashfs) ---"
-unsquashfs -l "${WORK}/install.img" 2>/dev/null | tr -d '\r' > "${WORK}/list.txt"
 echo "файлов: $(wc -l < "${WORK}/list.txt")"
 echo
 
-echo "--- оформление: что лежит в среде ---"
-grep -E 'cockpit/(static|branding)' "${WORK}/list.txt" | head -30 || echo "(ничего не найдено)"
+in_env() { grep -qx "/$1" "${WORK}/list.txt"; }
+
+echo "--- где живёт веб-интерфейс установщика ---"
+grep -E '^/usr/share/cockpit/[^/]*/(index\.html|manifest\.json)$' "${WORK}/list.txt" | head -10 || true
+echo
+echo "--- все файлы оформления в среде ---"
+grep -E 'branding|/logo\.png$' "${WORK}/list.txt" | grep -v '^/usr/share/icons' | head -30 || true
+echo
+echo "--- символические ссылки, связанные с оформлением ---"
+unsquashfs -ll "${WORK}/install.img" 2>/dev/null | tr -d '\r' | sed 's#squashfs-root/*##' | grep -E '^l.*(branding|cockpit)' | head -10 || true
 echo
 
-echo "--- симлинки оформления (куда указывают) ---"
-unsquashfs -ll "${WORK}/install.img" 2>/dev/null | tr -d '\r' | grep -E ' -> .*branding' | head -10 || echo "(симлинков нет)"
-echo
-
-echo "--- подхватился ли НАШ стиль ---"
+echo "--- подхватился ли НАШ стиль (ищем маркер FRAMZ-BRANDING) ---"
 FOUND_OURS=0
 for path in \
   usr/share/cockpit/static/branding.css \
   usr/share/cockpit/branding/framz/branding.css \
-  usr/share/cockpit/branding/fedora/branding.css
+  usr/share/cockpit/branding/fedora/branding.css \
+  usr/static/branding.css \
+  usr/share/static/branding.css
 do
-  if grep -qx "/${path}" "${WORK}/list.txt"; then
+  if in_env "${path}"; then
     if unsquashfs -cat "${WORK}/install.img" "${path}" 2>/dev/null | grep -q 'FRAMZ-BRANDING'; then
-      echo "ЕСТЬ   стиль FRAMZ — ${path}"
+      echo "ЕСТЬ   наш стиль — /${path}"
       FOUND_OURS=1
     else
-      echo "НЕТ    наш стиль не найден — ${path} (файл есть, маркера FRAMZ нет)"
+      echo "НЕТ    файл есть, но это НЕ наш стиль — /${path}"
     fi
   else
-    echo "НЕТ    файла нет — ${path}"
+    echo "нет    файла нет — /${path}"
   fi
 done
 [ "${FOUND_OURS}" = "1" ] || echo "ВНИМАНИЕ: наш стиль в среду установщика не попал"
 echo
 
+echo "--- что подключает веб-интерфейс (строки со стилями) ---"
+for html in $(grep -E '^/usr/share/cockpit/[^/]*/index\.html$' "${WORK}/list.txt" | head -2); do
+  echo "    ${html}:"
+  unsquashfs -cat "${WORK}/install.img" "${html#/}" 2>/dev/null | grep -i -E 'stylesheet|branding' | sed 's/^/       /' || true
+done
+echo
+
 echo "--- настройки установщика ---"
 for path in etc/anaconda/cockpit/conf.d/50-framz.conf etc/cockpit/conf.d/50-framz.conf; do
-  if grep -qx "/${path}" "${WORK}/list.txt"; then
-    echo "ЕСТЬ   ${path}:"
+  if in_env "${path}"; then
+    echo "ЕСТЬ   /${path}:"
     unsquashfs -cat "${WORK}/install.img" "${path}" 2>/dev/null | grep -v '^#' | grep -v '^$' | sed 's/^/       /'
   else
-    echo "НЕТ    ${path}"
+    echo "нет    /${path}"
   fi
 done
 echo
@@ -96,14 +109,5 @@ echo "--- имя системы в среде установщика ---"
 unsquashfs -cat "${WORK}/install.img" etc/os-release 2>/dev/null | grep -E '^(NAME|PRETTY_NAME|VERSION_ID|VARIANT|ID)=' | sed 's/^/    /'
 echo
 
-echo "--- как установщик подключает оформление ---"
-for path in usr/share/cockpit/anaconda/index.html usr/share/cockpit/anaconda-webui/index.html; do
-  if grep -qx "/${path}" "${WORK}/list.txt"; then
-    echo "    ${path}:"
-    unsquashfs -cat "${WORK}/install.img" "${path}" 2>/dev/null | grep -i 'branding' | sed 's/^/       /'
-  fi
-done
-
-echo
 echo "=== конец разбора ==="
 exit 0
