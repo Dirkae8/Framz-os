@@ -80,6 +80,32 @@ for pair in "ядро:${KERNEL}" "initrd:${INITRD}" "загрузчик UEFI:${G
 done
 echo
 
+# ── 3.1 Меню загрузки: наше ли оно ───────────────────────────────────────────
+echo "--- меню загрузки ---"
+MENU_FOUND=0
+for menu_norm in '/efi/boot/grub.cfg' '/boot/grub2/grub.cfg'; do
+  menu_path="$(path_of "${menu_norm}")"
+  [ -n "${menu_path}" ] || continue
+  isoinfo -i "${ISO}" -x "${menu_path}" > "${WORK}/menu.cfg" 2>/dev/null || continue
+  echo "нашлось меню: ${menu_path}"
+  if grep -q 'Установить FRAMZ OS' "${WORK}/menu.cfg"; then
+    echo "ЕСТЬ   наши пункты (Установить FRAMZ OS)"
+    MENU_FOUND=1
+  fi
+  grep -m1 'set timeout' "${WORK}/menu.cfg" | sed 's/^/       /' || true
+  if grep -q 'framz-boot/bg.png' "${WORK}/menu.cfg"; then
+    echo "ЕСТЬ   наш фон меню"
+  fi
+  if grep -q 'FRAMZ OS — меню загрузки' "${WORK}/menu.cfg"; then
+    echo "ЕСТЬ   наша подпись меню"
+  fi
+done
+if [ "${MENU_FOUND}" = "0" ]; then
+  echo "нет    наши пункты в меню не найдены (меню осталось стандартным)"
+  PROBLEMS=$((PROBLEMS + 1))
+fi
+echo
+
 # ── 4. Среда установщика и наш брендинг в ней ────────────────────────────────
 echo "--- среда установщика ---"
 SQUASH="$(path_of '/images/install.img')"
