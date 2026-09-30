@@ -1,0 +1,1478 @@
+=== ISO · запуск 36699191497 · ветка arena/01a0ee0e-framz-os ===
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root       145G   28G  117G  20% /
+
+=== вывод сборки ISO ===
+Unable to find image 'ghcr.io/jasonn3/build-container-installer:v1.5.0' locally
+v1.5.0: Pulling from jasonn3/build-container-installer
+8532d3aa7560: Pulling fs layer
+4e670e049a45: Pulling fs layer
+8532d3aa7560: Verifying Checksum
+8532d3aa7560: Download complete
+4e670e049a45: Verifying Checksum
+4e670e049a45: Download complete
+8532d3aa7560: Pull complete
+4e670e049a45: Pull complete
+Digest: sha256:354e6d7fd4cb1850fb5adcfc3535f2c271dcecbc127730a058c0cbedbd9d3f51
+Status: Downloaded newer image for ghcr.io/jasonn3/build-container-installer:v1.5.0
++ mknod -m 0660 /dev/loop0 b 7 0
++ true
++ [[ -d /cache/skopeo ]]
++ [[ ! -d /cache/dnf ]]
++ make IMAGE_REPO=ghcr.io/dirkae8 IMAGE_NAME=framz IMAGE_TAG=br-arena_01a0ee0e-framz-os-44 IMAGE_SIGNED=false VERSION=44 VARIANT=kinoite ISO_NAME=build/framz-os-1.0.iso WEB_UI=false DNF_CACHE=/cache/dnf ADDITIONAL_TEMPLATES=/framz-iso/framz-branding.tmpl _VOLID=FRAMZ_OS_1
+make -w -C external lorax/branch-44
+make[1]: Entering directory '/build-container-installer/external'
+git config advice.detachedHead false
+cd lorax && git reset --hard HEAD && git checkout tags/lorax-44.6-1
+HEAD is now at ffba3078 Add prefixdevname support to the boot.iso
+Previous HEAD position was ffba3078 Add prefixdevname support to the boot.iso
+HEAD is now at 9a140ee6 Automatic commit of package [lorax] release [44.6-1].
+touch lorax/branch-44
+make[1]: Leaving directory '/build-container-installer/external'
+make -w -C lorax_templates post_install_configure_upgrades.tmpl
+make[1]: Entering directory '/build-container-installer/lorax_templates'
+header=0; skip=0; while read -r line; do if [[ $line =~ ^\<\% ]]; then if [[ 'true' == 'true' ]]; then echo $line >> post_install_configure_upgrades.tmpl; fi; echo >> post_install_configure_upgrades.tmpl; else if [[ $header == 0 ]]; then if [[ $line =~ ^\#\#\ (.*)$ ]]; then echo "append usr/share/anaconda/post-scripts/install_configure_upgrades.ks \"%post --erroronfail ${BASH_REMATCH[1]}\"" >> post_install_configure_upgrades.tmpl; skip=1; else echo "append usr/share/anaconda/post-scripts/install_configure_upgrades.ks \"%post --erroronfail\"" >> post_install_configure_upgrades.tmpl; fi; header=1; fi; if [[ $skip == 0 ]]; then echo "append usr/share/anaconda/post-scripts/install_configure_upgrades.ks \"${line//\"/\\\"}\"" >> post_install_configure_upgrades.tmpl; fi; skip=0; fi; done < scripts/post/install_configure_upgrades; echo "append usr/share/anaconda/post-scripts/install_configure_upgrades.ks \"%end\"" >> post_install_configure_upgrades.tmpl
+make[1]: Leaving directory '/build-container-installer/lorax_templates'
+make -w -C lorax_templates install_include_post.tmpl
+make[1]: Entering directory '/build-container-installer/lorax_templates'
+echo '<%page />' > install_include_post.tmpl
+for file in  install_configure_upgrades; do echo "append usr/share/anaconda/interactive-defaults.ks \"%include /usr/share/anaconda/post-scripts/${file}.ks\"" >> install_include_post.tmpl; done
+make[1]: Leaving directory '/build-container-installer/lorax_templates'
+make -w -C repos fedora-cisco-openh264.repo
+make[1]: Entering directory '/build-container-installer/repos'
+cp /etc/yum.repos.d/fedora-cisco-openh264.repo           fedora-cisco-openh264.repo
+sed -i "s/\$releasever/44/g" fedora-cisco-openh264.repo
+sed -i "s/\$basearch/x86_64/g"      fedora-cisco-openh264.repo
+make[1]: Leaving directory '/build-container-installer/repos'
+make -w -C repos fedora-updates-testing.repo
+make[1]: Entering directory '/build-container-installer/repos'
+cp /etc/yum.repos.d/fedora-updates-testing.repo           fedora-updates-testing.repo
+sed -i "s/\$releasever/44/g" fedora-updates-testing.repo
+sed -i "s/\$basearch/x86_64/g"      fedora-updates-testing.repo
+make[1]: Leaving directory '/build-container-installer/repos'
+make -w -C repos fedora-updates.repo
+make[1]: Entering directory '/build-container-installer/repos'
+cp /etc/yum.repos.d/fedora-updates.repo           fedora-updates.repo
+sed -i "s/\$releasever/44/g" fedora-updates.repo
+sed -i "s/\$basearch/x86_64/g"      fedora-updates.repo
+make[1]: Leaving directory '/build-container-installer/repos'
+make -w -C repos fedora.repo
+make[1]: Entering directory '/build-container-installer/repos'
+cp /etc/yum.repos.d/fedora.repo           fedora.repo
+sed -i "s/\$releasever/44/g" fedora.repo
+sed -i "s/\$basearch/x86_64/g"      fedora.repo
+make[1]: Leaving directory '/build-container-installer/repos'
+mv /etc/rpm/macros.image-language-conf /tmp/tmp.dmINA10FC1/macros.image-language-conf
+lorax -p framz -v 44 -r 44 -t kinoite \
+	--isfinal --buildarch=x86_64 --volid=FRAMZ_OS_1 --sharedir /build-container-installer/external/lorax/share/templates.d/99-generic \
+	--nomacboot --squashfs-only --cachedir /cache/dnf \
+	--repo /build-container-installer/repos/fedora-cisco-openh264.repo --repo /build-container-installer/repos/fedora-updates-testing.repo --repo /build-container-installer/repos/fedora-updates.repo --repo /build-container-installer/repos/fedora.repo \
+	--add-template /build-container-installer/lorax_templates/install_set_installer.tmpl --add-template /build-container-installer/lorax_templates/post_install_configure_upgrades.tmpl --add-template /build-container-installer/lorax_templates/install_include_post.tmpl --add-template /build-container-installer/lorax_templates/cache_copy_dnf.tmpl \
+	--add-template /framz-iso/framz-branding.tmpl \
+	 \
+	 \
+	--rootfs-size 4 \
+	--add-template-var "arch=x86_64" --add-template-var "image_name=framz" --add-template-var "image_repo=ghcr.io/dirkae8" --add-template-var "_image_repo_double_escaped=ghcr.io\\\/dirkae8" --add-template-var "_image_repo_escaped=ghcr.io\/dirkae8" --add-template-var "image_signed=false" --add-template-var "image_tag=br-arena_01a0ee0e-framz-os-44" --add-template-var "repos=/etc/yum.repos.d/fedora-cisco-openh264.repo /etc/yum.repos.d/fedora-updates-testing.repo /etc/yum.repos.d/fedora-updates.repo /etc/yum.repos.d/fedora.repo" --add-template-var "_rhel=" --add-template-var "variant=kinoite" --add-template-var "version=44" --add-template-var "web_ui=false" --add-template-var "dnf_cache=/cache/dnf" \
+	results/
+2026-09-30 10:01:55,661: selinux is Disabled
+2026-09-30 10:01:55,666: Using platform:f44 for module_platform_id
+2026-09-30 10:01:55,668: Using repos: fedora, fedora-cisco-openh264, updates
+2026-09-30 10:01:55,668: Fetching metadata...
+2026-09-30 10:01:57,880: selinux is Disabled
+2026-09-30 10:01:57,880: checking for root privileges
+2026-09-30 10:01:57,880: checking dnf base object
+2026-09-30 10:01:57,880: setting up build architecture
+2026-09-30 10:01:57,880: setting up build parameters
+2026-09-30 10:01:57,880: Using templatedir /build-container-installer/external/lorax/share/templates.d/99-generic
+2026-09-30 10:01:57,951: got release: fedora-release-kinoite
+2026-09-30 10:01:57,951: installing runtime packages
+2026-09-30 10:01:57,998: running runtime-install.tmpl
+2026-09-30 10:01:58,105: installpkg: anaconda-install-img-deps>=40.15 expands to anaconda-install-img-deps-44.30-2.fc44.x86_64
+2026-09-30 10:01:58,114: installpkg: *-firmware expands to amd-gpu-firmware-20260916-1.fc44.noarch,atheros-firmware-20260916-1.fc44.noarch,brcmfmac-firmware-20260916-1.fc44.noarch,intel-gpu-firmware-20260916-1.fc44.noarch,intel-npu-firmware-20260916-1.fc44.noarch,iwlbluetooth-firmware-20260916-1.fc44.noarch,iwlegacy-firmware-20260916-1.fc44.noarch,iwlwifi-dvm-firmware-20260916-1.fc44.noarch,iwlwifi-mld-firmware-20260916-1.fc44.noarch,iwlwifi-mvm-firmware-20260916-1.fc44.noarch,libertas-firmware-20260916-1.fc44.noarch,linux-firmware-20260916-1.fc44.noarch,mediatek-firmware-20260916-1.fc44.noarch,mt7xxx-firmware-20260916-1.fc44.noarch,nvidia-gpu-firmware-20260916-1.fc44.noarch,nxpwireless-firmware-20260916-1.fc44.noarch,qcom-wwan-firmware-20260916-1.fc44.noarch,qed-firmware-20260916-1.fc44.noarch,realtek-firmware-20260916-1.fc44.noarch,tiwilink-firmware-20260916-1.fc44.noarch,atmel-firmware-1.3-37.fc44.noarch,spacemit-firmware-20240829-5.fc44.noarch,zd1211-firmware-1.5-20.fc44.noarch
+2026-09-30 10:01:58,115: installpkg: grub2-tools-efi>=1:2.06-67 expands to grub2-tools-efi-1:2.12-64.fc44.x86_64
+2026-09-30 10:01:58,116: installpkg: grub2-efi-x64-cdboot>=1:2.06-67 expands to grub2-efi-x64-cdboot-1:2.12-64.fc44.x86_64
+2026-09-30 10:01:58,116: installpkg: grub2-efi-ia32-cdboot>=1:2.06-67 expands to grub2-efi-ia32-cdboot-1:2.12-64.fc44.x86_64
+2026-09-30 10:01:58,117: installpkg: grub2-tools>=1:2.06-67 expands to grub2-tools-1:2.12-64.fc44.x86_64
+2026-09-30 10:01:58,117: installpkg: grub2-tools-minimal>=1:2.06-67 expands to grub2-tools-minimal-1:2.12-64.fc44.x86_64
+2026-09-30 10:01:58,117: installpkg: grub2-tools-extra>=1:2.06-67 expands to grub2-tools-extra-1:2.12-64.fc44.x86_64
+2026-09-30 10:01:58,118: installpkg: grub2-pc-modules>=1:2.06-67 expands to grub2-pc-modules-1:2.12-64.fc44.noarch
+2026-09-30 10:01:58,126: Checking dependencies
+2026-09-30 10:02:40,771: 893 packages selected
+2026-09-30 10:02:40,801: Downloading packages
+Downloading 16 / 893 RPMs
+Downloading 30 / 893 RPMs
+Downloading 102 / 893 RPMs
+Downloading 253 / 893 RPMs
+Downloading 469 / 893 RPMs
+Downloading 604 / 893 RPMs
+Downloading 723 / 893 RPMs
+Downloading 854 / 893 RPMs
+2026-09-30 10:02:57,346: Preparing transaction from installation source
+2026-09-30 10:02:57,346: Making missing mount directory: /proc
+2026-09-30 10:02:57,346: Making missing mount directory: /dev
+2026-09-30 10:03:08,361: Running %pretrans for xkeyboard-config-2.47-1.fc44.noarch
+2026-09-30 10:03:08,369: Running %pretrans for filesystem-3.18-52.fc44.x86_64
+2026-09-30 10:03:08,370: Running %pretrans for crypto-policies-20251128-3.git19878fe.fc44.noarch
+2026-09-30 10:03:08,371: Running %pretrans for ca-certificates-2026.2.90_v9.0.317-1.fc44.noarch
+2026-09-30 10:03:08,373: Running %pretrans for selinux-policy-targeted-44.10-1.fc44.noarch
+2026-09-30 10:03:08,374: Running %pretrans for nvidia-gpu-firmware-20260916-1.fc44.noarch
+2026-09-30 10:03:08,818: Install libgcc-16.2.1-2.fc44.x86_64
+2026-09-30 10:03:08,822: Install fonts-filesystem-1:5.0.0-2.fc44.noarch
+2026-09-30 10:03:08,824: Install google-noto-fonts-common-20251201-2.fc44.noarch
+2026-09-30 10:03:08,826: Install google-noto-sans-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:08,833: Install abattis-cantarell-vf-fonts-0.301-17.fc44.noarch
+2026-09-30 10:03:08,836: Install linux-firmware-whence-20260916-1.fc44.noarch
+2026-09-30 10:03:08,839: Install iwlbluetooth-firmware-20260916-1.fc44.noarch
+2026-09-30 10:03:08,865: Install google-noto-sans-devanagari-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:08,868: Install hwdata-0.411-1.fc44.noarch
+2026-09-30 10:03:08,891: Install xkeyboard-config-2.47-1.fc44.noarch
+2026-09-30 10:03:08,952: Install google-noto-sans-bengali-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:08,955: Install google-noto-sans-hebrew-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:08,961: Install tzdata-2026c-2.fc44.noarch
+2026-09-30 10:03:09,134: Install mesa-filesystem-26.2.3-1.fc44.x86_64
+2026-09-30 10:03:09,135: Install libreport-filesystem-2.17.15-10.fc44.noarch
+2026-09-30 10:03:09,138: Install pcre2-syntax-10.47-1.fc44.1.noarch
+2026-09-30 10:03:09,140: Install fuse-common-3.18.2-1.fc44.x86_64
+2026-09-30 10:03:09,141: Install rdma-core-common-61.1^20260812git975bdaf-1.fc44.noarch
+2026-09-30 10:03:09,144: Install default-fonts-he-4.3-1.fc44.noarch
+2026-09-30 10:03:09,145: Install default-fonts-yi-4.3-1.fc44.noarch
+2026-09-30 10:03:09,146: Install default-fonts-as-4.3-1.fc44.noarch
+2026-09-30 10:03:09,150: Install default-fonts-bn-4.3-1.fc44.noarch
+2026-09-30 10:03:09,152: Install default-fonts-hi-4.3-1.fc44.noarch
+2026-09-30 10:03:09,153: Install default-fonts-mai-4.3-1.fc44.noarch
+2026-09-30 10:03:09,154: Install default-fonts-mr-4.3-1.fc44.noarch
+2026-09-30 10:03:09,156: Install iwlwifi-mld-firmware-20260916-1.fc44.noarch
+2026-09-30 10:03:09,197: Install linux-firmware-20260916-1.fc44.noarch
+2026-09-30 10:03:09,392: Install default-fonts-core-sans-4.3-1.fc44.noarch
+2026-09-30 10:03:09,397: Install default-fonts-ast-4.3-1.fc44.noarch
+2026-09-30 10:03:09,399: Install default-fonts-be-4.3-1.fc44.noarch
+2026-09-30 10:03:09,400: Install default-fonts-bg-4.3-1.fc44.noarch
+2026-09-30 10:03:09,402: Install default-fonts-br-4.3-1.fc44.noarch
+2026-09-30 10:03:09,404: Install default-fonts-dz-4.3-1.fc44.noarch
+2026-09-30 10:03:09,405: Install default-fonts-el-4.3-1.fc44.noarch
+2026-09-30 10:03:09,407: Install default-fonts-eo-4.3-1.fc44.noarch
+2026-09-30 10:03:09,408: Install default-fonts-eu-4.3-1.fc44.noarch
+2026-09-30 10:03:09,410: Install default-fonts-ia-4.3-1.fc44.noarch
+2026-09-30 10:03:09,411: Install default-fonts-kab-4.3-1.fc44.noarch
+2026-09-30 10:03:09,413: Install default-fonts-ku-4.3-1.fc44.noarch
+2026-09-30 10:03:09,414: Install default-fonts-nb-4.3-1.fc44.noarch
+2026-09-30 10:03:09,415: Install default-fonts-nn-4.3-1.fc44.noarch
+2026-09-30 10:03:09,417: Install default-fonts-nr-4.3-1.fc44.noarch
+2026-09-30 10:03:09,419: Install default-fonts-nso-4.3-1.fc44.noarch
+2026-09-30 10:03:09,420: Install default-fonts-ru-4.3-1.fc44.noarch
+2026-09-30 10:03:09,422: Install default-fonts-ss-4.3-1.fc44.noarch
+2026-09-30 10:03:09,423: Install default-fonts-tn-4.3-1.fc44.noarch
+2026-09-30 10:03:09,425: Install default-fonts-ts-4.3-1.fc44.noarch
+2026-09-30 10:03:09,426: Install default-fonts-uk-4.3-1.fc44.noarch
+2026-09-30 10:03:09,427: Install default-fonts-ve-4.3-1.fc44.noarch
+2026-09-30 10:03:09,429: Install default-fonts-vi-4.3-1.fc44.noarch
+2026-09-30 10:03:09,431: Install default-fonts-xh-4.3-1.fc44.noarch
+2026-09-30 10:03:09,432: Install default-fonts-zu-4.3-1.fc44.noarch
+2026-09-30 10:03:09,434: Install google-noto-sans-ethiopic-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,438: Install default-fonts-am-4.3-1.fc44.noarch
+2026-09-30 10:03:09,440: Install google-noto-sans-arabic-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,442: Install default-fonts-ar-4.3-1.fc44.noarch
+2026-09-30 10:03:09,444: Install google-noto-sans-cherokee-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,446: Install default-fonts-chr-4.3-1.fc44.noarch
+2026-09-30 10:03:09,448: Install google-noto-sans-thaana-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,450: Install default-fonts-dv-4.3-1.fc44.noarch
+2026-09-30 10:03:09,452: Install google-noto-sans-gothic-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,454: Install default-fonts-got-4.3-1.fc44.noarch
+2026-09-30 10:03:09,456: Install google-noto-sans-gujarati-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,458: Install default-fonts-gu-4.3-1.fc44.noarch
+2026-09-30 10:03:09,460: Install google-noto-sans-armenian-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,462: Install default-fonts-hy-4.3-1.fc44.noarch
+2026-09-30 10:03:09,463: Install google-noto-sans-yi-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,466: Install default-fonts-ii-4.3-1.fc44.noarch
+2026-09-30 10:03:09,467: Install google-noto-sans-canadian-aboriginal-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,470: Install default-fonts-iu-4.3-1.fc44.noarch
+2026-09-30 10:03:09,472: Install google-noto-sans-georgian-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,474: Install default-fonts-ka-4.3-1.fc44.noarch
+2026-09-30 10:03:09,476: Install google-noto-sans-khmer-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,478: Install default-fonts-km-4.3-1.fc44.noarch
+2026-09-30 10:03:09,482: Install google-noto-sans-kannada-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,485: Install default-fonts-kn-4.3-1.fc44.noarch
+2026-09-30 10:03:09,486: Install google-noto-sans-lao-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,489: Install default-fonts-lo-4.3-1.fc44.noarch
+2026-09-30 10:03:09,490: Install google-noto-sans-meetei-mayek-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,492: Install default-fonts-mni-4.3-1.fc44.noarch
+2026-09-30 10:03:09,494: Install google-noto-sans-nko-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,496: Install default-fonts-nqo-4.3-1.fc44.noarch
+2026-09-30 10:03:09,498: Install google-noto-sans-oriya-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,501: Install default-fonts-or-4.3-1.fc44.noarch
+2026-09-30 10:03:09,502: Install google-noto-sans-gurmukhi-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,505: Install default-fonts-pa-4.3-1.fc44.noarch
+2026-09-30 10:03:09,506: Install google-noto-sans-ol-chiki-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,508: Install default-fonts-sat-4.3-1.fc44.noarch
+2026-09-30 10:03:09,510: Install google-noto-sans-sinhala-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,513: Install default-fonts-si-4.3-1.fc44.noarch
+2026-09-30 10:03:09,514: Install google-noto-sans-syriac-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,517: Install default-fonts-syr-4.3-1.fc44.noarch
+2026-09-30 10:03:09,518: Install google-noto-sans-tamil-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,521: Install default-fonts-ta-4.3-1.fc44.noarch
+2026-09-30 10:03:09,522: Install google-noto-sans-telugu-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,525: Install default-fonts-te-4.3-1.fc44.noarch
+2026-09-30 10:03:09,527: Install google-noto-sans-thai-vf-fonts-20251201-2.fc44.noarch
+2026-09-30 10:03:09,529: Install default-fonts-th-4.3-1.fc44.noarch
+2026-09-30 10:03:09,530: Install jomolhari-fonts-0.003-45.fc44.noarch
+2026-09-30 10:03:09,538: Install default-fonts-bo-4.3-1.fc44.noarch
+2026-09-30 10:03:09,540: Install vazirmatn-vf-fonts-33.003-16.fc44.noarch
+2026-09-30 10:03:09,543: Install default-fonts-fa-4.3-1.fc44.noarch
+2026-09-30 10:03:09,545: Install rit-meera-new-fonts-1.6.2-5.fc44.noarch
+2026-09-30 10:03:09,548: Install default-fonts-ml-4.3-1.fc44.noarch
+2026-09-30 10:03:09,549: Install sil-padauk-fonts-3.003-21.fc44.noarch
+2026-09-30 10:03:09,554: Install default-fonts-my-4.3-1.fc44.noarch
+2026-09-30 10:03:09,556: Install madan-fonts-2.000-43.fc44.noarch
+2026-09-30 10:03:09,559: Install default-fonts-ne-4.3-1.fc44.noarch
+2026-09-30 10:03:09,561: Install paktype-naskh-basic-fonts-7.0-4.20231228.fc44.noarch
+2026-09-30 10:03:09,567: Install default-fonts-ur-4.3-1.fc44.noarch
+2026-09-30 10:03:09,568: Install gnulib-l10n-20241231-2.fc44.noarch
+2026-09-30 10:03:09,579: Install coreutils-common-9.10-5.fc44.x86_64
+2026-09-30 10:03:09,624: Install libssh-config-0.12.2-1.fc44.noarch
+2026-09-30 10:03:09,628: Install libwacom-data-2.19.0-1.fc44.noarch
+2026-09-30 10:03:09,717: Install gnome-control-center-filesystem-50.4-1.fc44.noarch
+2026-09-30 10:03:09,720: Install gweather-locations-common-2026.2-1.fc44.noarch
+2026-09-30 10:03:09,724: Install gweather-locations-2026.2-1.fc44.x86_64
+2026-09-30 10:03:09,792: Install fedora-release-identity-kinoite-44-18.noarch
+2026-09-30 10:03:09,795: Install mutter-common-50.5-1.fc44.noarch
+2026-09-30 10:03:09,797: Install llvm-filesystem-22.1.8-4.fc44.x86_64
+2026-09-30 10:03:09,799: Install langtable-0.0.71-1.fc44.noarch
+2026-09-30 10:03:09,802: Install catatonit-0.2.1-5.fc44.x86_64
+2026-09-30 10:03:09,806: Install dns-root-data-2026260100-2.fc44.noarch
+2026-09-30 10:03:09,809: Install pkgconf-m4-2.5.1-1.fc44.noarch
+2026-09-30 10:03:09,810: Install publicsuffix-list-dafsa-20260116-1.fc44.noarch
+2026-09-30 10:03:09,813: Install mobile-broadband-provider-info-20240407-5.fc44.noarch
+2026-09-30 10:03:09,816: Install libnma-common-1.10.6-11.fc44.noarch
+2026-09-30 10:03:09,834: Install adwaita-cursor-theme-50.0-1.fc44.noarch
+2026-09-30 10:03:09,858: Install libX11-common-1.8.13-1.fc44.noarch
+2026-09-30 10:03:09,893: Install quota-nls-1:4.11-2.fc44.noarch
+2026-09-30 10:03:09,896: Install ncurses-base-6.6-1.fc44.noarch
+2026-09-30 10:03:09,916: Install vim-data-2:9.2.1129-1.fc44.noarch
+2026-09-30 10:03:09,920: Install kbd-legacy-2.9.0-4.fc44.noarch
+2026-09-30 10:03:09,954: Install fedora-release-ostree-desktop-44-18.noarch
+2026-09-30 10:03:09,956: Install fedora-gpg-keys-44-2.noarch
+2026-09-30 10:03:10,006: Install fedora-repos-44-2.noarch
+2026-09-30 10:03:10,008: Install fedora-release-common-44-18.noarch
+2026-09-30 10:03:10,014: Install fedora-release-kinoite-44-18.noarch
+2026-09-30 10:03:10,015: Running sysusers for setup-2.15.0-28.fc44.noarch
+2026-09-30 10:03:10,026: Install setup-2.15.0-28.fc44.noarch
+2026-09-30 10:03:10,036: Running %post for setup-2.15.0-28.fc44.noarch
+2026-09-30 10:03:10,047: Install filesystem-3.18-52.fc44.x86_64
+2026-09-30 10:03:10,279: Running %pre for glibc-2.43-8.fc44.x86_64
+2026-09-30 10:03:10,280: Install glibc-2.43-8.fc44.x86_64
+2026-09-30 10:03:10,321: Running %post for glibc-2.43-8.fc44.x86_64
+2026-09-30 10:03:10,327: Install ncurses-libs-6.6-1.fc44.x86_64
+2026-09-30 10:03:10,337: Install bash-5.3.9-3.fc44.x86_64
+2026-09-30 10:03:10,374: Running %post for bash-5.3.9-3.fc44.x86_64
+2026-09-30 10:03:10,377: Install glibc-common-2.43-8.fc44.x86_64
+2026-09-30 10:03:10,399: Install glibc-all-langpacks-2.43-8.fc44.x86_64
+2026-09-30 10:03:10,898: Install glibc-gconv-extra-2.43-8.fc44.x86_64
+2026-09-30 10:03:10,982: Running %post for glibc-gconv-extra-2.43-8.fc44.x86_64
+2026-09-30 10:03:10,986: Install systemd-libs-259.9-1.fc44.x86_64
+2026-09-30 10:03:10,997: Install zlib-ng-compat-2.3.3-3.fc44.x86_64
+2026-09-30 10:03:11,000: Install libstdc++-16.2.1-2.fc44.x86_64
+2026-09-30 10:03:11,013: Install libuuid-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:11,016: Install libzstd-1.5.7-5.fc44.x86_64
+2026-09-30 10:03:11,021: Install libblkid-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:11,024: Install json-c-0.18-8.fc44.x86_64
+2026-09-30 10:03:11,028: Install xz-libs-1:5.8.2-2.fc44.x86_64
+2026-09-30 10:03:11,031: Install libxml2-2.12.10-6.fc44.x86_64
+2026-09-30 10:03:11,050: Install popt-1.19-10.fc44.x86_64
+2026-09-30 10:03:11,059: Install sqlite-libs-3.51.2-2.fc44.x86_64
+2026-09-30 10:03:11,066: Install readline-8.3-4.fc44.x86_64
+2026-09-30 10:03:11,070: Install dbus-libs-1:1.16.2-1.fc44.x86_64
+2026-09-30 10:03:11,073: Install libacl-2.4.0-1.fc44.x86_64
+2026-09-30 10:03:11,075: Install bzip2-libs-1.0.8-23.fc44.x86_64
+2026-09-30 10:03:11,078: Install libgpg-error-1.58-2.fc44.x86_64
+2026-09-30 10:03:11,097: Install expat-2.8.3-1.fc44.x86_64
+2026-09-30 10:03:11,111: Install libseccomp-2.6.1-2.fc44.x86_64
+2026-09-30 10:03:11,115: Install grub2-common-1:2.12-64.fc44.noarch
+2026-09-30 10:03:11,139: Install libcom_err-1.47.3-4.fc44.x86_64
+2026-09-30 10:03:11,142: Install libxcrypt-4.5.2-3.fc44.x86_64
+2026-09-30 10:03:11,146: Install libffi-3.5.2-2.fc44.x86_64
+2026-09-30 10:03:11,148: Install libwayland-client-1.26.0-1.fc44.x86_64
+2026-09-30 10:03:11,151: Install libgcrypt-1.12.2-1.fc44.x86_64
+2026-09-30 10:03:11,158: Install libxkbcommon-1.13.1-2.fc44.x86_64
+2026-09-30 10:03:11,162: Install elfutils-libelf-0.196-1.fc44.x86_64
+2026-09-30 10:03:11,169: Install gmp-1:6.3.0-5.fc44.x86_64
+2026-09-30 10:03:11,174: Install nspr-4.39.0-5.fc44.x86_64
+2026-09-30 10:03:11,178: Running %pre for crypto-policies-20251128-3.git19878fe.fc44.noarch
+2026-09-30 10:03:11,186: Install crypto-policies-20251128-3.git19878fe.fc44.noarch
+2026-09-30 10:03:11,204: Running %post for crypto-policies-20251128-3.git19878fe.fc44.noarch
+2026-09-30 10:03:11,206: Install pcre2-10.47-1.fc44.1.x86_64
+2026-09-30 10:03:11,210: Install grep-3.12-3.fc44.x86_64
+2026-09-30 10:03:11,236: Install libnl3-3.12.0-3.fc44.x86_64
+2026-09-30 10:03:11,245: Install jansson-2.14-4.fc44.x86_64
+2026-09-30 10:03:11,252: Install keyutils-libs-1.6.3-7.fc44.x86_64
+2026-09-30 10:03:11,254: Install nss-util-3.129.0-1.fc44.x86_64
+2026-09-30 10:03:11,257: Install libassuan-2.5.7-5.fc44.x86_64
+2026-09-30 10:03:11,260: Install libusb1-1.0.30-1.fc44.x86_64
+2026-09-30 10:03:11,263: Install fuse3-libs-3.18.2-1.fc44.x86_64
+2026-09-30 10:03:11,267: Install alsa-lib-1.2.16.1-1.fc44.x86_64
+2026-09-30 10:03:11,293: Install libcap-ng-0.9.6-1.fc44.x86_64
+2026-09-30 10:03:11,297: Install audit-libs-4.2.1-1.fc44.x86_64
+2026-09-30 10:03:11,301: Install libX11-xcb-1.8.13-1.fc44.x86_64
+2026-09-30 10:03:11,303: Install libjpeg-turbo-3.1.3-1.fc44.x86_64
+2026-09-30 10:03:11,307: Install libpng-2:1.6.58-1.fc44.x86_64
+2026-09-30 10:03:11,310: Install libedit-3.1-59.20260512cvs.fc44.x86_64
+2026-09-30 10:03:11,313: Install libyaml-0.2.5-18.fc44.x86_64
+2026-09-30 10:03:11,316: Install libbrotli-1.2.0-3.fc44.x86_64
+2026-09-30 10:03:11,321: Install libnghttp2-1.68.0-5.fc44.x86_64
+2026-09-30 10:03:11,324: Install e2fsprogs-libs-1.47.3-4.fc44.x86_64
+2026-09-30 10:03:11,329: Install libicu-77.1-3.fc44.x86_64
+2026-09-30 10:03:11,431: Install protobuf-c-1.5.2-2.fc44.x86_64
+2026-09-30 10:03:11,434: Install libmnl-1.0.5-9.fc44.x86_64
+2026-09-30 10:03:11,436: Install libsepol-3.11-1.fc44.x86_64
+2026-09-30 10:03:11,441: Install libselinux-3.11-2.fc44.x86_64
+2026-09-30 10:03:11,445: Install libmount-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:11,448: Install sed-4.9-7.fc44.x86_64
+2026-09-30 10:03:11,471: Install libselinux-utils-3.11-2.fc44.x86_64
+2026-09-30 10:03:11,492: Install findutils-1:4.10.0-7.fc44.x86_64
+2026-09-30 10:03:11,517: Install libunistring-1.1-11.fc44.x86_64
+2026-09-30 10:03:11,525: Install libidn2-2.3.8-3.fc44.x86_64
+2026-09-30 10:03:11,534: Install fribidi-1.0.16-4.fc44.x86_64
+2026-09-30 10:03:11,548: Install libattr-2.6.0-1.fc44.x86_64
+2026-09-30 10:03:11,550: Install npth-1.8-4.fc44.x86_64
+2026-09-30 10:03:11,552: Install lua-libs-5.4.8-5.fc44.x86_64
+2026-09-30 10:03:11,556: Install opus-1.6-2.fc44.x86_64
+2026-09-30 10:03:11,560: Install libogg-2:1.3.6-2.fc44.x86_64
+2026-09-30 10:03:11,563: Install efi-filesystem-6-6.fc44.noarch
+2026-09-30 10:03:11,564: Install libpsl-0.21.5-7.fc44.x86_64
+2026-09-30 10:03:11,584: Install augeas-libs-1.14.2-0.11.20260408gitada6219.fc44.x86_64
+2026-09-30 10:03:11,614: Install libsemanage-3.11-1.fc44.x86_64
+2026-09-30 10:03:11,618: Install libfdisk-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:11,621: Install alternatives-1.33-5.fc44.x86_64
+2026-09-30 10:03:11,636: Install lzo-2.10-16.fc44.x86_64
+2026-09-30 10:03:11,638: Install libXau-1.0.12-4.fc44.x86_64
+2026-09-30 10:03:11,640: Install libxcb-1.17.0-7.fc44.x86_64
+2026-09-30 10:03:11,655: Install libX11-1.8.13-1.fc44.x86_64
+2026-09-30 10:03:11,660: Install libXext-1.3.6-5.fc44.x86_64
+2026-09-30 10:03:11,662: Install libXfixes-6.0.1-7.fc44.x86_64
+2026-09-30 10:03:11,664: Install libXi-1.8.3-1.fc44.x86_64
+2026-09-30 10:03:11,666: Install libXinerama-1.1.5-10.fc44.x86_64
+2026-09-30 10:03:11,667: Install libXrender-0.9.12-4.fc44.x86_64
+2026-09-30 10:03:11,669: Install libXrandr-1.5.4-7.fc44.x86_64
+2026-09-30 10:03:11,671: Install libtasn1-4.21.0-1.fc44.x86_64
+2026-09-30 10:03:11,674: Install p11-kit-0.26.5-1.fc44.x86_64
+2026-09-30 10:03:11,708: Install p11-kit-trust-0.26.5-1.fc44.x86_64
+2026-09-30 10:03:11,721: Running %post for p11-kit-trust-0.26.5-1.fc44.x86_64
+2026-09-30 10:03:11,733: Install gdbm-libs-1:1.23-11.fc44.x86_64
+2026-09-30 10:03:11,736: Install lcms2-2.16-7.fc44.x86_64
+2026-09-30 10:03:11,739: Install libeconf-0.7.9-3.fc44.x86_64
+2026-09-30 10:03:11,741: Install pam-libs-1.7.2-2.fc44.x86_64
+2026-09-30 10:03:11,745: Install libcap-2.78-1.fc44.x86_64
+2026-09-30 10:03:11,763: Install openssl-libs-1:3.5.8-1.fc44.x86_64
+2026-09-30 10:03:11,792: Install coreutils-9.10-5.fc44.x86_64
+2026-09-30 10:03:11,849: Running %pre for ca-certificates-2026.2.90_v9.0.317-1.fc44.noarch
+2026-09-30 10:03:11,856: Install ca-certificates-2026.2.90_v9.0.317-1.fc44.noarch
+2026-09-30 10:03:11,881: Running %post for ca-certificates-2026.2.90_v9.0.317-1.fc44.noarch
+2026-09-30 10:03:13,375: Install kmod-libs-34.2-4.fc44.x86_64
+2026-09-30 10:03:13,379: Install libevent-2.1.13-1.fc44.x86_64
+2026-09-30 10:03:13,385: Install bubblewrap-0.12.0-1.fc44.x86_64
+2026-09-30 10:03:13,401: Install avahi-libs-0.9~rc2-8.fc44.x86_64
+2026-09-30 10:03:13,405: Install shadow-utils-2:4.19.0-7.fc44.x86_64
+2026-09-30 10:03:13,444: Install systemd-shared-259.9-1.fc44.x86_64
+2026-09-30 10:03:13,462: Install libnvme-1.16.2-1.fc44.x86_64
+2026-09-30 10:03:13,466: Install libsmartcols-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:13,468: Install util-linux-core-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:13,498: Install ngtcp2-1.22.1-1.fc44.x86_64
+2026-09-30 10:03:13,501: Install ngtcp2-crypto-ossl-1.22.1-1.fc44.x86_64
+2026-09-30 10:03:13,503: Install daxctl-libs-85-1.fc44.x86_64
+2026-09-30 10:03:13,506: Install composefs-libs-1.0.8-5.fc44.x86_64
+2026-09-30 10:03:13,509: Running sysusers for tpm2-tss-4.1.3-9.fc44.x86_64
+2026-09-30 10:03:13,525: Install tpm2-tss-4.1.3-9.fc44.x86_64
+2026-09-30 10:03:13,538: Install zchunk-libs-1.5.4-1.fc44.x86_64
+2026-09-30 10:03:13,540: Install libXcursor-1.2.3-4.fc44.x86_64
+2026-09-30 10:03:13,543: Install libXtst-1.2.5-4.fc44.x86_64
+2026-09-30 10:03:13,544: Install libXdamage-1.1.6-7.fc44.x86_64
+2026-09-30 10:03:13,546: Install libvorbis-1:1.3.7-14.fc44.x86_64
+2026-09-30 10:03:13,551: Install gnupg2-gpgconf-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:13,569: Install nettle-3.10.1-3.fc44.x86_64
+2026-09-30 10:03:13,574: Install gnutls-3.8.13-1.fc44.x86_64
+2026-09-30 10:03:13,589: Install glib2-2.88.3-1.fc44.x86_64
+2026-09-30 10:03:13,663: Install libblockdev-utils-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:13,665: Install polkit-libs-127-2.fc44.2.x86_64
+2026-09-30 10:03:13,669: Install json-glib-1.10.8-5.fc44.x86_64
+2026-09-30 10:03:13,685: Install libgudev-238-9.fc44.x86_64
+2026-09-30 10:03:13,688: Install gsettings-desktop-schemas-50.1-1.fc44.x86_64
+2026-09-30 10:03:13,716: Install libblockdev-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:13,720: Install NetworkManager-libnm-1:1.56.1-2.fc44.x86_64
+2026-09-30 10:03:13,756: Install graphene-1.10.8-4.fc44.x86_64
+2026-09-30 10:03:13,760: Install shared-mime-info-2.4-3.fc44.x86_64
+2026-09-30 10:03:13,781: Running %post for shared-mime-info-2.4-3.fc44.x86_64
+2026-09-30 10:03:13,792: Install mpfr-4.2.2-3.fc44.x86_64
+2026-09-30 10:03:13,798: Install gawk-5.3.2-3.fc44.x86_64
+2026-09-30 10:03:13,825: Install libbytesize-2.12-2.fc44.x86_64
+2026-09-30 10:03:13,833: Install libwayland-cursor-1.26.0-1.fc44.x86_64
+2026-09-30 10:03:13,835: Install file-libs-5.46-10.fc44.x86_64
+2026-09-30 10:03:13,857: Install file-5.46-10.fc44.x86_64
+2026-09-30 10:03:13,872: Running sysusers for dbus-common-1:1.16.2-1.fc44.noarch
+2026-09-30 10:03:13,887: Install dbus-common-1:1.16.2-1.fc44.noarch
+2026-09-30 10:03:13,889: Running %post for dbus-common-1:1.16.2-1.fc44.noarch
+2026-09-30 10:03:13,897: Install hicolor-icon-theme-0.18-3.fc44.noarch
+2026-09-30 10:03:13,952: Install libpciaccess-0.16-17.fc44.x86_64
+2026-09-30 10:03:13,954: Install libdrm-2.4.134-1.fc44.x86_64
+2026-09-30 10:03:13,960: Install userspace-rcu-0.15.6-1.fc44.x86_64
+2026-09-30 10:03:13,966: Install libverto-0.3.2-12.fc44.x86_64
+2026-09-30 10:03:13,968: Install krb5-libs-1.22.2-4.fc44.x86_64
+2026-09-30 10:03:13,983: Install libtirpc-1.3.8-0.fc44.x86_64
+2026-09-30 10:03:13,986: Install libaio-0.3.111-23.fc44.x86_64
+2026-09-30 10:03:13,989: Install libepoxy-1.5.10-12.fc44.x86_64
+2026-09-30 10:03:13,993: Install libevdev-1.13.7-1.fc44.x86_64
+2026-09-30 10:03:13,995: Install libglvnd-1:1.7.0-9.fc44.x86_64
+2026-09-30 10:03:13,998: Install fdk-aac-free-2.0.3-2.fc44.x86_64
+2026-09-30 10:03:14,002: Install vulkan-loader-1.4.341.0-1.fc44.x86_64
+2026-09-30 10:03:14,007: Install libgomp-16.2.1-2.fc44.x86_64
+2026-09-30 10:03:14,010: Install libwayland-egl-1.26.0-1.fc44.x86_64
+2026-09-30 10:03:14,013: Install libwebp-1.6.0-3.fc44.x86_64
+2026-09-30 10:03:14,019: Running sysusers for dbus-broker-37-8.fc44.x86_64
+2026-09-30 10:03:14,029: Install dbus-broker-37-8.fc44.x86_64
+2026-09-30 10:03:14,046: Running %post for dbus-broker-37-8.fc44.x86_64
+2026-09-30 10:03:14,056: Install dbus-1:1.16.2-1.fc44.x86_64
+2026-09-30 10:03:14,057: Install dconf-0.49.0-5.fc44.x86_64
+2026-09-30 10:03:14,074: Running %post for dconf-0.49.0-5.fc44.x86_64
+2026-09-30 10:03:14,084: Install libgusb-0.4.9-5.fc44.x86_64
+2026-09-30 10:03:14,087: Install colord-libs-1.4.8-4.fc44.x86_64
+2026-09-30 10:03:14,093: Install libblockdev-fs-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:14,095: Install libblockdev-loop-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:14,097: Install libblockdev-nvme-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:14,099: Install gcr-libs-4.4.0.1-7.fc44.x86_64
+2026-09-30 10:03:14,122: Install libudisks2-2.11.2-1.fc44.x86_64
+2026-09-30 10:03:14,126: Install avahi-glib-0.9~rc2-8.fc44.x86_64
+2026-09-30 10:03:14,129: Install ModemManager-glib-1.24.2-3.fc44.x86_64
+2026-09-30 10:03:14,135: Install gobject-introspection-1.86.0-3.fc44.x86_64
+2026-09-30 10:03:14,140: Install composefs-1.0.8-5.fc44.x86_64
+2026-09-30 10:03:14,157: Install ndctl-libs-85-1.fc44.x86_64
+2026-09-30 10:03:14,160: Install systemd-sysusers-259.9-1.fc44.x86_64
+2026-09-30 10:03:14,175: Install gzip-1.14-2.fc44.x86_64
+2026-09-30 10:03:14,192: Install cracklib-2.10.3-1.fc44.x86_64
+2026-09-30 10:03:14,217: Install libpwquality-1.4.5-15.fc44.x86_64
+2026-09-30 10:03:14,243: Install authselect-libs-1.7.1-1.fc44.x86_64
+2026-09-30 10:03:14,257: Running %post for authselect-libs-1.7.1-1.fc44.x86_64
+2026-09-30 10:03:14,266: Install openssl-1:3.5.8-1.fc44.x86_64
+2026-09-30 10:03:14,288: Install xmlrpc-c-1.60.04-5.fc44.x86_64
+2026-09-30 10:03:14,295: Install hiredis-1.2.0-8.fc44.x86_64
+2026-09-30 10:03:14,298: Install podman-sequoia-0.3.2-2.fc44.x86_64
+2026-09-30 10:03:14,320: Install shadow-utils-subid-2:4.19.0-7.fc44.x86_64
+2026-09-30 10:03:14,335: Install libXcomposite-0.4.6-7.fc44.x86_64
+2026-09-30 10:03:14,337: Install btrfs-progs-7.1-1.fc44.x86_64
+2026-09-30 10:03:14,367: Install gnupg2-verify-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:14,383: Install fuse3-3.18.2-1.fc44.x86_64
+2026-09-30 10:03:14,398: Install xz-1:5.8.2-2.fc44.x86_64
+2026-09-30 10:03:14,422: Install libbpf-2:1.6.3-2.fc44.x86_64
+2026-09-30 10:03:14,426: Install libksba-1.6.7-5.fc44.x86_64
+2026-09-30 10:03:14,429: Running %pre for xml-common-0.6.3-68.fc44.noarch
+2026-09-30 10:03:14,436: Install xml-common-0.6.3-68.fc44.noarch
+2026-09-30 10:03:14,440: Install fmt-11.2.0-4.fc44.x86_64
+2026-09-30 10:03:14,443: Install openh264-2.6.0-3.fc44.x86_64
+2026-09-30 10:03:14,449: Install procps-ng-4.0.6-1.fc44.x86_64
+2026-09-30 10:03:14,474: Install efivar-libs-39-12.fc44.x86_64
+2026-09-30 10:03:14,478: Install mokutil-2:0.7.2-3.fc44.x86_64
+2026-09-30 10:03:14,493: Install pciutils-libs-3.15.0-1.fc44.x86_64
+2026-09-30 10:03:14,496: Install lz4-libs-1.10.0-4.fc44.x86_64
+2026-09-30 10:03:14,498: Install libarchive-3.8.7-1.fc44.x86_64
+2026-09-30 10:03:14,503: Install xxhash-libs-0.8.3-4.fc44.x86_64
+2026-09-30 10:03:14,506: Install lmdb-libs-0.9.34-2.fc44.x86_64
+2026-09-30 10:03:14,508: Install cpio-2.15-9.fc44.x86_64
+2026-09-30 10:03:14,531: Install libref_array-0.1.5-61.fc44.x86_64
+2026-09-30 10:03:14,533: Install libcbor-0.13.0-2.fc44.x86_64
+2026-09-30 10:03:14,535: Install libfido2-1.16.0-5.fc44.x86_64
+2026-09-30 10:03:14,538: Install duktape-2.7.0-11.fc44.x86_64
+2026-09-30 10:03:14,542: Install pixman-0.46.2-3.fc44.x86_64
+2026-09-30 10:03:14,546: Install libtool-ltdl-2.5.4-10.fc44.x86_64
+2026-09-30 10:03:14,548: Install bluez-libs-5.87+1.git8750129efca8-1.fc44.x86_64
+2026-09-30 10:03:14,551: Install ntfs-3g-libs-2:2026.2.25-1.fc44.x86_64
+2026-09-30 10:03:14,554: Install libdav1d-1.5.4-1.fc44.x86_64
+2026-09-30 10:03:14,561: Install libstemmer-3.0.1-11.fc44.x86_64
+2026-09-30 10:03:14,565: Install gsm-1.0.24-2.fc44.x86_64
+2026-09-30 10:03:14,567: Install lame-libs-3.100-21.fc44.x86_64
+2026-09-30 10:03:14,571: Install ntfsprogs-2:2026.2.25-1.fc44.x86_64
+2026-09-30 10:03:14,595: Install ntfs-3g-2:2026.2.25-1.fc44.x86_64
+2026-09-30 10:03:14,612: Install libssh-0.12.2-1.fc44.x86_64
+2026-09-30 10:03:14,617: Install rsync-3.5.0-2.fc44.x86_64
+2026-09-30 10:03:14,634: Install pciutils-3.15.0-1.fc44.x86_64
+2026-09-30 10:03:14,652: Install iso-codes-4.20.1-3.fc44.noarch
+2026-09-30 10:03:14,819: Install gnupg2-keyboxd-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:14,822: Running %post for gnupg2-keyboxd-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:14,830: Install libblockdev-btrfs-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:14,832: Install authselect-1.7.1-1.fc44.x86_64
+2026-09-30 10:03:14,849: Install cracklib-dicts-2.10.3-1.fc44.x86_64
+2026-09-30 10:03:14,911: Install ibus-libs-1.5.34-4.fc44.x86_64
+2026-09-30 10:03:14,916: Install upower-libs-1.91.4-1.fc44.x86_64
+2026-09-30 10:03:14,919: Install xdg-dbus-proxy-0.1.8-1.fc44.x86_64
+2026-09-30 10:03:14,933: Install soxr-0.1.3-21.fc44.x86_64
+2026-09-30 10:03:14,937: Install fftw-libs-single-3.3.10-17.fc44.x86_64
+2026-09-30 10:03:14,949: Install plymouth-core-libs-24.004.60-24.fc44.x86_64
+2026-09-30 10:03:14,952: Install lsof-4.98.0-9.fc44.x86_64
+2026-09-30 10:03:14,967: Install quota-1:4.11-2.fc44.x86_64
+2026-09-30 10:03:14,987: Install libnsl2-2.0.1-5.fc44.x86_64
+2026-09-30 10:03:14,989: Install nano-8.7.1-2.fc44.x86_64
+2026-09-30 10:03:15,027: Install initscripts-rename-device-10.27-2.fc44.x86_64
+2026-09-30 10:03:15,029: Install audit-rules-4.2.1-1.fc44.x86_64
+2026-09-30 10:03:15,045: Running %post for audit-rules-4.2.1-1.fc44.x86_64
+2026-09-30 10:03:15,070: Install libxmlb-0.3.29-1.fc44.x86_64
+2026-09-30 10:03:15,087: Install sso-mib-libs-0.8.0-1.fc44.x86_64
+2026-09-30 10:03:15,090: Install conmon-2:2.2.1-2.fc44.x86_64
+2026-09-30 10:03:15,105: Install libcloudproviders-0.4.1-1.fc44.x86_64
+2026-09-30 10:03:15,108: Install libsecret-0.21.8.2-2.fc44.x86_64
+2026-09-30 10:03:15,137: Install geoclue2-libs-2.8.2-1.fc44.x86_64
+2026-09-30 10:03:15,139: Install libvncserver-0.9.15-6.fc44.x86_64
+2026-09-30 10:03:15,145: Install gnupg2-gpg-agent-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:15,160: Running %post for gnupg2-gpg-agent-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:15,170: Install ima-evm-utils-libs-1.6.2-8.fc44.x86_64
+2026-09-30 10:03:15,173: Install cxl-libs-85-1.fc44.x86_64
+2026-09-30 10:03:15,176: Running sysusers for libutempter-1.2.1-20.fc44.x86_64
+2026-09-30 10:03:15,192: Install libutempter-1.2.1-20.fc44.x86_64
+2026-09-30 10:03:15,196: Install tmux-3.7c-1.fc44.x86_64
+2026-09-30 10:03:15,213: Running %post for tmux-3.7c-1.fc44.x86_64
+2026-09-30 10:03:15,226: Install python-pip-wheel-26.0.1-3.fc44.noarch
+2026-09-30 10:03:15,230: Install which-2.25-1.fc44.x86_64
+2026-09-30 10:03:15,247: Install fuse-2.9.9-25.fc44.x86_64
+2026-09-30 10:03:15,262: Install mdadm-4.3-11.fc44.x86_64
+2026-09-30 10:03:15,279: Running %post for mdadm-4.3-11.fc44.x86_64
+2026-09-30 10:03:15,290: Install libblockdev-mdraid-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:15,292: Install sound-theme-freedesktop-0.8-31.fc44.noarch
+2026-09-30 10:03:15,298: Running %post for sound-theme-freedesktop-0.8-31.fc44.noarch
+2026-09-30 10:03:15,305: Install openssl-pkcs11-0.4.13-4.fc44.x86_64
+2026-09-30 10:03:15,309: Install hfsplus-tools-540.1.linux3-36.fc44.x86_64
+2026-09-30 10:03:15,313: Install libfsverity-1.6-4.fc44.x86_64
+2026-09-30 10:03:15,315: Install rpm-sequoia-1.10.3-1.fc44.x86_64
+2026-09-30 10:03:15,324: Install rpm-libs-6.0.2-1.fc44.x86_64
+2026-09-30 10:03:15,330: Install libmodulemd-2.15.3-1.fc44.x86_64
+2026-09-30 10:03:15,348: Install libsolv-0.7.39-1.fc44.x86_64
+2026-09-30 10:03:15,354: Install drpm-0.5.3-2.fc44.x86_64
+2026-09-30 10:03:15,357: Install star-libs-2024.03.21-6.fc44.x86_64
+2026-09-30 10:03:15,362: Install rmt-2:2024.03.21-6.fc44.x86_64
+2026-09-30 10:03:15,376: Install crun-1.28-1.fc44.x86_64
+2026-09-30 10:03:15,392: Install liblastlog2-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:15,395: Running %post for liblastlog2-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:15,403: Install cyrus-sasl-lib-2.1.28-35.fc44.x86_64
+2026-09-30 10:03:15,426: Install openldap-2.6.14-1.fc44.x86_64
+2026-09-30 10:03:15,432: Install libnfsidmap-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:03:15,436: Install gnupg2-dirmngr-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:15,450: Running %post for gnupg2-dirmngr-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:15,461: Install gnupg2-2.4.9-16.fc44.x86_64
+2026-09-30 10:03:15,500: Install gpgme-2.0.1-5.fc44.x86_64
+2026-09-30 10:03:15,517: Install rpm-sign-libs-6.0.2-1.fc44.x86_64
+2026-09-30 10:03:15,520: Install gdbm-1:1.23-11.fc44.x86_64
+2026-09-30 10:03:15,539: Install pam-1.7.2-2.fc44.x86_64
+2026-09-30 10:03:15,589: Install util-linux-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:15,646: Running %post for util-linux-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:15,660: Running sysusers for systemd-259.9-1.fc44.x86_64
+2026-09-30 10:03:15,682: Running sysusers for systemd-259.9-1.fc44.x86_64
+2026-09-30 10:03:15,693: Running sysusers for systemd-259.9-1.fc44.x86_64
+2026-09-30 10:03:15,705: Install systemd-259.9-1.fc44.x86_64
+2026-09-30 10:03:15,830: Running %post for systemd-259.9-1.fc44.x86_64
+2026-09-30 10:03:16,013: Install device-mapper-1.02.212-2.fc44.x86_64
+2026-09-30 10:03:16,031: Install device-mapper-libs-1.02.212-2.fc44.x86_64
+2026-09-30 10:03:16,035: Install cryptsetup-libs-2.8.8-1.fc44.x86_64
+2026-09-30 10:03:16,050: Running sysusers for polkit-127-2.fc44.2.x86_64
+2026-09-30 10:03:16,065: Install polkit-127-2.fc44.2.x86_64
+2026-09-30 10:03:16,089: Running %post for polkit-127-2.fc44.2.x86_64
+2026-09-30 10:03:16,105: Install parted-3.6-15.fc44.x86_64
+2026-09-30 10:03:16,134: Install device-mapper-event-libs-1.02.212-2.fc44.x86_64
+2026-09-30 10:03:16,137: Running sysusers for rpcbind-1.3.1-0.fc44.x86_64
+2026-09-30 10:03:16,152: Install rpcbind-1.3.1-0.fc44.x86_64
+2026-09-30 10:03:16,168: Running %post for rpcbind-1.3.1-0.fc44.x86_64
+2026-09-30 10:03:16,185: Install iputils-20250605-2.fc44.x86_64
+2026-09-30 10:03:16,208: Install openssh-10.2p1-14.fc44.x86_64
+2026-09-30 10:03:16,226: Install libblockdev-part-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:16,230: Install libblockdev-swap-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:16,232: Install device-mapper-event-1.02.212-2.fc44.x86_64
+2026-09-30 10:03:16,244: Running %post for device-mapper-event-1.02.212-2.fc44.x86_64
+2026-09-30 10:03:16,266: Install lvm2-libs-2.03.38-2.fc44.x86_64
+2026-09-30 10:03:16,280: Install realmd-0.17.1-19.fc44.x86_64
+2026-09-30 10:03:16,307: Running %post for realmd-0.17.1-19.fc44.x86_64
+2026-09-30 10:03:16,326: Install accountsservice-23.13.9-16.fc44.x86_64
+2026-09-30 10:03:16,343: Running %post for accountsservice-23.13.9-16.fc44.x86_64
+2026-09-30 10:03:16,357: Install accountsservice-libs-23.13.9-16.fc44.x86_64
+2026-09-30 10:03:16,360: Install malcontent-libs-0.14.0-1.fc44.x86_64
+2026-09-30 10:03:16,364: Running sysusers for rtkit-0.11-70.fc44.x86_64
+2026-09-30 10:03:16,380: Install rtkit-0.11-70.fc44.x86_64
+2026-09-30 10:03:16,394: Running %post for rtkit-0.11-70.fc44.x86_64
+2026-09-30 10:03:16,411: Install device-mapper-multipath-libs-0.13.1-1.fc44.x86_64
+2026-09-30 10:03:16,425: Install kpartx-0.13.1-1.fc44.x86_64
+2026-09-30 10:03:16,441: Install device-mapper-multipath-0.13.1-1.fc44.x86_64
+2026-09-30 10:03:16,457: Running %post for device-mapper-multipath-0.13.1-1.fc44.x86_64
+2026-09-30 10:03:16,474: Install libblockdev-dm-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:16,477: Install libblockdev-mpath-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:16,479: Install initscripts-service-10.27-2.fc44.noarch
+2026-09-30 10:03:16,495: Install libkcapi-1.5.0-7.fc44.x86_64
+2026-09-30 10:03:16,498: Install libkcapi-hasher-1.5.0-7.fc44.x86_64
+2026-09-30 10:03:16,514: Install libkcapi-hmaccalc-1.5.0-7.fc44.x86_64
+2026-09-30 10:03:16,529: Running sysusers for systemd-resolved-259.9-1.fc44.x86_64
+2026-09-30 10:03:16,545: Install systemd-resolved-259.9-1.fc44.x86_64
+2026-09-30 10:03:16,563: Running %post for systemd-resolved-259.9-1.fc44.x86_64
+2026-09-30 10:03:16,584: Install bootupd-0.3.2-1.fc44.x86_64
+2026-09-30 10:03:16,611: Running sysusers for chrony-4.9-1.fc44.x86_64
+2026-09-30 10:03:16,627: Running %pre for chrony-4.9-1.fc44.x86_64
+2026-09-30 10:03:16,634: Install chrony-4.9-1.fc44.x86_64
+2026-09-30 10:03:16,653: Running %post for chrony-4.9-1.fc44.x86_64
+2026-09-30 10:03:16,672: Install flatpak-session-helper-1.18.2-1.fc44.x86_64
+2026-09-30 10:03:16,675: Install systemd-pam-259.9-1.fc44.x86_64
+2026-09-30 10:03:16,681: Install iio-sensor-proxy-3.8-2.fc44.x86_64
+2026-09-30 10:03:16,695: Running %post for iio-sensor-proxy-3.8-2.fc44.x86_64
+2026-09-30 10:03:16,713: Install wpa_supplicant-1:2.11-9.fc44.x86_64
+2026-09-30 10:03:16,744: Running %post for wpa_supplicant-1:2.11-9.fc44.x86_64
+2026-09-30 10:03:16,764: Install nvme-cli-2.16-3.fc44.x86_64
+2026-09-30 10:03:16,789: Running %post for nvme-cli-2.16-3.fc44.x86_64
+2026-09-30 10:03:16,828: Running sysusers for brlapi-0.8.7-8.fc44.x86_64
+2026-09-30 10:03:16,843: Install brlapi-0.8.7-8.fc44.x86_64
+2026-09-30 10:03:16,861: Running %post for brlapi-0.8.7-8.fc44.x86_64
+2026-09-30 10:03:16,874: Install libXxf86vm-1.1.6-4.fc44.x86_64
+2026-09-30 10:03:16,877: Install libXv-1.0.13-4.fc44.x86_64
+2026-09-30 10:03:16,879: Install xprop-1.2.8-5.fc44.x86_64
+2026-09-30 10:03:16,894: Install libxkbfile-1.1.3-5.fc44.x86_64
+2026-09-30 10:03:16,897: Install xcb-util-0.4.1-9.fc44.x86_64
+2026-09-30 10:03:16,899: Install startup-notification-0.12-33.fc44.x86_64
+2026-09-30 10:03:16,902: Install flac-libs-1.5.0-8.fc44.x86_64
+2026-09-30 10:03:16,907: Install libtheora-1:1.1.1-41.fc44.x86_64
+2026-09-30 10:03:16,911: Install attr-2.6.0-1.fc44.x86_64
+2026-09-30 10:03:16,929: Install tar-2:1.35-9.fc44.x86_64
+2026-09-30 10:03:16,958: Install chkconfig-1.33-5.fc44.x86_64
+2026-09-30 10:03:16,988: Install f2fs-tools-1.16.0-10.fc44.x86_64
+2026-09-30 10:03:17,007: Install libnftnl-1.3.1-2.fc44.x86_64
+2026-09-30 10:03:17,010: Install boost-regex-1.90.0-7.fc44.x86_64
+2026-09-30 10:03:17,013: Install ctags-6.2.1-3.fc44.x86_64
+2026-09-30 10:03:17,035: Install source-highlight-3.1.9-27.fc44.x86_64
+2026-09-30 10:03:17,079: Install llvm-libs-22.1.8-4.fc44.x86_64
+2026-09-30 10:03:17,431: Running sysusers for rtl-sdr-2.0.1-7.fc44.x86_64
+2026-09-30 10:03:17,451: Install rtl-sdr-2.0.1-7.fc44.x86_64
+2026-09-30 10:03:17,472: Install nss-softokn-freebl-3.129.0-1.fc44.x86_64
+2026-09-30 10:03:17,479: Install nss-softokn-3.129.0-1.fc44.x86_64
+2026-09-30 10:03:17,488: Install nss-sysinit-3.129.0-1.fc44.x86_64
+2026-09-30 10:03:17,504: Install nss-3.129.0-1.fc44.x86_64
+2026-09-30 10:03:17,513: Running %post for nss-3.129.0-1.fc44.x86_64
+2026-09-30 10:03:17,521: Install volume_key-libs-0.3.12-29.fc44.x86_64
+2026-09-30 10:03:17,532: Install libblockdev-crypto-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:17,535: Install keyutils-1.6.3-7.fc44.x86_64
+2026-09-30 10:03:17,553: Install libnl3-cli-3.12.0-3.fc44.x86_64
+2026-09-30 10:03:17,588: Install libteam-1.32-13.fc44.x86_64
+2026-09-30 10:03:17,603: Install libibverbs-61.1^20260812git975bdaf-1.fc44.x86_64
+2026-09-30 10:03:17,617: Install libpcap-14:1.10.7-1.fc44.x86_64
+2026-09-30 10:03:17,621: Install iw-6.17-2.fc44.x86_64
+2026-09-30 10:03:17,636: Install libwayland-server-1.26.0-1.fc44.x86_64
+2026-09-30 10:03:17,639: Install libss-1.47.3-4.fc44.x86_64
+2026-09-30 10:03:17,653: Install e2fsprogs-1.47.3-4.fc44.x86_64
+2026-09-30 10:03:17,692: Install libcomps-0.1.24-1.fc44.x86_64
+2026-09-30 10:03:17,695: Install dbus-tools-1:1.16.2-1.fc44.x86_64
+2026-09-30 10:03:17,711: Running %pre for dbus-daemon-1:1.16.2-1.fc44.x86_64
+2026-09-30 10:03:17,718: Install dbus-daemon-1:1.16.2-1.fc44.x86_64
+2026-09-30 10:03:17,735: Running %post for dbus-daemon-1:1.16.2-1.fc44.x86_64
+2026-09-30 10:03:17,757: Install isomd5sum-1:1.2.5-6.fc44.x86_64
+2026-09-30 10:03:17,773: Install libtextstyle-0.26-5.fc44.x86_64
+2026-09-30 10:03:17,776: Install gettext-libs-0.26-5.fc44.x86_64
+2026-09-30 10:03:17,786: Install kexec-tools-2.0.32-3.fc44.x86_64
+2026-09-30 10:03:17,801: Install zstd-1.5.7-5.fc44.x86_64
+2026-09-30 10:03:17,819: Install snappy-1.2.2-4.fc44.x86_64
+2026-09-30 10:03:17,822: Install graphite2-1.3.14-20.fc44.x86_64
+2026-09-30 10:03:17,837: Install freetype-2.14.3-1.fc44.x86_64
+2026-09-30 10:03:17,843: Install harfbuzz-14.1.0-2.fc44.x86_64
+2026-09-30 10:03:17,855: Install fontconfig-2.17.0-4.fc44.x86_64
+2026-09-30 10:03:17,880: Running %post for fontconfig-2.17.0-4.fc44.x86_64
+2026-09-30 10:03:18,927: Install cairo-1.18.4-6.fc44.x86_64
+2026-09-30 10:03:18,937: Install cairo-gobject-1.18.4-6.fc44.x86_64
+2026-09-30 10:03:18,938: Install libXft-2.3.8-10.fc44.x86_64
+2026-09-30 10:03:18,941: Install libconfig-1.8.2-2.fc44.x86_64
+2026-09-30 10:03:18,945: Install lldpad-1.1.0-16.git85e5583.fc44.x86_64
+2026-09-30 10:03:18,961: Running %post for lldpad-1.1.0-16.git85e5583.fc44.x86_64
+2026-09-30 10:03:18,980: Install spirv-tools-libs-2026.1-1.fc44.x86_64
+2026-09-30 10:03:19,002: Install abseil-cpp-20260107.1-1.fc44.x86_64
+2026-09-30 10:03:19,036: Install webrtc-audio-processing-2.1-5.fc44.x86_64
+2026-09-30 10:03:19,043: Install liblerc-4.0.0-10.fc44.x86_64
+2026-09-30 10:03:19,047: Install libopenjph-0.25.3-3.fc44.x86_64
+2026-09-30 10:03:19,050: Install highway-1.3.0-2.fc44.x86_64
+2026-09-30 10:03:19,065: Install libjxl-1:0.11.2-1.fc44.x86_64
+2026-09-30 10:03:19,079: Install libvmaf-3.0.0-5.fc44.x86_64
+2026-09-30 10:03:19,084: Install libaom-3.13.3-1.fc44.x86_64
+2026-09-30 10:03:19,101: Install device-mapper-persistent-data-1.3.3-1.fc44.x86_64
+2026-09-30 10:03:19,128: Install libatasmart-0.19-32.fc44.x86_64
+2026-09-30 10:03:19,144: Install libblockdev-smart-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:19,146: Install mtools-4.0.49-3.fc44.x86_64
+2026-09-30 10:03:19,169: Install adwaita-icon-theme-legacy-46.2-7.fc44.noarch
+2026-09-30 10:03:19,364: Install adwaita-icon-theme-50.0-1.fc44.noarch
+2026-09-30 10:03:19,444: Install elfutils-default-yama-scope-0.196-1.fc44.noarch
+2026-09-30 10:03:19,445: Running %post for elfutils-default-yama-scope-0.196-1.fc44.noarch
+2026-09-30 10:03:19,453: Install elfutils-libs-0.196-1.fc44.x86_64
+2026-09-30 10:03:19,459: Install satyr-0.43-10.fc44.x86_64
+2026-09-30 10:03:19,476: Install libreport-2.17.15-10.fc44.x86_64
+2026-09-30 10:03:19,498: Install libreport-cli-2.17.15-10.fc44.x86_64
+2026-09-30 10:03:19,512: Install rpm-build-libs-6.0.2-1.fc44.x86_64
+2026-09-30 10:03:19,515: Install libbabeltrace-1.5.11-17.fc44.x86_64
+2026-09-30 10:03:19,522: Install psmisc-23.7-7.fc44.x86_64
+2026-09-30 10:03:19,546: Install iproute-6.17.0-2.fc44.x86_64
+2026-09-30 10:03:19,573: Install fcoe-utils-1.0.34-14.gitb233050.fc44.x86_64
+2026-09-30 10:03:19,589: Running %post for fcoe-utils-1.0.34-14.gitb233050.fc44.x86_64
+2026-09-30 10:03:19,608: Install libestr-0.1.11-13.fc44.x86_64
+2026-09-30 10:03:19,611: Install libfastjson-1.2304.0-8.fc44.x86_64
+2026-09-30 10:03:19,614: Install sg3_utils-libs-1.48-10.fc44.x86_64
+2026-09-30 10:03:19,617: Install dosfstools-4.2-18.fc44.x86_64
+2026-09-30 10:03:19,634: Install pcre2-utf32-10.47-1.fc44.1.x86_64
+2026-09-30 10:03:19,638: Install zram-generator-1.2.1-5.fc44.x86_64
+2026-09-30 10:03:19,643: Install zram-generator-defaults-1.2.1-5.fc44.noarch
+2026-09-30 10:03:19,644: Install fstrm-0.6.1-14.fc44.x86_64
+2026-09-30 10:03:19,646: Install libbasicobjects-0.1.1-61.fc44.x86_64
+2026-09-30 10:03:19,648: Install libcollection-0.7.0-61.fc44.x86_64
+2026-09-30 10:03:19,653: Install libpath_utils-0.2.1-61.fc44.x86_64
+2026-09-30 10:03:19,655: Install libini_config-1.3.1-61.fc44.x86_64
+2026-09-30 10:03:19,657: Install libdatrie-0.2.14-2.fc44.x86_64
+2026-09-30 10:03:19,660: Install libthai-0.1.30-2.fc44.x86_64
+2026-09-30 10:03:19,664: Install pango-1.57.1-1.fc44.x86_64
+2026-09-30 10:03:19,684: Install inih-62-2.fc44.x86_64
+2026-09-30 10:03:19,687: Install xfsprogs-7.1.1-1.fc44.x86_64
+2026-09-30 10:03:19,720: Install mpdecimal-4.0.1-3.fc44.x86_64
+2026-09-30 10:03:19,728: Install python3-libs-3.14.7-1.fc44.x86_64
+2026-09-30 10:03:20,048: Install python3-3.14.7-1.fc44.x86_64
+2026-09-30 10:03:20,063: Install python3-gobject-base-3.56.3-1.fc44.x86_64
+2026-09-30 10:03:20,077: Install python3-libselinux-3.11-2.fc44.x86_64
+2026-09-30 10:03:20,082: Install python3-rpm-6.0.2-1.fc44.x86_64
+2026-09-30 10:03:20,086: Install gstreamer1-1.28.7-1.fc44.x86_64
+2026-09-30 10:03:20,131: Running sysusers for unbound-libs-1.26.1-1.fc44.x86_64
+2026-09-30 10:03:20,160: Install unbound-libs-1.26.1-1.fc44.x86_64
+2026-09-30 10:03:20,169: Install python3-dbus-1.4.0-9.fc44.x86_64
+2026-09-30 10:03:20,179: Install at-spi2-core-2.60.7-1.fc44.x86_64
+2026-09-30 10:03:20,206: Install atk-2.60.7-1.fc44.x86_64
+2026-09-30 10:03:20,210: Install python3-dasbus-1.7-14.fc44.noarch
+2026-09-30 10:03:20,220: Install python3-systemd-235-18.fc44.x86_64
+2026-09-30 10:03:20,228: Install python3-pid-3.0.4-5.fc44.noarch
+2026-09-30 10:03:20,233: Install python3-pyparted-1:3.13.0-14.fc44.x86_64
+2026-09-30 10:03:20,240: Install python3-bytesize-2.12-2.fc44.x86_64
+2026-09-30 10:03:20,242: Install python3-blockdev-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:20,244: Install python3-pyudev-0.24.4-3.fc44.noarch
+2026-09-30 10:03:20,254: Install python3-idna-3.18-1.fc44.noarch
+2026-09-30 10:03:20,274: Install python3-urllib3-2.8.0-1.fc44.noarch
+2026-09-30 10:03:20,290: Install libwacom-2.19.0-1.fc44.x86_64
+2026-09-30 10:03:20,306: Install at-spi2-atk-2.60.7-1.fc44.x86_64
+2026-09-30 10:03:20,310: Install gnutls-dane-3.8.13-1.fc44.x86_64
+2026-09-30 10:03:20,312: Install wget2-libs-2.2.1-2.fc44.x86_64
+2026-09-30 10:03:20,316: Install wget2-2.2.1-2.fc44.x86_64
+2026-09-30 10:03:20,339: Install unbound-anchor-1.26.1-1.fc44.x86_64
+2026-09-30 10:03:20,351: Running %post for unbound-anchor-1.26.1-1.fc44.x86_64
+2026-09-30 10:03:20,373: Install unbound-1.26.1-1.fc44.x86_64
+2026-09-30 10:03:20,399: Running %post for unbound-1.26.1-1.fc44.x86_64
+2026-09-30 10:03:20,425: Install python3-simpleline-1.9.0-18.fc44.noarch
+2026-09-30 10:03:20,441: Install python3-libsemanage-3.11-1.fc44.x86_64
+2026-09-30 10:03:20,446: Install brltty-6.8-8.fc44.x86_64
+2026-09-30 10:03:20,549: Running %post for brltty-6.8-8.fc44.x86_64
+2026-09-30 10:03:20,567: Install python3-pam-2.0.2-18.fc44.noarch
+2026-09-30 10:03:20,572: Install python3-satyr-0.43-10.fc44.x86_64
+2026-09-30 10:03:20,575: Install python3-pyyaml-6.0.3-3.fc44.x86_64
+2026-09-30 10:03:20,586: Install crypto-policies-scripts-20251128-3.git19878fe.fc44.noarch
+2026-09-30 10:03:20,608: Install python3-crypt-r-3.13.1-9.fc44.x86_64
+2026-09-30 10:03:20,612: Install python3-iso639-0.1.4-33.fc44.noarch
+2026-09-30 10:03:20,615: Install python3-productmd-1.50-2.fc44.noarch
+2026-09-30 10:03:20,622: Install python3-pwquality-1.4.5-15.fc44.x86_64
+2026-09-30 10:03:20,624: Install python3-libcomps-0.1.24-1.fc44.x86_64
+2026-09-30 10:03:20,628: Install python3-pycparser-2.22-8.fc44.noarch
+2026-09-30 10:03:20,641: Install python3-cffi-2.0.0-3.fc44.x86_64
+2026-09-30 10:03:20,652: Install python3-xkbregistry-0.3-9.fc44.x86_64
+2026-09-30 10:03:20,657: Install python3-charset-normalizer-3.4.4-2.fc44.noarch
+2026-09-30 10:03:20,677: Install python3-requests-2.33.1-1.fc44.noarch
+2026-09-30 10:03:20,686: Install python3-kickstart-3.69-1.fc44.noarch
+2026-09-30 10:03:20,763: Install python3-requests-file-3.0.0-2.fc44.noarch
+2026-09-30 10:03:20,767: Install python3-requests-ftp-0.3.1-43.fc44.noarch
+2026-09-30 10:03:20,771: Install python3-cairo-1.28.0-5.fc44.x86_64
+2026-09-30 10:03:20,776: Install python3-gobject-3.56.3-1.fc44.x86_64
+2026-09-30 10:03:20,778: Install python3-audit-4.2.1-1.fc44.x86_64
+2026-09-30 10:03:20,781: Install python3-distro-1.9.0-11.fc44.noarch
+2026-09-30 10:03:20,800: Install blivet-data-1:3.14.2-1.fc44.noarch
+2026-09-30 10:03:20,817: Install python3-libmount-2.41.5-1.fc44.x86_64
+2026-09-30 10:03:20,820: Install python3-packaging-25.0-8.fc44.noarch
+2026-09-30 10:03:20,830: Install python3-langtable-0.0.71-1.fc44.noarch
+2026-09-30 10:03:20,837: Install python3-setools-4.6.0-6.fc44.x86_64
+2026-09-30 10:03:20,887: Install python3-argcomplete-3.6.3-4.fc44.noarch
+2026-09-30 10:03:20,909: Install libndp-1.9-5.fc44.x86_64
+2026-09-30 10:03:20,924: Install libdaemon-0.14-33.fc44.x86_64
+2026-09-30 10:03:20,926: Install teamd-1.32-13.fc44.x86_64
+2026-09-30 10:03:20,943: Install libpkgconf-2.5.1-1.fc44.x86_64
+2026-09-30 10:03:20,946: Install pkgconf-2.5.1-1.fc44.x86_64
+2026-09-30 10:03:20,961: Install pkgconf-pkg-config-2.5.1-1.fc44.x86_64
+2026-09-30 10:03:20,975: Install kmod-34.2-4.fc44.x86_64
+2026-09-30 10:03:20,993: Install lvm2-2.03.38-2.fc44.x86_64
+2026-09-30 10:03:21,023: Running %post for lvm2-2.03.38-2.fc44.x86_64
+2026-09-30 10:03:21,058: Install libblockdev-lvm-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:21,061: Install libblockdev-tools-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:21,077: Install lvm2-dbusd-2.03.38-2.fc44.noarch
+2026-09-30 10:03:21,098: Running %post for lvm2-dbusd-2.03.38-2.fc44.noarch
+2026-09-30 10:03:21,117: Install libblockdev-lvm-dbus-3.5.0-1.fc44.x86_64
+2026-09-30 10:03:21,120: Install diffutils-3.12-5.fc44.x86_64
+2026-09-30 10:03:21,148: Install policycoreutils-3.11-2.fc44.x86_64
+2026-09-30 10:03:21,186: Running %post for policycoreutils-3.11-2.fc44.x86_64
+2026-09-30 10:03:21,203: Install selinux-policy-44.10-1.fc44.noarch
+2026-09-30 10:03:21,207: Running %post for selinux-policy-44.10-1.fc44.noarch
+2026-09-30 10:03:21,223: Running %triggerin for selinux-policy-44.10-1.fc44.noarch
+2026-09-30 10:03:21,234: Running %pre for selinux-policy-targeted-44.10-1.fc44.noarch
+2026-09-30 10:03:21,240: Install selinux-policy-targeted-44.10-1.fc44.noarch
+2026-09-30 10:03:21,503: Running %post for selinux-policy-targeted-44.10-1.fc44.noarch
+2026-09-30 10:03:21,512: Running %pre for container-selinux-4:2.251.0-1.fc44.noarch
+2026-09-30 10:03:21,519: Install container-selinux-4:2.251.0-1.fc44.noarch
+2026-09-30 10:03:21,523: Running %post for container-selinux-4:2.251.0-1.fc44.noarch
+2026-09-30 10:03:37,330: Install containers-common-5:0.67.2-1.fc44.noarch
+2026-09-30 10:03:37,336: Install skopeo-1:1.22.3-1.fc44.x86_64
+2026-09-30 10:03:37,419: Running %pre for passt-selinux-0^20260728.gf8df3f1-2.fc44.noarch
+2026-09-30 10:03:37,426: Install passt-selinux-0^20260728.gf8df3f1-2.fc44.noarch
+2026-09-30 10:03:37,429: Running %post for passt-selinux-0^20260728.gf8df3f1-2.fc44.noarch
+2026-09-30 10:03:49,603: Install passt-0^20260728.gf8df3f1-2.fc44.x86_64
+2026-09-30 10:03:49,625: Install libxshmfence-1.3.2-8.fc44.x86_64
+2026-09-30 10:03:49,627: Install lm_sensors-libs-3.6.0-24.fc44.x86_64
+2026-09-30 10:03:49,630: Install mesa-dri-drivers-26.2.3-1.fc44.x86_64
+2026-09-30 10:03:49,762: Install mesa-libgbm-26.2.3-1.fc44.x86_64
+2026-09-30 10:03:49,764: Install mesa-libEGL-26.2.3-1.fc44.x86_64
+2026-09-30 10:03:49,768: Install libglvnd-egl-1:1.7.0-9.fc44.x86_64
+2026-09-30 10:03:49,771: Install libglvnd-gles-1:1.7.0-9.fc44.x86_64
+2026-09-30 10:03:49,773: Install mesa-libGL-26.2.3-1.fc44.x86_64
+2026-09-30 10:03:49,777: Install libglvnd-glx-1:1.7.0-9.fc44.x86_64
+2026-09-30 10:03:49,781: Install libva-2.23.0-3.fc44.x86_64
+2026-09-30 10:03:49,786: Install libipt-2.1.2-4.fc44.x86_64
+2026-09-30 10:03:49,789: Install isns-utils-libs-0.103-4.fc44.x86_64
+2026-09-30 10:03:49,792: Install iscsi-initiator-utils-6.2.1.11-0.git4b3e853.fc44.3.x86_64
+2026-09-30 10:03:49,812: Running %post for iscsi-initiator-utils-6.2.1.11-0.git4b3e853.fc44.3.x86_64
+2026-09-30 10:03:49,835: Install iscsi-initiator-utils-iscsiuio-6.2.1.11-0.git4b3e853.fc44.3.x86_64
+2026-09-30 10:03:49,849: Running %post for iscsi-initiator-utils-iscsiuio-6.2.1.11-0.git4b3e853.fc44.3.x86_64
+2026-09-30 10:03:49,868: Install jitterentropy-3.7.0-3.fc44.x86_64
+2026-09-30 10:03:49,872: Install checkpolicy-3.11-1.fc44.x86_64
+2026-09-30 10:03:49,892: Install python3-policycoreutils-3.11-2.fc44.noarch
+2026-09-30 10:03:49,943: Install policycoreutils-python-utils-3.11-2.fc44.noarch
+2026-09-30 10:03:49,958: Running %pre for dnsconfd-selinux-1.7.5-4.fc44.noarch
+2026-09-30 10:03:49,966: Install dnsconfd-selinux-1.7.5-4.fc44.noarch
+2026-09-30 10:03:49,968: Running %post for dnsconfd-selinux-1.7.5-4.fc44.noarch
+2026-09-30 10:04:02,008: Running sysusers for dnsconfd-1.7.5-4.fc44.x86_64
+2026-09-30 10:04:02,023: Install dnsconfd-1.7.5-4.fc44.x86_64
+2026-09-30 10:04:02,051: Running %post for dnsconfd-1.7.5-4.fc44.x86_64
+2026-09-30 10:04:02,069: Running sysusers for dnsconfd-unbound-1.7.5-4.fc44.noarch
+2026-09-30 10:04:02,078: Install dnsconfd-unbound-1.7.5-4.fc44.noarch
+2026-09-30 10:04:02,081: Install flatpak-selinux-1.18.2-1.fc44.noarch
+2026-09-30 10:04:02,082: Running %post for flatpak-selinux-1.18.2-1.fc44.noarch
+2026-09-30 10:04:14,065: Running %pre for smartmontools-selinux-1:7.5-9.fc44.noarch
+2026-09-30 10:04:14,073: Install smartmontools-selinux-1:7.5-9.fc44.noarch
+2026-09-30 10:04:14,075: Running %post for smartmontools-selinux-1:7.5-9.fc44.noarch
+2026-09-30 10:04:26,321: Install smartmontools-1:7.5-9.fc44.x86_64
+2026-09-30 10:04:26,343: Running %post for smartmontools-1:7.5-9.fc44.x86_64
+2026-09-30 10:04:26,360: Install libblockdev-smartmontools-3.5.0-1.fc44.x86_64
+2026-09-30 10:04:26,362: Install iniparser-4.2.6-4.fc44.x86_64
+2026-09-30 10:04:26,365: Running %pre for ndctl-85-1.fc44.x86_64
+2026-09-30 10:04:26,372: Install ndctl-85-1.fc44.x86_64
+2026-09-30 10:04:26,388: Running %post for ndctl-85-1.fc44.x86_64
+2026-09-30 10:04:26,398: Install libblockdev-nvdimm-3.5.0-1.fc44.x86_64
+2026-09-30 10:04:26,400: Install libblockdev-plugins-all-3.5.0-1.fc44.x86_64
+2026-09-30 10:04:26,401: Install gettext-envsubst-0.26-5.fc44.x86_64
+2026-09-30 10:04:26,417: Install gettext-runtime-0.26-5.fc44.x86_64
+2026-09-30 10:04:26,442: Install grub2-tools-minimal-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:26,466: Install mpg123-libs-1.32.10-3.fc44.x86_64
+2026-09-30 10:04:26,472: Install libsndfile-1.2.2-11.fc44.x86_64
+2026-09-30 10:04:26,476: Install libei-1.6.0-2.fc44.x86_64
+2026-09-30 10:04:26,478: Install libebur128-1.2.6-15.fc44.x86_64
+2026-09-30 10:04:26,481: Install liblc3-1.1.3-7.fc44.x86_64
+2026-09-30 10:04:26,483: Install libldac-2.0.2.3-19.fc44.x86_64
+2026-09-30 10:04:26,486: Install libsbc-2.1-2.fc44.x86_64
+2026-09-30 10:04:26,489: Install libtdb-1.4.15-1.fc44.x86_64
+2026-09-30 10:04:26,491: Install libdisplay-info-0.3.0-1.fc44.x86_64
+2026-09-30 10:04:26,494: Install libfyaml-0.8-9.fc44.x86_64
+2026-09-30 10:04:26,498: Install oniguruma-6.9.10-4.fc44.x86_64
+2026-09-30 10:04:26,503: Install jq-1.8.1-3.fc44.x86_64
+2026-09-30 10:04:26,519: Install libmaxminddb-1.14.1-1.fc44.x86_64
+2026-09-30 10:04:26,534: Install libuv-1:1.52.1-2.fc44.x86_64
+2026-09-30 10:04:26,539: Install bind-libs-32:9.18.50-2.fc44.x86_64
+2026-09-30 10:04:26,554: Install jbigkit-libs-2.1-33.fc44.x86_64
+2026-09-30 10:04:26,557: Install libtiff-4.7.2-1.fc44.x86_64
+2026-09-30 10:04:26,562: Install spandsp-0.0.6-22.fc44.x86_64
+2026-09-30 10:04:26,567: Install libasyncns-0.8-34.fc44.x86_64
+2026-09-30 10:04:26,573: Install pulseaudio-libs-17.0-9.fc44.x86_64
+2026-09-30 10:04:26,595: Install pipewire-libs-1.6.9-1.fc44.x86_64
+2026-09-30 10:04:26,661: Install libcanberra-0.30-39.fc44.x86_64
+2026-09-30 10:04:26,676: Running %post for libcanberra-0.30-39.fc44.x86_64
+2026-09-30 10:04:26,697: Install wireplumber-libs-0.5.17-1.fc44.x86_64
+2026-09-30 10:04:26,720: Install wireplumber-0.5.17-1.fc44.x86_64
+2026-09-30 10:04:26,749: Running sysusers for pipewire-1.6.9-1.fc44.x86_64
+2026-09-30 10:04:26,766: Install pipewire-1.6.9-1.fc44.x86_64
+2026-09-30 10:04:26,783: Running %post for pipewire-1.6.9-1.fc44.x86_64
+2026-09-30 10:04:26,804: Install pulseaudio-libs-glib2-17.0-9.fc44.x86_64
+2026-09-30 10:04:26,807: Install aardvark-dns-2:1.17.1-1.fc44.x86_64
+2026-09-30 10:04:26,816: Install libnfnetlink-1.0.1-32.fc44.x86_64
+2026-09-30 10:04:26,819: Install libnetfilter_conntrack-1.1.1-1.fc44.x86_64
+2026-09-30 10:04:26,822: Install iptables-libs-1.8.11-13.fc44.x86_64
+2026-09-30 10:04:26,852: Install nftables-1:1.1.6-2.fc44.x86_64
+2026-09-30 10:04:26,871: Install nftables-services-1:1.1.6-2.fc44.noarch
+2026-09-30 10:04:26,873: Running %post for nftables-services-1:1.1.6-2.fc44.noarch
+2026-09-30 10:04:26,889: Install netavark-2:1.17.2-1.fc44.x86_64
+2026-09-30 10:04:26,918: Install containers-common-extra-5:0.67.2-1.fc44.noarch
+2026-09-30 10:04:26,920: Install podman-5:5.8.7-1.fc44.x86_64
+2026-09-30 10:04:27,065: Install libeis-1.6.0-2.fc44.x86_64
+2026-09-30 10:04:27,068: Install mtdev-1.1.6-12.fc44.x86_64
+2026-09-30 10:04:27,070: Install libinput-1.31.3-1.fc44.x86_64
+2026-09-30 10:04:27,092: Running %post for libinput-1.31.3-1.fc44.x86_64
+2026-09-30 10:04:27,102: Install uriparser-1.0.2-1.fc44.x86_64
+2026-09-30 10:04:27,118: Install libwinpr-2:3.31.1-1.fc44.x86_64
+2026-09-30 10:04:27,126: Install cdparanoia-libs-10.2-50.fc44.x86_64
+2026-09-30 10:04:27,129: Install libvisual-1:0.4.2-4.fc44.x86_64
+2026-09-30 10:04:27,133: Install orc-0.4.41-3.fc44.x86_64
+2026-09-30 10:04:27,151: Install gstreamer1-plugins-base-1.28.7-1.fc44.x86_64
+2026-09-30 10:04:27,197: Install openjpeg-2.5.4-3.fc44.x86_64
+2026-09-30 10:04:27,201: Install rav1e-libs-0.8.1-3.fc44.x86_64
+2026-09-30 10:04:27,211: Install svt-av1-libs-3.1.2-2.fc44.x86_64
+2026-09-30 10:04:27,230: Install libheif-1.23.5-3.fc44.x86_64
+2026-09-30 10:04:27,242: Install glycin-libs-2.1.5-1.fc44.x86_64
+2026-09-30 10:04:27,256: Install gdk-pixbuf2-2.44.6^really2.44.4-3.fc44.x86_64
+2026-09-30 10:04:27,297: Install librsvg2-2.62.3-1.fc44.x86_64
+2026-09-30 10:04:27,314: Install glycin-loaders-2.1.5-1.fc44.x86_64
+2026-09-30 10:04:27,349: Install libnotify-0.8.8-1.fc44.x86_64
+2026-09-30 10:04:27,365: Install gtk-update-icon-cache-3.24.52-2.fc44.x86_64
+2026-09-30 10:04:27,379: Install libnghttp3-1.18.0-1.fc44.x86_64
+2026-09-30 10:04:27,382: Install libcurl-8.18.0-10.fc44.x86_64
+2026-09-30 10:04:27,388: Install ostree-libs-2026.4-1.fc44.x86_64
+2026-09-30 10:04:27,394: Install librepo-1.21.0-2.fc44.x86_64
+2026-09-30 10:04:27,398: Install libdnf-0.76.0-1.fc44.x86_64
+2026-09-30 10:04:27,416: Install python3-libdnf-0.76.0-1.fc44.x86_64
+2026-09-30 10:04:27,432: Install libdnf5-5.4.6.0-1.fc44.x86_64
+2026-09-30 10:04:27,459: Install curl-8.18.0-10.fc44.x86_64
+2026-09-30 10:04:27,489: Running %pre for rpm-6.0.2-1.fc44.x86_64
+2026-09-30 10:04:27,496: Install rpm-6.0.2-1.fc44.x86_64
+2026-09-30 10:04:27,548: Running %post for rpm-6.0.2-1.fc44.x86_64
+2026-09-30 10:04:27,565: Install elfutils-debuginfod-client-0.196-1.fc44.x86_64
+2026-09-30 10:04:27,582: Install appstream-1.1.3-1.fc44.x86_64
+2026-09-30 10:04:27,621: Running sysusers for flatpak-1.18.2-1.fc44.x86_64
+2026-09-30 10:04:27,635: Install flatpak-1.18.2-1.fc44.x86_64
+2026-09-30 10:04:27,678: Running %post for flatpak-1.18.2-1.fc44.x86_64
+2026-09-30 10:04:27,695: Install binutils-2.46.1-1.fc44.x86_64
+2026-09-30 10:04:27,795: Running %post for binutils-2.46.1-1.fc44.x86_64
+2026-09-30 10:04:27,808: Install gdb-headless-17.2-4.fc44.x86_64
+2026-09-30 10:04:27,884: Running %pre for gdb-17.2-4.fc44.x86_64
+2026-09-30 10:04:27,893: Install gdb-17.2-4.fc44.x86_64
+2026-09-30 10:04:27,909: Install color-filesystem-1-38.fc44.noarch
+2026-09-30 10:04:27,912: Running sysusers for colord-1.4.8-4.fc44.x86_64
+2026-09-30 10:04:27,926: Install colord-1.4.8-4.fc44.x86_64
+2026-09-30 10:04:27,970: Running %post for colord-1.4.8-4.fc44.x86_64
+2026-09-30 10:04:27,988: Install dnf-data-4.24.0-3.fc44.noarch
+2026-09-30 10:04:27,992: Install python3-libdnf5-5.4.6.0-1.fc44.x86_64
+2026-09-30 10:04:28,025: Install python3-hawkey-0.76.0-1.fc44.x86_64
+2026-09-30 10:04:28,031: Install python3-dnf-4.24.0-3.fc44.noarch
+2026-09-30 10:04:28,077: Install python3-libreport-2.17.15-10.fc44.x86_64
+2026-09-30 10:04:28,088: Install python3-meh-0.52-9.fc44.noarch
+2026-09-30 10:04:28,114: Install rpm-ostree-libs-2026.2-1.fc44.x86_64
+2026-09-30 10:04:28,118: Install flatpak-libs-1.18.2-1.fc44.x86_64
+2026-09-30 10:04:28,125: Install createrepo_c-libs-1.2.1-5.fc44.x86_64
+2026-09-30 10:04:28,128: Install createrepo_c-1.2.1-5.fc44.x86_64
+2026-09-30 10:04:28,145: Install xmlrpc-c-client-1.60.04-5.fc44.x86_64
+2026-09-30 10:04:28,147: Install libreport-web-2.17.15-10.fc44.x86_64
+2026-09-30 10:04:28,149: Install libreport-plugin-reportuploader-2.17.15-10.fc44.x86_64
+2026-09-30 10:04:28,164: Install libreport-plugin-bugzilla-2.17.15-10.fc44.x86_64
+2026-09-30 10:04:28,179: Install libreport-anaconda-2.17.15-10.fc44.x86_64
+2026-09-30 10:04:28,181: Install libproxy-0.5.12-2.fc44.x86_64
+2026-09-30 10:04:28,187: Install glib-networking-2.80.1-4.fc44.x86_64
+2026-09-30 10:04:28,206: Install libsoup3-3.6.6-10.fc44.x86_64
+2026-09-30 10:04:28,225: Install libtinysparql-3.11.1-1.fc44.x86_64
+2026-09-30 10:04:28,231: Install geocode-glib-3.26.4-15.fc44.x86_64
+2026-09-30 10:04:28,236: Install gssdp-1.6.6-1.fc44.x86_64
+2026-09-30 10:04:28,239: Install gupnp-1.6.10-1.fc44.x86_64
+2026-09-30 10:04:28,243: Install gupnp-igd-1.6.0-8.fc44.x86_64
+2026-09-30 10:04:28,246: Install libnice-0.1.23-2.fc44.x86_64
+2026-09-30 10:04:28,263: Install gstreamer1-plugins-bad-free-libs-1.28.7-1.fc44.x86_64
+2026-09-30 10:04:28,287: Install libgweather-4.6.0-1.fc44.x86_64
+2026-09-30 10:04:28,313: Running sysusers for geoclue2-2.8.2-1.fc44.x86_64
+2026-09-30 10:04:28,329: Running %pre for geoclue2-2.8.2-1.fc44.x86_64
+2026-09-30 10:04:28,335: Install geoclue2-2.8.2-1.fc44.x86_64
+2026-09-30 10:04:28,342: Running %post for geoclue2-2.8.2-1.fc44.x86_64
+2026-09-30 10:04:28,358: Install libev-4.33-15.fc44.x86_64
+2026-09-30 10:04:28,361: Install libverto-libev-0.3.2-12.fc44.x86_64
+2026-09-30 10:04:28,364: Running %pre for gssproxy-0.9.2-10.fc44.x86_64
+2026-09-30 10:04:28,370: Install gssproxy-0.9.2-10.fc44.x86_64
+2026-09-30 10:04:28,388: Running %post for gssproxy-0.9.2-10.fc44.x86_64
+2026-09-30 10:04:28,407: Install nfs-common-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:28,425: Running %post for nfs-common-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:28,443: Running sysusers for nfsv3-client-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:28,457: Install nfsv3-client-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:28,476: Install nfsv4-client-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:28,495: Running %triggerin for nfsv4-client-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:28,505: Install nfs-client-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:28,506: Running %post for nfs-client-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:28,513: Install cups-filesystem-1:2.4.19-3.fc44.noarch
+2026-09-30 10:04:28,516: Install cups-libs-1:2.4.19-3.fc44.x86_64
+2026-09-30 10:04:28,522: Install gtk3-3.24.52-2.fc44.x86_64
+2026-09-30 10:04:28,624: Install gtk4-4.22.5-2.fc44.x86_64
+2026-09-30 10:04:28,736: Install libadwaita-1.9.4-1.fc44.x86_64
+2026-09-30 10:04:28,769: Install tecla-50.0-1.fc44.x86_64
+2026-09-30 10:04:28,794: Install anaconda-widgets-44.30-2.fc44.x86_64
+2026-09-30 10:04:28,797: Install libnma-1.10.6-11.fc44.x86_64
+2026-09-30 10:04:28,801: Install nm-connection-editor-1.36.0-7.fc44.x86_64
+2026-09-30 10:04:28,843: Install libreport-gtk-2.17.15-10.fc44.x86_64
+2026-09-30 10:04:28,858: Install python3-meh-gui-0.52-9.fc44.noarch
+2026-09-30 10:04:28,861: Install gnome-desktop3-44.5-1.fc44.x86_64
+2026-09-30 10:04:28,892: Install gnome-desktop4-44.5-1.fc44.x86_64
+2026-09-30 10:04:28,898: Install gnome-settings-daemon-50.1-1.fc44.x86_64
+2026-09-30 10:04:28,943: Running %post for gnome-settings-daemon-50.1-1.fc44.x86_64
+2026-09-30 10:04:28,962: Install mutter-50.5-1.fc44.x86_64
+2026-09-30 10:04:29,024: Install gnome-kiosk-50.1-1.fc44.x86_64
+2026-09-30 10:04:29,041: Install freerdp-libs-2:3.31.1-1.fc44.x86_64
+2026-09-30 10:04:29,059: Running sysusers for gnome-remote-desktop-50.2-1.fc44.x86_64
+2026-09-30 10:04:29,075: Install gnome-remote-desktop-50.2-1.fc44.x86_64
+2026-09-30 10:04:29,108: Running %post for gnome-remote-desktop-50.2-1.fc44.x86_64
+2026-09-30 10:04:29,142: Install kbd-misc-2.9.0-4.fc44.noarch
+2026-09-30 10:04:29,224: Install kbd-2.9.0-4.fc44.x86_64
+2026-09-30 10:04:29,255: Install grubby-8.40-88.fc44.x86_64
+2026-09-30 10:04:29,267: Running %post for grubby-8.40-88.fc44.x86_64
+2026-09-30 10:04:29,278: Running sysusers for systemd-udev-259.9-1.fc44.x86_64
+2026-09-30 10:04:29,292: Running sysusers for systemd-udev-259.9-1.fc44.x86_64
+2026-09-30 10:04:29,305: Install systemd-udev-259.9-1.fc44.x86_64
+2026-09-30 10:04:29,399: Running %post for systemd-udev-259.9-1.fc44.x86_64
+2026-09-30 10:04:29,853: Install dracut-108-8.fc44.x86_64
+2026-09-30 10:04:29,922: Install os-prober-1.81-11.fc44.x86_64
+2026-09-30 10:04:29,941: Running %pre for grub2-tools-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:29,948: Install grub2-tools-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:29,984: Running %post for grub2-tools-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:30,010: Install kernel-core-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:30,309: Running %post for kernel-core-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:30,330: Install kernel-modules-core-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:31,440: Running %pre for NetworkManager-1:1.56.1-2.fc44.x86_64
+2026-09-30 10:04:31,447: Install NetworkManager-1:1.56.1-2.fc44.x86_64
+2026-09-30 10:04:31,511: Running %post for NetworkManager-1:1.56.1-2.fc44.x86_64
+2026-09-30 10:04:31,533: Install dracut-network-108-8.fc44.x86_64
+2026-09-30 10:04:31,556: Install kernel-modules-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:32,483: Running %post for kernel-modules-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:38,161: Install ostree-2026.4-1.fc44.x86_64
+2026-09-30 10:04:38,183: Running %post for ostree-2026.4-1.fc44.x86_64
+2026-09-30 10:04:38,199: Install bootc-1.16.13-1.fc44.x86_64
+2026-09-30 10:04:38,267: Install python3-blivet-1:3.14.2-1.fc44.noarch
+2026-09-30 10:04:38,313: Install blivet-gui-runtime-2.6.0-12.fc44.noarch
+2026-09-30 10:04:38,352: Install rpm-ostree-2026.2-1.fc44.x86_64
+2026-09-30 10:04:38,405: Running %post for rpm-ostree-2026.2-1.fc44.x86_64
+2026-09-30 10:04:38,422: Install kernel-modules-extra-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:38,470: Running %post for kernel-modules-extra-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:44,272: Install dracut-live-108-8.fc44.x86_64
+2026-09-30 10:04:44,277: Install NetworkManager-team-1:1.56.1-2.fc44.x86_64
+2026-09-30 10:04:44,284: Install anaconda-core-44.30-2.fc44.x86_64
+2026-09-30 10:04:44,510: Install anaconda-tui-44.30-2.fc44.x86_64
+2026-09-30 10:04:44,522: Install kdump-anaconda-addon-006-17.20250925git2a3605a.fc44.noarch
+2026-09-30 10:04:44,538: Install grub2-efi-x64-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:44,570: Install grub2-efi-ia32-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:44,592: Install plymouth-scripts-24.004.60-24.fc44.x86_64
+2026-09-30 10:04:44,607: Install plymouth-24.004.60-24.fc44.x86_64
+2026-09-30 10:04:44,637: Install unbound-dracut-1.26.1-1.fc44.x86_64
+2026-09-30 10:04:44,639: Install dnsconfd-micro-1.7.5-4.fc44.x86_64
+2026-09-30 10:04:44,654: Install dnsconfd-dracut-1.7.5-4.fc44.x86_64
+2026-09-30 10:04:44,656: Install udisks2-2.11.2-1.fc44.x86_64
+2026-09-30 10:04:44,692: Running %post for udisks2-2.11.2-1.fc44.x86_64
+2026-09-30 10:04:44,709: Install udisks2-iscsi-2.11.2-1.fc44.x86_64
+2026-09-30 10:04:44,714: Install anaconda-install-env-deps-44.30-2.fc44.x86_64
+2026-09-30 10:04:44,716: Install wireless-regdb-2026.09.03-1.fc44.noarch
+2026-09-30 10:04:44,731: Install NetworkManager-wifi-1:1.56.1-2.fc44.x86_64
+2026-09-30 10:04:44,735: Install fedora-logos-42.0.1-3.fc44.noarch
+2026-09-30 10:04:44,767: Install anaconda-gui-44.30-2.fc44.x86_64
+2026-09-30 10:04:44,800: Install anaconda-44.30-2.fc44.x86_64
+2026-09-30 10:04:44,801: Install anaconda-install-img-deps-44.30-2.fc44.x86_64
+2026-09-30 10:04:44,803: Install anaconda-dracut-44.30-2.fc44.x86_64
+2026-09-30 10:04:44,812: Install shim-ia32-16.1-5.x86_64
+2026-09-30 10:04:44,819: Install shim-x64-16.1-5.x86_64
+2026-09-30 10:04:44,827: Install kernel-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:44,830: Install kernel-modules-internal-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:44,910: Running %post for kernel-modules-internal-7.2.7-200.fc44.x86_64
+2026-09-30 10:04:50,934: Install grub2-tools-efi-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:50,957: Install grub2-tools-extra-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:50,985: Install dracut-config-generic-108-8.fc44.x86_64
+2026-09-30 10:04:50,986: Install b43-openfwwf-5.2-48.fc44.noarch
+2026-09-30 10:04:50,989: Running %pre for nfs-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:50,998: Install nfs-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:51,018: Running %post for nfs-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:51,046: Running %triggerin for nfs-utils-1:2.8.7-7.fc44.x86_64
+2026-09-30 10:04:51,061: Install rsyslog-8.2604.0-1.fc44.x86_64
+2026-09-30 10:04:51,092: Running %post for rsyslog-8.2604.0-1.fc44.x86_64
+2026-09-30 10:04:51,112: Install rng-tools-6.17-10.fc44.x86_64
+2026-09-30 10:04:51,128: Running %post for rng-tools-6.17-10.fc44.x86_64
+2026-09-30 10:04:51,145: Install bind-utils-32:9.18.50-2.fc44.x86_64
+2026-09-30 10:04:51,167: Install python3-pyatspi-2.58.2-1.fc44.noarch
+2026-09-30 10:04:51,177: Install wget2-wget-2.2.1-2.fc44.x86_64
+2026-09-30 10:04:51,190: Install usbutils-019-2.fc44.x86_64
+2026-09-30 10:04:51,207: Install rdma-core-61.1^20260812git975bdaf-1.fc44.x86_64
+2026-09-30 10:04:51,223: Running %post for rdma-core-61.1^20260812git975bdaf-1.fc44.x86_64
+2026-09-30 10:04:51,270: Install fpaste-0.5.0.0-4.fc44.noarch
+2026-09-30 10:04:51,286: Install xfsdump-3.2.0-4.fc44.x86_64
+2026-09-30 10:04:51,306: Install sg3_utils-1.48-10.fc44.x86_64
+2026-09-30 10:04:51,353: Install strace-7.2-1.fc44.x86_64
+2026-09-30 10:04:51,373: Install nmap-ncat-4:7.92-11.fc44.x86_64
+2026-09-30 10:04:51,387: Running %post for nmap-ncat-4:7.92-11.fc44.x86_64
+2026-09-30 10:04:51,398: Install volume_key-0.3.12-29.fc44.x86_64
+2026-09-30 10:04:51,414: Install nss-tools-3.129.0-1.fc44.x86_64
+2026-09-30 10:04:51,441: Install initscripts-10.27-2.fc44.x86_64
+2026-09-30 10:04:51,470: Running %post for initscripts-10.27-2.fc44.x86_64
+2026-09-30 10:04:51,491: Running sysusers for openssh-server-10.2p1-14.fc44.x86_64
+2026-09-30 10:04:51,512: Running %pre for openssh-server-10.2p1-14.fc44.x86_64
+2026-09-30 10:04:51,519: Install openssh-server-10.2p1-14.fc44.x86_64
+2026-09-30 10:04:51,540: Running %post for openssh-server-10.2p1-14.fc44.x86_64
+2026-09-30 10:04:51,560: Install openssh-clients-10.2p1-14.fc44.x86_64
+2026-09-30 10:04:51,582: Running %post for openssh-clients-10.2p1-14.fc44.x86_64
+2026-09-30 10:04:51,602: Install cryptsetup-2.8.8-1.fc44.x86_64
+2026-09-30 10:04:51,620: Install audit-4.2.1-1.fc44.x86_64
+2026-09-30 10:04:51,638: Running %post for audit-4.2.1-1.fc44.x86_64
+2026-09-30 10:04:51,657: Install net-tools-2.0-0.77.20160912git.fc44.x86_64
+2026-09-30 10:04:51,677: Running %post for net-tools-2.0-0.77.20160912git.fc44.x86_64
+2026-09-30 10:04:51,696: Install ipmitool-1.8.19-12.fc44.x86_64
+2026-09-30 10:04:51,726: Install mt-st-1.8-3.fc44.x86_64
+2026-09-30 10:04:51,740: Running %post for mt-st-1.8-3.fc44.x86_64
+2026-09-30 10:04:51,760: Install spice-vdagent-0.23.0-2.fc44.x86_64
+2026-09-30 10:04:51,777: Running %post for spice-vdagent-0.23.0-2.fc44.x86_64
+2026-09-30 10:04:51,797: Install dump-1:0.4-0.62.b52.fc44.x86_64
+2026-09-30 10:04:51,815: Install rpm-plugin-selinux-6.0.2-1.fc44.x86_64
+2026-09-30 10:04:51,817: Install nano-default-editor-8.7.1-2.fc44.noarch
+2026-09-30 10:04:51,819: Install biosdevname-0.7.3-21.fc44.x86_64
+2026-09-30 10:04:51,834: Install efibootmgr-18-11.fc44.x86_64
+2026-09-30 10:04:51,849: Install mtr-2:0.96-1.fc44.x86_64
+2026-09-30 10:04:51,865: Install vim-minimal-2:9.2.1129-1.fc44.x86_64
+2026-09-30 10:04:51,887: Install ethtool-2:7.1-1.fc44.x86_64
+2026-09-30 10:04:51,905: Install grub2-efi-x64-cdboot-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:51,924: Install grub2-efi-ia32-cdboot-1:2.12-64.fc44.x86_64
+2026-09-30 10:04:51,938: Install grub2-pc-modules-1:2.12-64.fc44.noarch
+2026-09-30 10:04:51,982: Install bzip2-1.0.8-23.fc44.x86_64
+2026-09-30 10:04:52,000: Install ftp-0.17-100.fc44.x86_64
+2026-09-30 10:04:52,014: Install gdisk-1.0.10-5.fc44.x86_64
+2026-09-30 10:04:52,033: Install gdb-gdbserver-17.2-4.fc44.x86_64
+2026-09-30 10:04:52,051: Install pigz-2.8-8.fc44.x86_64
+2026-09-30 10:04:52,066: Install prefixdevname-0.2.0-8.fc44.x86_64
+2026-09-30 10:04:52,075: Install less-704-4.fc44.x86_64
+2026-09-30 10:04:52,092: Install hexedit-1.6-10.fc44.x86_64
+2026-09-30 10:04:52,107: Install bridge-utils-1.7.1-15.fc44.x86_64
+2026-09-30 10:04:52,121: Install hdparm-9.65-10.fc44.x86_64
+2026-09-30 10:04:52,137: Install dmidecode-1:3.7-1.fc44.x86_64
+2026-09-30 10:04:52,154: Install vconfig-1.9-41.fc43.x86_64
+2026-09-30 10:04:52,168: Install default-fonts-other-sans-4.3-1.fc44.noarch
+2026-09-30 10:04:52,170: Install iwlwifi-mvm-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,281: Install iwlwifi-dvm-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,290: Install amd-gpu-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,432: Install atheros-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,568: Install brcmfmac-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,595: Install intel-gpu-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,628: Install intel-npu-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,632: Install iwlegacy-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,634: Install libertas-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,640: Install mediatek-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,655: Install mt7xxx-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,708: Install nvidia-gpu-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,895: Install nxpwireless-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,900: Install qcom-wwan-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,904: Install qed-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,920: Install realtek-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,942: Install tiwilink-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,954: Install amd-ucode-firmware-20260916-1.fc44.noarch
+2026-09-30 10:04:52,958: Install google-noto-sans-cjk-fonts-1:2.004-11.fc44.noarch
+2026-09-30 10:04:53,369: Install zd1211-firmware-1.5-20.fc44.noarch
+2026-09-30 10:04:53,372: Install spacemit-firmware-20240829-5.fc44.noarch
+2026-09-30 10:04:53,375: Install atmel-firmware-1.3-37.fc44.noarch
+2026-09-30 10:04:53,387: Running %posttrans for filesystem-3.18-52.fc44.x86_64
+2026-09-30 10:04:53,391: Running %posttrans for glibc-all-langpacks-2.43-8.fc44.x86_64
+2026-09-30 10:04:53,391: Running %posttrans for grub2-common-1:2.12-64.fc44.noarch
+2026-09-30 10:04:53,408: Running %posttrans for ca-certificates-2026.2.90_v9.0.317-1.fc44.noarch
+2026-09-30 10:04:55,107: Running %posttrans for dconf-0.49.0-5.fc44.x86_64
+2026-09-30 10:04:55,118: Running %posttrans for authselect-libs-1.7.1-1.fc44.x86_64
+2026-09-30 10:04:55,138: Running %posttrans for systemd-259.9-1.fc44.x86_64
+2026-09-30 10:04:55,145: Running %posttrans for systemd-resolved-259.9-1.fc44.x86_64
+2026-09-30 10:04:55,162: Running %posttrans for fontconfig-2.17.0-4.fc44.x86_64
+2026-09-30 10:04:55,170: Running %posttrans for crypto-policies-scripts-20251128-3.git19878fe.fc44.noarch
+2026-09-30 10:04:55,344: Running %posttrans for selinux-policy-targeted-44.10-1.fc44.noarch
+2026-09-30 10:05:10,187: Running %posttrans for container-selinux-4:2.251.0-1.fc44.noarch
+2026-09-30 10:05:10,196: Running %posttrans for passt-selinux-0^20260728.gf8df3f1-2.fc44.noarch
+2026-09-30 10:05:10,203: Running %posttrans for dnsconfd-selinux-1.7.5-4.fc44.noarch
+2026-09-30 10:05:10,210: Running %posttrans for wireplumber-0.5.17-1.fc44.x86_64
+2026-09-30 10:05:10,222: Running %posttrans for appstream-1.1.3-1.fc44.x86_64
+2026-09-30 10:05:10,265: Running %posttrans for systemd-udev-259.9-1.fc44.x86_64
+2026-09-30 10:05:10,278: Running %posttrans for kernel-core-7.2.7-200.fc44.x86_64
+2026-09-30 10:06:07,854: Running %posttrans for kernel-modules-core-7.2.7-200.fc44.x86_64
+2026-09-30 10:06:13,858: Running %posttrans for kernel-modules-7.2.7-200.fc44.x86_64
+2026-09-30 10:06:13,865: Running %posttrans for grub2-efi-x64-1:2.12-64.fc44.x86_64
+2026-09-30 10:06:13,883: Running %posttrans for shim-x64-16.1-5.x86_64
+2026-09-30 10:06:16,240: running /build-container-installer/lorax_templates/install_set_installer.tmpl
+2026-09-30 10:06:16,244: running /build-container-installer/lorax_templates/post_install_configure_upgrades.tmpl
+2026-09-30 10:06:16,247: running /build-container-installer/lorax_templates/install_include_post.tmpl
+2026-09-30 10:06:16,248: running /build-container-installer/lorax_templates/cache_copy_dnf.tmpl
+2026-09-30 10:06:16,278: running /framz-iso/framz-branding.tmpl
+2026-09-30 10:06:16,355: writing .buildstamp file
+2026-09-30 10:06:16,355: writing debug data to pkglists and original-pkgsizes.txt
+2026-09-30 10:06:17,447: doing post-install configuration
+2026-09-30 10:06:17,458: running runtime-postinstall.tmpl
+2026-09-30 10:06:18,746: writing .discinfo file
+2026-09-30 10:06:18,747: backing up installroot
+2026-09-30 10:06:20,649: generating kernel module metadata
+2026-09-30 10:06:20,650: doing depmod and module-info for 7.2.7-200.fc44.x86_64
+2026-09-30 10:06:26,714: cleaning unneeded files
+2026-09-30 10:06:26,727: running runtime-cleanup.tmpl
+2026-09-30 10:06:29,867: verifying the installroot
+2026-09-30 10:06:32,997: creating the runtime image
+2026-09-30 10:10:58,113: preparing to build output tree and boot images
+2026-09-30 10:10:58,113: rebuilding initramfs images
+2026-09-30 10:10:58,113: dracut args = ['--xz', '--install', '/.buildstamp', '--no-early-microcode', '--add', 'fips']
+2026-09-30 10:10:58,113: anaconda args = ['--xz', '--install', '/.buildstamp', '--no-early-microcode', '--add', 'fips', '--add', 'anaconda pollcdrom qemu qemu-net prefixdevname-tools']
+2026-09-30 10:10:58,134: rebuilding boot/initramfs-7.2.7-200.fc44.x86_64.img
+2026-09-30 10:12:17,342: populating output tree and building boot images
+2026-09-30 10:12:17,363: running x86.tmpl
+2026-09-30 10:12:24,467: writing .treeinfo file
+make -w -C container framz
+make[1]: Entering directory '/build-container-installer/container'
+skopeo copy docker://ghcr.io/dirkae8/framz:br-arena_01a0ee0e-framz-os-44 oci:framz:br-arena_01a0ee0e-framz-os-44
+Getting image source signatures
+Copying blob sha256:68153b530a6afb4b887ffca7617c619155a33a0ccc914d28f94403314afe7352
+Copying blob sha256:66b6e96f4739f20e36fc26439f53a361061353d01d8ccafdbc186ea19e93c167
+Copying blob sha256:f521dd09b19d15144ca32def8ac5c1908b7a1a1be0db7eb096e76e6cb322bb25
+Copying blob sha256:a9d99cad8a184fb1925aa26ec151c6c2446cc820a25e4e92cc16878aa812ab80
+Copying blob sha256:5739f1ce0da4bd59a5662a393806bf3bed8ff7f065d16b602daaa91de7726c65
+Copying blob sha256:a615df7c1e7d041758ad0b30ec6585b4c4d3ea3e450b418c4821b892cdfa1824
+Copying blob sha256:ad4efffde9ee56bcfc16c0770adf218b3c6588b1d92eb4e537b25d99262a81ff
+Copying blob sha256:ed064d98c4470497b3090546a34acdc4764f68eb286204c2344915b4ee00309d
+Copying blob sha256:eb4d8416a4c4fc10adcd882cc0dd933e3f9a6015f81cd4df690da0b3355c1ba1
+Copying blob sha256:a754369b27bde6cfe8364872c03442a81b7e99ef2c40a51bc80d431bbc5c2012
+Copying blob sha256:3512c8da9e960b5d3375f2b2593d8f9d020cba6a70be5095ece41e9a7e3d186c
+Copying blob sha256:928df6513048b58b9f20c0f332ec4db791ef79f4d5f38ac1fbefac188b185001
+Copying blob sha256:e1c7008605bd14e2fb9af3cf6c627e733392351af0244d3bb30645c39915e42f
+Copying blob sha256:fe3ce68db0b8c5d5050432940bdb0723195907e8a48ca253bfb762ec56881b33
+Copying blob sha256:6b3025b83fdaf2b3abd6c9a74b0d4f3bd823d924599483c082ad0e9e980974f1
+Copying blob sha256:82a4c8d2c9c68f8bf959749de845d9d3bdb5300df869e2c4bffbafcf99b076b2
+Copying blob sha256:0c279194bc0e1331fc93c7bbaf07213a22805546e40bb290ba2d734172c84354
+Copying blob sha256:e5f8f9843ee6acdab12d97bb4ebd84bb08814a2333ab24a85bca0fcc46991810
+Copying blob sha256:4a388ee900c9aa1fd23e968011a8a90eef826d42effc03425cf1134158c82991
+Copying blob sha256:c3d986c5fb24313e123372bfc52c5092aee3c78f2790e35d8dee2f34c2cb6082
+Copying blob sha256:c8d3e4b0222cca6f069caff6cb49e80e39f59006f02e540a5a4a50bbefd3b0ab
+Copying blob sha256:1aa03e2c043e87ab488a3a6ecf6fb1b43df43bc8e187962ec9c130068ce83ee4
+Copying blob sha256:25ae66c46b558d57388402bd20311a5b7cc7e27ac3665541a04d764cb4e02460
+Copying blob sha256:b6bb789a6718cefeabc257975d508bc0eba54fa84b23a553a8a3c01ca0652156
+Copying blob sha256:e39837ce0633fc979933a5b181638f7ca5d163040007c99ea0c26ea6888f27b0
+Copying blob sha256:252ecc22cdc3cd8e14e507324f868d91333bcc62aedfbf363d0b6aaf5f2d78da
+Copying blob sha256:a8e3351ec7691d392f2a7fde0fe2461fdb29ad89c15ac6ccc5c3d4d8a8a054b2
+Copying blob sha256:cefd64d55fee78c19e702e3b4a7d50424d93cbb7ca8d0f1b4760dfd72adf7704
+Copying blob sha256:97c68e38afeb03102a4ae49cf370581a4bdb5c6c322b8e92b3745efaa89554d0
+Copying blob sha256:f5219672878a4b1763fe8d6e121023f619b1ee3d86cdfcde4f44624089c78edf
+Copying blob sha256:cf1f6c9ccf20a71d944b129b86b6bfdc6a94e8645edb8f79de7c23d49995b586
+Copying blob sha256:3ae5f734b1060ea3e8169dc7c7ffdd0377ac9ecbda855a05c51d3481f5f26e93
+Copying blob sha256:88c32b17e64c2a1271a349ae88f20a9e4ceae06df99fa349e64d456966ff0f15
+Copying blob sha256:807e710ef1e7eaa86fe30934235103b94e36035cb770820150380415481c73f2
+Copying blob sha256:2673dcc50503b0e5e8dbf63753f2d1dc43d5649f33feb0fddce1422927bb15ef
+Copying blob sha256:23e386d5c61c4b8ed26ac3826934aa3d198c9538cd53bcfc4ee609b699d4e42f
+Copying blob sha256:c99442b9d3b5682275d24aaae811fb6b72fdbf02b21fef75c7e2d00f4855cac6
+Copying blob sha256:4ab5b8109bab86d069cee79137118dccdaae7272004f24199ef7ff5708fa481b
+Copying blob sha256:b3cb1500b2a96b5f19d6446b4fdecd2d2b685228429be200f1ea9f30d691cf3f
+Copying blob sha256:173dae2b99abf7e9fa51f073f82be526f89cfe8bc3f5d7d30bf4ecb18a71c216
+Copying blob sha256:941b64663cf8103c501c6b85402f015ccc99069203b1dac6649a872d821d7491
+Copying blob sha256:4383ce887fdcde0c2f24113bdd642f702da1438b5eb5c95a7d79b324ea3e4115
+Copying blob sha256:c0e392350a310afde3fe45821fa73952185973b5f05ef97992cbec7c191da3ea
+Copying blob sha256:470fb756f908df83385d2b93a505dca6a7eb1fabeecc924c84d7d321b8b79eed
+Copying blob sha256:78bd97ae5bdce4a3afcab997f03ab2c2241181b3a676e834cb11f91e51ae3155
+Copying blob sha256:0a40ca8128392b078104563cd243c1d7869ad5453efe349796e2a02c6d706242
+Copying blob sha256:ced9691edae5d4a6cad628145380743aa54d13d6d4207e110b302101e488671c
+Copying blob sha256:793df38bef1f34e81a0bc42bc3f85f0e5041cb92dbd679af27870f8179d9d10d
+Copying blob sha256:145c713afc793b1ec54473135f0e80ed68863e7d30eea6f6e94288e6c34d5834
+Copying blob sha256:6ca009cfaba5b3607e01a9f99753029544c8969e65a55a2e10d5b876a72d90f2
+Copying blob sha256:4ab962aadc42fa933e865b7578c997246b7b5b5778ffb4c76271f66e423b9287
+Copying blob sha256:6ccdfee256ee84f5bcec10f516e5d4a3e6d33da77674044a5c854c715d7e1829
+Copying blob sha256:b1fd8ccfdc45f783f09d14c9cebb4edf131e9d717ba90cf52d8fd49218adddfa
+Copying blob sha256:8f2ef4f685ea395f2359acee0654e667ddeb69f3a19a5f239c5b0e4147e5a370
+Copying blob sha256:f60b3e16d590fd020fd4ca97b958b9e7691184a5db2874c87053fe2da927edd8
+Copying blob sha256:3d70279167549f85ed580b8fe2c7d7315e518a2d66bff6cc20e1bbe2890167ae
+Copying blob sha256:7f52979c1880b14ea7ad92cbbe12db7eec7a949cfaea9da7788cb9c303dc9d3a
+Copying blob sha256:e6e821fbf5844ba499a6e4a196ff303ca297b003ba79018e2edd5c06bc69880a
+Copying blob sha256:4a62db26a468e3c868a3f3d2481deebe5d2511b79089f17d1d6e0ddff9e12e50
+Copying blob sha256:02daab949310b6aa1fe2e20e3d357e2966d8d8a3d1163c3ac053f2486260caa3
+Copying blob sha256:abd5f02f27171ea49cfd0daee08a6b5d2e6b6d1b7497bfc036c71f189950d1ac
+Copying blob sha256:95d2c68ca5629c7866a4504b30597286f65169fed62a01ab9bc02b18eb692392
+Copying blob sha256:ea9dc5b62e0232c7351049e1ece5f37afe3bed08434fbdf9737f6c28018bf8aa
+Copying blob sha256:1cd050d7641073a9cf798a5737b68b3ffe32a53a76bab6bb51455a15e0735695
+Copying blob sha256:7414465e7fa1644e3ba66839813260e9eff88b9046de4ce584b6718e601ee973
+Copying blob sha256:1051762a96de454f599b72c96b2a7410cb8d1210d14f07a3d3f00e17300623e3
+Copying blob sha256:c4fec79b1aa2c961d417d0eae9b4206665de06fa13cc2e8a50a772977248a160
+Copying blob sha256:12ebca71a37c948b57afd5229b949045cbeaa41fc537c846d3ef151ffb640f49
+Copying blob sha256:14c8ae969b60d300181ae024fc3f0d85c4aa84adeaebf1f12a6430b26201ff91
+Copying blob sha256:2f9eeb45c0a7cce6bee9edee716623258b8eb20f75e02f94434c3aa8a8d7c08a
+Copying blob sha256:66c04b9400a4eea611a8e63517c83b4c6390a1d5fe3a56e84f81f7af6c07d8a2
+Copying blob sha256:7af68e2289c689ea9372c64d6bf6f731be194d809ec67ee1e312f48d69a78ae3
+Copying blob sha256:a75ce7d434c62f89a27207eebee15c83461dc4999213740f672944aceca07c09
+Copying blob sha256:c4341c40bbbccd4cc9d853cd85dcaf89d1c3b4529710cd8be56a5ba515ffea54
+Copying blob sha256:9dca42b3b960d6a99bc77762b212a52f5bcf00bb2407beec0d63bb84d7bd00f9
+Copying blob sha256:0206f296862a6fc2d8c4492c7c1927c551316b89fcb1801ed9ad3b532669f0d1
+Copying blob sha256:88fa6e0319efed5cf4afa2913dc51f1c44639fa4b0c9cbddb9d36faa4e463ecf
+Copying blob sha256:98d7f5d279fb3130060f4bfad70fdf454cf82938377c747a75ba7052d006f8ff
+Copying blob sha256:b85eb92ae69e7e6dc22f2711616e29845bfc0135ce70b2257d635def58335f79
+Copying blob sha256:a83c3e65281f253ce13e9388f4e0a14b6f64ea1a25964216c831c40cfa45c4a6
+Copying blob sha256:60500874a5ee01cb4e73e7d742c194284011283d3346efda403047312236a46a
+Copying blob sha256:7de2c72017bfdfae90d92b731ff46ff7a9b69b4632a63c112127d690e2b575ae
+Copying blob sha256:cb03610c09c7a7557be1cb88e617fee6c600be3f79737b0f5053145c389a1005
+Copying blob sha256:664db4901787f7ae350f88ff08a5be4fae01a8434f466f77dbe50bf8fd871010
+Copying blob sha256:bbb2c370a79febe4b7589e13c53b6d2da9d16b116eb38913dfa229d232670afd
+Copying blob sha256:e6453378500efc6b447ae69b5cc7a9552bdd59744f5f3a5a6629954350f38662
+Copying blob sha256:3ca7df81de1d10c695ffab8854eed5e4b3986ef6ff298455b96aa945f43a6ece
+Copying blob sha256:e7793a3e17684315e82efaa5bc9b4f112e22846695f991c438ed8f5f63118ee1
+Copying blob sha256:d9c2ee64466ab26a0f94ddaf968d37e2f227d2587e4c2fb4c3ef37f09499fc8e
+Copying blob sha256:8b772a8f687866a436a0fb90c9cef7723dd60581dbe3168f68ce2a6b269cb99a
+Copying blob sha256:72639391cceb6d5450807db59512731d7f4b7f89f5ee0b0cf8a5b65b75d12438
+Copying blob sha256:a985fe1b711b3eef585e90aca837d728a7b6b9931c929107f65a87c7f0d7a2e8
+Copying blob sha256:62ae0d3a073e6191ddb86e8d75a18f78979d72bfa5098eb95fac67cc5a8cdde8
+Copying blob sha256:0bcc3144ebf32b3fd50ecf570a63d25964246b802b6262362309cf8d723353c5
+Copying blob sha256:409fd876ba24181c71375c3612e52cfb169bb26f93dafd7eaeea9a89f75d3f00
+Copying blob sha256:45fac74ee352278c8c3a349dff023721c285573c9e1d8977a8e7f8c03dc1796c
+Copying blob sha256:cff3835492458dc756195bfcc02133f92d7094540d3c2bba5437a61158acf438
+Copying blob sha256:e42a270bcf63e0a6f92d3dd2014ebfdb64723366c541a008f1c50d005c1c4ed8
+Copying blob sha256:abfe30defd802f7702f9c44d91344d28b75c59a60b46b0f8d09b5835be1b4cc6
+Copying blob sha256:d5f57890d00447a350d1b99b47c2d78f8fef8945b7a67d6019a06e93127c4421
+Copying blob sha256:04404f5a43c44a664742d1fcfd4600d91076ce22e2aac356f461a297106f94be
+Copying blob sha256:34da36be37a3aee2976292832e7d363e1d9f24f5ad895fc9d4d1ac9ac41af9ea
+Copying blob sha256:28c67e87d70bdc9913a85f34434968299342a37dd3b06ede992fbe12701b3e89
+Copying blob sha256:3ad525d65ad84c7515be3c517618c560568cb198bb350667476926dbff0ae0f0
+Copying blob sha256:a8779d57bcb3f9f2c606870e9e5ec33732000a44b3272be18dd0386dd6d2d103
+Copying blob sha256:577f812e19bc069519d2c418631f613ddba29e59913e687a5e8b798f48c6fdd5
+Copying blob sha256:65ff63280a83011abc12cf0bd2e1891eebcb90bd8bc312eda3351843580231b0
+Copying blob sha256:04418598962d5bb2ea079d8b2dd57fd0a560970745fa94ae0bab56f5e0b9ea10
+Copying blob sha256:aa5099217eab7e1017e298b88435c1cf99f4bee4dfd32ea94b41614a97458213
+Copying blob sha256:3b16b5f7000c940cb4d178f30bc4d5dc12cb535425a47918eb916f6c6573b504
+Copying blob sha256:7db3b1ca9cb925ee9376cfb16162fa3050dc6ebae4edc9dd728f33e57e79feff
+Copying blob sha256:ee20bdf20880409272345b2b9d3879a536c33bf47fe21c57bbbf10daa2e211ac
+Copying blob sha256:a83a07e57884195e71f06cd71ffee2a8fbf638a2f68ad430f84a85b419adb87b
+Copying blob sha256:3e53c0af8cbf4e10f8f951ced2b88ee37f5e1f57ae9c598eaf6c9a671e485718
+Copying blob sha256:371c9f1ae209821b4344e95f2e492f4b91708e057cb81670f54dfed085fde625
+Copying blob sha256:9438a847a0a6c1e4a4712681392123dc6ce4a307bfcfdd1e2836e74b1e6f0a07
+Copying blob sha256:f30cbb05df94d40a73f0cea14d48dd213979eb43a07dc4e4cd41b17b886ccb6c
+Copying blob sha256:594131ba58ac8b5e76cca0e9f0cbeb9ad65f44d218008a94b73787c3fbb4fab9
+Copying blob sha256:a5553b92cdb2a752b67735573a21aaeb002728b29d9d9bf0a94a53b344f7e688
+Copying blob sha256:a79fc998e7982944bd9d7dd7e455c36eae16f8614f01d2293f40556ed25ecb4e
+Copying blob sha256:e35b8312fbaf2cd60422ebd7494adb279185b9ce9746da6ce696aea33d5c535c
+Copying blob sha256:894cf42da2cc8bfdf8b9be714139d3e9ed723e98a9ebe8b384233349092b06ea
+Copying blob sha256:22f4f8a5383f833b03f166c8f6f536976efd97d9c2f825b82786017827bebbd2
+Copying blob sha256:63047ce681cefba69cb5805b30f8ba526cd0b635bdc65d7114b66969882fb1dd
+Copying blob sha256:5a4148757b95399d5b3039b03348eec2db9a356769d081be77d2f61c4da6627b
+Copying blob sha256:df741beba2b0dbff0c065650dd74b3537298ca2112adb29070708d8be9c6efa8
+Copying blob sha256:b9fe5da0212ddd672bc71118fe4365778ba39bd50d21d3b51b18dea09d7fe6f1
+Copying blob sha256:784bf66dabdab4c1147b5bd3974786ffce8e6a86b4aa052306b1844462d7cbed
+Copying blob sha256:929b690f60e57f3b4ee897ea2f70106cc5b68d54a0a614791cddc05597b55091
+Copying blob sha256:eeb4b501199ece120d5eeaa54d72627bf1958a7eed2e2d97c4af65fbdcd83eae
+Copying blob sha256:cc84e03cadd2a5d1e92826f283d8ac1bcca171e70f038640d668f387f3ef46c5
+Copying blob sha256:7f5f70f90d99cb93ca624f8edc4bb75415a017e4d51413dc23dafa40678d9719
+Copying blob sha256:d716190d939a66c7c9322fae7584eefbbcd058cc003ae263d4012e4a1fe1ed1d
+Copying blob sha256:95055b08e6c99b12cab18649481e0e0fe1b283a054e923949431ac53aebc5320
+Copying blob sha256:72f761e6ebb3b420aefdaba44ae5b0444e80606be429d0009518fc341cd31882
+Copying blob sha256:40afa9978bd444b67452968f22ea8a1e7be315745244a83d1874189fcec4aa01
+Copying blob sha256:d61c39c4f2e1e64a57b71749e292b9d6aa7587b630b9d3905627df9d697f3887
+Copying blob sha256:c637de8d2771297436ada2087db65219683be719109cd41e231ac3b17fb448b7
+Copying blob sha256:8a26729f7b7fbedfe84c4ba017434490812ec8bbea68119610a4ee9541c175a6
+Copying blob sha256:7c3bb4b9bcc9a73752bcd4f1a6affec386e0f30049b62cfa2cf47cd01678daa9
+Copying blob sha256:d1c3db3f983573286329107b236ad378c6b3bc6a34cbd7367e7a55547c09929f
+Copying blob sha256:f158229882f7ec1eb0106950c5c7be942bc8baf48e0946415ba3fc67215c27ed
+Copying blob sha256:9cc84461690d0411cd941fd8d45b0d4cb199ff14eaefae5039e6abff4e3ec981
+Copying blob sha256:df2e8f57a659d3282ff4adeef325370d37d88616fd74747eaa794bd2d04095fb
+Copying blob sha256:ff750d5cafa67e0c47fa5caf5846394be0c0618c7326fc75705cd75e3f791350
+Copying blob sha256:8b8b41b54630b0942659edebc4a01ae116272bceb709a71bc60500e11316357a
+Copying blob sha256:e062dd46e3a8463b54c942ea73e80ed366eb81408347c8383e6dea0729174f72
+Copying blob sha256:b2437b0932185e7d42b1f24778428223c9c27d4a0b6fc75e839c955eacbde564
+Copying blob sha256:da0701144bddcd3bad750dd2726194e312a38ca133f0fa1e81af53ccb1bb4a42
+Copying blob sha256:d42d78e463b3e8e00518533224a41c0b5ee4fda31e42359818e4dacfb13e3b8d
+Copying blob sha256:52e54a696133d240d8c81692aab8185e6a90acf797d471b18636f31537b29134
+Copying blob sha256:c0049ba79f0d63a5a33d611d09673fbe9d7cf9cf61ef3646130c88b82dd75dfb
+Copying blob sha256:f5eea729f4e98cbc1e6408f3b8bdf3ca6c130d603a8482d4179805d32fdb6f69
+Copying blob sha256:6450806aa1c004557b7806814af85969dcdce5a994eafde14aaaccd35c0e8763
+Copying blob sha256:1df6b9897cba576f2c2f1d3fde22b0e23459f11bc4dd02ad56e93d0da27fc316
+Copying blob sha256:b67618b6b6bfbe6c472ba56e944911827fabdea843f7313cc80b0a7193f9d972
+Copying blob sha256:fe3a45f1425cee53bc66eece79a4b18b0131daf6fafae0c4cbb4529b965d69e6
+Copying blob sha256:ddf425a4ae39fdd99387289aea377d62e20892290d6df5d24bfc8a68be33815d
+Copying blob sha256:7b9da430e7ea05c19b33709370b9b68194a2409f9412a665ac205023bcd268b4
+Copying blob sha256:6898a2349989df647940fba03a8cf7f2b86161da7af2243ba4ee3ff7e2ad859b
+Copying blob sha256:f58c5956cbae35666979017e74c2f1d5e02561171ed5a0110e82b687de757fad
+Copying blob sha256:e2a8f22ed54c39e7969d2451654bdf865a5905cb37ecdf2bb9c5d799ee867db9
+Copying blob sha256:797a6166fdb19eced0ec0a8c6928cdd53690d8dcaf6cc289dbaa94911cda8890
+Copying blob sha256:3974e484cf576e44547b708760231826eb88ba24bb3d92268b6a6700fc17fe2b
+Copying blob sha256:3e22eb553dc1efde4c225b1b839e6e56464f769c3d75e4f40b2ad47c94ad0e50
+Copying blob sha256:c1f42b1b2f9a1c3a923b604f8876a42490ffdcec0028f4d19800923944c53008
+Copying blob sha256:da384da899387a6eff3147bfc0743e8229d392c859bb69ae6d345a11b4931747
+Copying blob sha256:dc5856ecf45774d960a9182b8265a61b16bfdcc839b03b6cb7ad6cba4c5e9a32
+Copying blob sha256:291adf337bab636e2f64ed856df2df4500d11d41bab5e4c0bcd4fd9cd246049f
+Copying blob sha256:9a9af1535794823be8b9fcf8b90173143741f3fb97df59e8f6a1ec915c03e7ba
+Copying blob sha256:3897ac8edf7bd61fe104ca8f5cea0b3e51e0cc433f0c432241b1b96c5099e47a
+Copying blob sha256:b7ce82ceeca3a9f1ee699fef52c2a3d84528e13c41216e389d08eb0f092f68d5
+Copying blob sha256:9de997a8ba85924ffa911d173a6db086a8d09e84979cd3a3c34033b85304a9e0
+Copying blob sha256:c4ccf8de111da5a71a68701e44140992a34e9a3a5d751823c183815170e6ace9
+Copying blob sha256:ad348bbd1d57422d67bf51cf470c75ccaf641f938194a3c20bc577d4e74bf854
+Copying blob sha256:1f6495d70d896684086d33ba5f58e018e3ba8a9e934841ae15f51b99d50a1c2a
+Copying blob sha256:bd24b00c987753bb8b869dfe5d582dcf0eb3dcc4e162321277ed95d78e48e893
+Copying blob sha256:a25532f1640a6f694c11bce7613777830a9906b237dbe4a096193ffa412b8d12
+Copying blob sha256:fe80b01ea6b52ec574ce6f9badfb0e7b6d046235ccf4454d9861583917a1a2d0
+Copying blob sha256:835eca680377b552e13cf95212463c73708e24edb24baa6583762a2336f7e92b
+Copying blob sha256:eb8c67e706070b735986e3283b964d0d9f300aa65e195651d308fa1cb553c320
+Copying blob sha256:f0651ea35f282ac3467209db2beb8014dca7bdf3589189cfeadc038b82d44db3
+Copying blob sha256:bb906f5ecab319fa3ae79d6cee034d062cd3e7fdba124e7a88d790b26db26ee3
+Copying blob sha256:69f92e645e7690116912ae884bd33cd2339fd9c9f818563d543b62e084731a4f
+Copying blob sha256:f7841d42b7558d23eb600ca09e079fdfb3adb1cb0cd69b1f5fcef9a035ed72dc
+Copying blob sha256:b2724c9711229e026d4a15914dc5b3ab65c45ddb54abb2ddce823d878a3f70eb
+Copying blob sha256:2f4208271d0d47e1886a2311226ffce2cecba822dc462660ee11b389fd5e6dc1
+Copying blob sha256:7802a0874d9f0d68c0a37faad584017239be055ca31f4a6a6c85d282d2638630
+Copying blob sha256:8bf74a6d36d43c549970b419475789cee69fcaf492a85ca9d05e3c3df586b8b0
+Copying blob sha256:c903de7d2cec9f904ce3cf2f70ae7f5e3c8cb06c87c75e642ac481096e389459
+Copying blob sha256:8d19eec97830ff1941267342a72ca27e4c3461683c94c7ecf201f3ec293dc8f2
+Copying blob sha256:bc73cf0c688823df7f7a5398720a3fd3453c106a43f483f1f1d0d353a00dc0d6
+Copying blob sha256:02c281256be98fbda190ccee49de2d4f7a8e01a6593d85f1b2a9c1d1fbc8109c
+Copying blob sha256:a8ac81ab17dd3a9d3d95b6f6d303f9022a188a0f5924684694f37fa4c6a21a0d
+Copying blob sha256:419a16a9075f116388c76606995801d3a3034a2ad914650779feab42ba1221e6
+Copying blob sha256:dab5e3094c5d64219234b4233b391e63d038d01be7e2b795f1a827a0dd394a1b
+Copying blob sha256:c92b2e714b725513810e014be38b72e8c6ebb0d10b6aa66b0570259fe2ec5e90
+Copying blob sha256:9e2af566b0a48b6ce031a9cae8abb14dbb024088d6fd6ad445a995866b9bb68f
+Copying blob sha256:a0c7132e5fcaaf92cdcab82426a3565cbc7724748da14a4d3b2e20cdef215dea
+Copying blob sha256:1a96d26c9095e05596243d991dc45e2fa7c91b3aea8031a825f9bcf8afdee66d
+Copying blob sha256:afa29af60b159e0fdb1fa6d66accb3e99f603356c5e5836e2fa7423aa87c5b64
+Copying blob sha256:f58ff33d5df7d034a1402ab4ee28ce465d129acad2775bccafd39682dd0b449a
+Copying blob sha256:74923bf910adcd6b802d079ea7924750f52be977ddf76a9d41a5b2b36383f639
+Copying blob sha256:a3df6d8b9cb4fae4c2fd7940433a10cd4585b07f91da19899bd470d4ce92043b
+Copying blob sha256:9f2f9a4c003ab8177c6e721788307fff6ffe0b45fe1044e399ff8b5716cc15cb
+Copying blob sha256:2137148f5edecee2232a8c1aa74795b53dcaaab3f5326ede1c9d3b027b69c6ae
+Copying blob sha256:0d64760d0ecdea73bb262d4e5f8c533726a896a8d61b5562e2ca4ae8aceab719
+Copying blob sha256:539c3aeb1ccf01b8e861c21280eae176655763cafef0217bd50ef96534c3a6dc
+Copying blob sha256:cc7a54f295501f1694f1506da0feb54ed38c0d47821b255dbb0309e3c2807503
+Copying blob sha256:97e06e93e4cb3fcf4b83b361afec6b3db9a549629221194511701338ae34fddc
+Copying blob sha256:8bce69a5bf37036a0c055afd8a7e3e3d0a3e8643eaac245c78e663faee78c340
+Copying blob sha256:21b96842518f313508a7383591ab3e2cc7cf1eeb200b7e38f5eb25bfdd05f59b
+Copying blob sha256:b19e7d75b17172f8a58f3ec2ad8b7b6eb4a300a44aa1d9b81ae22f482c9db2de
+Copying blob sha256:2c4b2e49def2a8a3b2c5930cf1722ece1de669758711e278750859c77ab2abf6
+Copying blob sha256:f868aef1a39262b653f6b2d29471b6ecbb747b9ef140736b705ae03c5e622b52
+Copying blob sha256:610cb6327b2aedc7fa29969a08240576258aa8c5890ec2e21cf55e8ee711b91e
+Copying blob sha256:7a8b2daf95eb098c0490f9287790a74f314fbb245266d3ac894dd5fbd931d943
+Copying blob sha256:208ab65c44fcbe30ebe6cc934669f5f5755c79881d6f0caacd2eceee2167d3c4
+Copying blob sha256:1773b6473612ea919d238ab970c10613478c24452378608ebee5ae73247fae4b
+Copying blob sha256:88e1141384a87025ac8e9fd500d70f2189883e2638937fbd521a41dc9219e389
+Copying blob sha256:ba68d92465c2ccc517a7c4253cf2cd81dce06cbe4ee424ef48ebad68167e8bb4
+Copying blob sha256:b132534194d986f7e43f8de8afcc09aa3ccf153dcc2528b551fc10916ec1683c
+Copying blob sha256:a5d396d3154aff08aec46e7e8eec1f603105d7eb7b1a4f4e0025cc1f5ebdb44d
+Copying blob sha256:10f9f068e99a560be791ab0977d05faf57f10427966c7e055a0e8867f4ea45ac
+Copying blob sha256:bc21d59fc6d9eef9c8bdc4f6f3c28b84d8d17b988b6c2ee2fbce06601d584c5e
+Copying blob sha256:66ba08f35f53c640b0eb72b1e1d0e235c5cee1e2b776bdaa08d53892559172a7
+Copying blob sha256:eecb300f5d6c00e90731a4ffd4c4ac9d36abc1af0c135380867fec0026b7a98e
+Copying blob sha256:9054d2ca4fb9b8eced9a10c5381879f98ed72eaa73bdea5cdcf9ede39029fc0a
+Copying blob sha256:7aceca57dafefd31410fa5cd7a037b60785fa2f86b539c5012decb608ba1e29b
+Copying blob sha256:7459d4bc76f310143be41ee2e26c82d7bbec1ba9717a22118803ace52aaecf58
+Copying blob sha256:59c264640752d25d62c2783d4dffbd5fd994e5bc1ed628eb7bb37d72e4c4b868
+Copying blob sha256:d166af3bac7055c33f09ba1179d4e18120bce18921bb76df3989fd00091acd45
+Copying blob sha256:8cbaf9560e3ad89bfc9c8b9093f0217036bbaea1683d85781757f0158c3892f2
+Copying blob sha256:8ca4de557376fb5ad0b269b8c2d998ec974b9ee04c7e4f3522be595a3c55a19d
+Copying blob sha256:e0709cdafcb601d3050f231b52614d02a1b3eb33fe29e1680613f4120355be74
+Copying blob sha256:8024c54f3c642f840a13d355d1d50ef0529b7564c966c10f00d41d9c6f4c31e6
+Copying blob sha256:89a216bee6b1023d30e8980231bf2eae2f1831ab77028e2d059edb432179c4bd
+Copying blob sha256:5fb1698c15ce8d5fcf5875db1ebc89aec148a9eb32826cb44c3f8cf608c9e9b5
+Copying blob sha256:a1cd63bc2455ae3e886eaf83e443bbcc2e1d801df1f3b0b6d7675d0b02e2db0c
+Copying blob sha256:bb25dddd0b9703d361c3044775077f9a80372e53c60d53b192a25039904f6894
+Copying blob sha256:b929898cee6573f9d5eb5ebfe4455edf5e8389fa822f1efad9f99167fcaa6da6
+Copying blob sha256:4373ceae21b0b0c4bb011d35ab1d400f175cb5c8596fc386c361f9aa27243f63
+Copying blob sha256:08f7a0acf661e4fae4bce65d3b4b917ba8af862fc2488d5e3682ca9e4872b46a
+Copying blob sha256:c7f06e934e4a3da3b3b9ff7b0b184247af37fe153669e2ceb9f8deeb1a839ed8
+Copying blob sha256:eaa65808139a96d782cc25518e2b56f52c8187ec59544a993c0f66c3a01edae7
+Copying blob sha256:548699582d18aac9347bee1bf99f64234c1e8bca430d6c7232f43dc2d1aa9eb0
+Copying blob sha256:190382a9ca34843c07e00643cf66f1881027ac515fcf1c4299220021a4a42f9b
+Copying blob sha256:c14bc1b9bbb6fe2101eb4cae0c1c1dcf72ebabe3b1170c8fcfed784521660b30
+Copying blob sha256:ce9cd14664e0b43406a649f4fbf1fc85cd0b06d8eb23f79f3d5c7d8db88b42f9
+Copying blob sha256:17928cd1b9ae8e290b9620982cb75ef93de4a0ea8994606c9ae1e54d858a8c99
+Copying blob sha256:a289b0757dc36dae568e9170ca4b14ce813e0408faa45df225839af6cd17457d
+Copying blob sha256:7cd4db3c571d4014e771c47683482eb4f8bd5142cd76a90c6edba082b8edcacb
+Copying blob sha256:c0e5aadf8734c7cc9e516ee2a965c3f8859a09c7fa8c06e62dd93cb55bd9502f
+Copying blob sha256:203eb7fa29a00542b2f0da8554fe9732d32b0d15e6ec58a8af78a3eb749c71d5
+Copying blob sha256:790095e27a501136747afac4a37d813e32fb1203ee844dfb46225fe5084c4e7b
+Copying blob sha256:552020ff4dc4e7ca89e7f72e1dad8daa112465f4e2e9f113e2d84ac49d51a4ac
+Copying blob sha256:9dad063a624b62064bf25dbbc2e802e472d636056f661f2a0be73efd8a4da98b
+Copying blob sha256:abbec9fd5bf706d186d775f62847cd277a1ec979127d45cfd79a67f46edec99e
+Copying blob sha256:efd22f3b6b37b851ec2c54e6cd13d624455c8c86676a6d4dd62736a3a816b00c
+Copying blob sha256:f7e9c90bdaf824b30e932bd1a58c8c55e5ff0eaeed1a99b206659ae367f49460
+Copying blob sha256:5dda47ae03b654a3d0f4da042d15999c363c8d3e8d1d8e8e6b4c2472ad4d0c68
+Copying blob sha256:c75cadd045bbfee446ba2ee4944b10dac144ffca4d62b31677df1432ad33586d
+Copying blob sha256:14bbc859d377271f9a8591f698393c4bf0048d1668324e0e6aa14b4900ba56a3
+Copying blob sha256:4bb35fa3bc5a48157e5f8f92cf2d89e6a1068eaf9a3e386c47dd38a873047287
+Copying blob sha256:c59ae25e0cff131c1d7bf976b0fc1f9f6469509ac62ad6f6e0a3600bc5aa4a10
+Copying blob sha256:af560c230dfec85de432d9a66573f08e25e9dc9d34f4bb7163b61b44a1940091
+time="2026-09-30T10:13:22Z" level=fatal msg="copying system image from manifest list: reading blob sha256:34da36be37a3aee2976292832e7d363e1d9f24f5ad895fc9d4d1ac9ac41af9ea: fetching blob: received unexpected HTTP status: 503 first byte timeout"
+make[1]: *** [Makefile:2: framz] Error 1
+make[1]: Leaving directory '/build-container-installer/container'
+make: *** [Makefile:148: container/framz] Error 2
